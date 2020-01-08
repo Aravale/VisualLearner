@@ -1,0 +1,67 @@
+        .parallelogram {
+            width: 50px;
+            height: 20px;
+            transform: skew(340deg);
+            background: #efefef;
+            border: 2px solid #343a40;
+			margin: 5px 5px 0px 5px;
+        }
+
+        .circle {
+            height: 20px;
+            width: 20px;
+            background: #efefef;
+            border: 2px solid #343a40;
+            border-radius: 50%;
+			margin: 5px 5px 0px 5px;
+        }
+
+        .rectangle {
+            height: 20px;
+            width: 50px;
+            background: #efefef;
+            border: 2px solid #343a40;
+			margin: 5px 5px 0px 5px;
+        }
+
+        .rrectangle {
+            height: 20px;
+            width: 50px;
+            background: #efefef;
+            border: 2px solid #343a40;
+            border-radius: 40px;
+			margin: 5px 5px 0px 5px;
+        }
+
+        .arrow {
+            background: none;
+            border: none;
+            font-size: 30px;
+            color: black;
+            padding: 0px !important;
+        }
+
+        .dici {
+            height: 20px;
+            width: 20px;
+            background: #efefef;
+            border: 2px solid #343a40;
+			margin: 5px 5px 0px 5px;
+			transform: rotate(45deg);
+        }
+
+#menu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        box-shadow: 0 0 5px grey;
+        border-radius: 3px;
+      }
+
+      #menu button {
+        border: none;
+		  display: block;
+
+      }
+
+      

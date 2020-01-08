@@ -1,0 +1,113 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color:yellow;
+  }
+
+#maincontent {
+    padding-top: 10px;
+    background-color: #1f2226 !important;
+}
+#maincontent > div {
+	min-height: 80vh;
+}
+
+/* Flowchart things */
+.row-box {
+	border-top: 0px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+    min-height: 30px;
+    
+}
+.invisibile-texty {
+	border: none !important;
+	border-radius: 0px !important;
+    background: none !important;
+    color: #ccc;
+}
+#flowchartdiv {
+	height: 80vh;
+    background-color: #f8f9fa;
+    overflow: auto;
+}
+
+
+
+
+/* Topics menu */
+.sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: visible;
+    z-index: 1000;
+    min-width: 50px;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 0;
+}
+
+.sidebar > .navbar {
+    position: relative;
+    height: 100%;
+    overflow: visible;
+}
+
+.sidebar-right {
+    right: 0;
+    left: initial;
+}
+
+.sub-topic > li > a{
+    color: rgba(255,255,255,.3) !important;
+    cursor: pointer;
+}
+
+/* Holder thing */
+.holder-thing {
+    float: right;
+    line-height: 30px !important;
+}
+
+/* Add Row btn */
+.addRowBtn {
+    cursor: pointer;
+    font-size: 35px;
+    font-weight: normal;
+    padding-bottom: 3px;
+}
+.addRowBtn:hover {
+    font-weight: bolder;
+}
+
+
+/* Brightness slider */
+.slider {
+    -webkit-appearance: none;
+    height: 7px;
+    border-radius: 5px;  
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%; 
+    background: #1f2226;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #1f2226;
+    cursor: pointer;
+  }
