@@ -3,7 +3,7 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	mongoose = require('mongoose'),
 	passport = require('passport'),
-	flash       = require("connect-flash"),
+	flash = require("connect-flash"),
 	LocalStrategy = require('passport-local'),
 	User = require('./models/user');
 
@@ -32,39 +32,26 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 	res.locals.currentUser = req.user;
-	   res.locals.error = req.flash("error");
-   res.locals.success = req.flash("success");
+	res.locals.error = req.flash("error");
+	res.locals.success = req.flash("success");
 	next();
 });
 
 app.use(indexRoutes);
 
-/*User.findOne({ username: '2@gmail.com' }, function(err, user) {
-	if (err) {
-		console.log(err);
-	} else {
-		 /*user.topics.push({
-            title: "C Control Statements",
-        });
-		user.topics.forEach(function(topic) {
-			//console.log(topic);
-			if (topic.title == 'C tutorial') {
-			//	console.log(topic);
-				//topic.subtopics.push({ name: 'Basics' });
-				//topic.subtopics.push({ name: 'Variables' });
-			}
-		});
-		user.save(function(err, user) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log(user);
-			}
-		});
-	}
-});*/
-app.listen(3001, function() {
+
+app.listen(3000, function () {
 	console.log('server is running');
+});
+
+app.on('uncaughtException', err => {
+	console.log(`Uncaught Exception: ${err.message}`)
+	app.exit(1)
+});
+
+app.on('unhandledRejection', (reason, promise) => {
+	console.log('Unhandled rejection at ', promise, `reason: ${err.message}`)
+	app.exit(1)
 });

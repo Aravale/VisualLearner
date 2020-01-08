@@ -1,4 +1,4 @@
-var StageWidth = $('#flowchartdiv').width();
+var StageWidth = 650;
 var StageHeight = $('#flowchartdiv').height();
 var shadowOffset = 20;
 var tween = null;
@@ -21,16 +21,16 @@ var stage = new Konva.Stage({
 var gridLayer = new Konva.Layer();
 
 var layer = new Konva.Layer();
-var placeX = stage.width() / 2 - ShapeWidth / 2;
-var placeY = 50;
+var placeX = 300 - ShapeWidth / 2;
+var placeY = 0;
 
 stage.add(gridLayer);
 stage.add(layer);
 
 function makeTA(grp) {
-
-	var textnode = grp.getChildren()[1];
 	var shapenode = grp.getChildren()[0];
+	var textnode = grp.getChildren()[1];
+	
 	textnode.hide();
 	layer.draw();
 
@@ -162,7 +162,7 @@ function newRectangle() {
 	var txt = new Konva.Text({
 		text: '\nint a',
 		width: ShapeWidth,
-		fontSize: 16,
+		fontSize: blockSnapSize/2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -198,7 +198,7 @@ function newRRectangle() {
 	var txt = new Konva.Text({
 		text: '\nStart/End',
 		width: ShapeWidth,
-		fontSize: 14,
+		fontSize: blockSnapSize/2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -252,7 +252,7 @@ function newDici() {
 
 		text: '\nif()',
 		width: Decilength + 38,
-		fontSize: 14,
+		fontSize: blockSnapSize/2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -301,7 +301,7 @@ function newParallelo() {
 	var txt = new Konva.Text({
 		text: '\nInput X',
 		width: ShapeWidth,
-		fontSize: 14,
+		fontSize: blockSnapSize/2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -480,9 +480,6 @@ function initShadows() {
 }
 
 function stageinit(gridLayer, layer, stage) {
-gridLayer.getChildren().each(function(node){if (node.getClassName==='Line'){
-	node.destroy();
-}});
 	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
 		gridLayer.add(new Konva.Line({
 			points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, StageHeight],
@@ -500,7 +497,7 @@ gridLayer.getChildren().each(function(node){if (node.getClassName==='Line'){
 		}));
 	}
 
-	stage.batchDraw();
+	gridLayer.batchDraw();
 
 	layer.on('dblclick', function (e) {
 		// prevent default behavior
@@ -523,6 +520,7 @@ gridLayer.getChildren().each(function(node){if (node.getClassName==='Line'){
 		else { currentShape.getParent().destroy(); }
 		layer.draw();
 	});
+
 	document.getElementById('mvfrnt-button').addEventListener('click', () => {
 				
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveToTop(); }
@@ -531,6 +529,7 @@ gridLayer.getChildren().each(function(node){if (node.getClassName==='Line'){
 		layer.draw();
 	
 	});
+	
 	document.getElementById('mvbck-button').addEventListener('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveToBottom(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveToBottom(); }
@@ -771,6 +770,9 @@ function addshadow() {
 function addstageheight() {
 	StageHeight = StageHeight + ShapeHeight * 2;
 	stage.height(StageHeight);
+	gridLayer.getChildren().each(function(node){if (node.getClassName==='Line'){
+		node.destroy();
+	}});
 	stageinit(layer, stage, gridLayer);
 }
 /*

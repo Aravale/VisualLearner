@@ -9,256 +9,256 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 	<link rel="stylesheet" href="/stylesheets/home.css">
 	<link rel="stylesheet" href="/stylesheets/konva.css">
-	<title>Visual Learner</title>
+	<title>Visual Learner!</title>
 </head>
 
 <body>
 
-	<% include ./partials/header %>
-	
+	<%- include ./partials/header -%>
 
-		<% if(error && error.length > 0){ %>
-		<div class="alert alert-danger" role="alert">
-			<%= error %>
-		</div>
-		<% } %>
-		<% if(success && success.length > 0){ %>
-		<div class="alert alert-success" role="alert">
-			<%= success %>
-		</div>
-		<% } %>
 
-		<!--Main Content-->
-		<div class="row " id="maincontent">
-			<!-- Code -->
-			<div class="col-md-4 py-0" id="code" style="background-color: #1f2226 !important;">
-				<div class="card-header bg-light rounded-0">
-					<h2>
-						<span>Code</span>
-						<div class="holder-thing">
-							<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-							<span class="addRowBtn" id="addRowBtn1" data-toggle="tooltip" data-placement="bottom"
-								title="Add Row">+</span>
-						</div>
-					</h2>
-				</div>
+	<% if(error && error.length > 0){ %>
+	<div class="alert alert-danger" role="alert">
+		<%= error %>
+	</div>
+	<% } %>
+	<% if(success && success.length > 0){ %>
+	<div class="alert alert-success" role="alert">
+		<%= success %>
+	</div>
+	<% } %>
 
-				<div id="codeDiv">
-					<div class="row-box">
-						<textarea class="form-control form-control-sm invisibile-texty" rows="1" id="codeDivTA"></textarea>
-					</div>
+	<%# Main Content %>
+	<div class="row " id="maincontent">
+
+		<!-- Code -->
+		<div class="col-md-4 py-0 " id="code">
+			<div class="card-header bg-light rounded-0 colheader">
+				<h2 class="colhead">
+					Code
+				</h2>
+				<div class="holder-thing">
+					<input type="range" min="1" max="100" value="50" class="slider">
+
+					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
+						data-placement="bottom" title="Add Row">+</button>
 				</div>
 			</div>
-			<!-- Flowchart -->
-			<div class="col-md-4 p-0" id="flowchart">
-				<div class="card-header bg-light rounded-0">
-					<h2>
-						Flowchart &nbsp;
 
-						<button class="rectangle" onclick="newRectangle()" data-toggle="tooltip" data-placement="bottom"
-							title="Process"></button>
-						<button class="rrectangle" onclick="newRRectangle()" data-toggle="tooltip"
-							data-placement="bottom" title="Terminal"></button>
-						<button class="parallelogram" onclick="newParallelo()" data-toggle="tooltip"
-							data-placement="bottom" title="I/O"></button>
-						<button class="dici" onclick="newDici()" data-toggle="tooltip" data-placement="bottom"
-							title="Decision"></button>
-						<button class="circle" onclick="newCircle()" data-toggle="tooltip" data-placement="bottom"
-							title="Connector"></button>
-						<button class="arrow" onclick="newArrow()" data-toggle="tooltip" data-placement="bottom"
-							title="Arrow">&#8599;</button>
-						<div class="holder-thing">
-							<span class="addRowBtn" style="font-size: 25px;" onclick="clBoard()"
-								data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
-								<i class="fa fa-trash-alt"></i>
-							</span>
-							<span class="addRowBtn" id="addstageheight" data-toggle="tooltip" data-placement="bottom"
-								title="Add Row" onclick="addstageheight()">+</span>
-						</div>
-					</h2>
-				</div>
-				<div id="flowchartdiv">
-				</div>
-			</div>
-			<!-- Psuedocode -->
-			<div class="col-md-4 py-0" id="psuedo" style="background-color: #1f2226 !important;">
-				<div class="card-header bg-light rounded-0">
-					<h2>
-						<span>Psuedocode</span>
-						<div class="holder-thing">
-							<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-							<span class="addRowBtn" id="addRowBtn2" data-toggle="tooltip" data-placement="bottom"
-								title="Add Row">+</span>
-						</div>
-					</h2>
-				</div>
-				<div id="psuedoDiv">
-					<div class="row-box">
-						<textarea class="form-control form-control-sm invisibile-texty" id="psuedoDivTA" rows="1"></textarea>
-					</div>
+			<div id="codeDiv">
+				<div class="row-box">
+					<textarea class="form-control form-control-sm invisibile-texty" rows="2" id="codeDivTA"></textarea>
 				</div>
 			</div>
 		</div>
 
-		<!-- Bottom Nav -->
-		<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-bottom" style="height: 60px;">
-			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-				<ul class="navbar-nav mr-auto">
-					<li class="float-right">
-						<a data-toggle="collapse" data-target=".sidebar" style="color: rgba(255,255,255,.5);"
-							onMouseOver="this.style.color='rgba(255,255,255,.8)'"
-							onMouseOut="this.style.color='rgba(255,255,255,.5)'" id="topicsbutton">
-							<i class="fa fa-bars fa-lg"></i>
-						</a>
-						<span id="subTopicName" class="text-light">&emsp; Topic Name Here</span>
-					</li>
-				</ul>
+		<!-- Flowchart -->
+		<div class="col-md-4 p-0 " id="flowchart">
+			<div class="card-header bg-light rounded-0 colheader">
+				<h2 class="colhead">
+					Flowchart
+				</h2>
+				<button class="rectangle" onclick="newRectangle()" data-toggle="tooltip" data-placement="bottom"
+					title="Process"></button>
+				<button class="rrectangle" onclick="newRRectangle()" data-toggle="tooltip" data-placement="bottom"
+					title="Terminal"></button>
+				<button class="parallelogram" onclick="newParallelo()" data-toggle="tooltip" data-placement="bottom"
+					title="I/O"></button>
+				<button class="dici" onclick="newDici()" data-toggle="tooltip" data-placement="bottom"
+					title="Decision"></button>
+				<button class="circle" onclick="newCircle()" data-toggle="tooltip" data-placement="bottom"
+					title="Connector"></button>
+				<button class="arrow" onclick="newArrow()" data-toggle="tooltip" data-placement="bottom"
+					title="Arrow">&#8599;</button>
+
+				<div class="holder-thing">
+					<span class="addRowBtn" onclick="clBoard()" data-toggle="tooltip" data-placement="bottom"
+						title="Clear Flowchart">
+						<i class="fa fa-trash-alt"></i>
+					</span>
+					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
+						data-placement="bottom" title="Add Row" onclick="addstageheight()">+</button>
+				</div>
+
 			</div>
-			<div class="navbar-nav mx-auto order-0">
-				<li class="nav-item">
-					<a class="nav-link" href="#">
-						<button type="button" class="btn btn-outline-light">Previous</button>
+			<div id="flowchartdiv">
+			</div>
+		</div>
+
+		<!-- Psuedocode -->
+		<div class="col-md-4 py-0 " id="psuedo">
+			<div class="card-header bg-light rounded-0 colheader">
+				<h2 class="colhead">
+					Psuedocode
+				</h2>
+				<div class="holder-thing">
+					<input type="range" min="1" max="100" value="50" class="slider">
+
+					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
+						data-placement="bottom" title="Add Row">+</button>
+
+				</div>
+			</div>
+
+			<div id="psuedoDiv">
+				<div class="row-box">
+					<textarea class="form-control form-control-sm invisibile-texty" id="psuedoDivTA"
+						rows="2"></textarea>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<%# Bottom Nav %>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-bottom" style="height: 60px;">
+		<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+			<ul class="navbar-nav mr-auto">
+				<li class="float-right">
+					<a data-toggle="collapse" data-target=".sidebar" style="color: rgba(255,255,255,.5);"
+						onMouseOver="this.style.color='rgba(255,255,255,.8)'"
+						onMouseOut="this.style.color='rgba(255,255,255,.5)'" id="topicsbutton">
+						<i class="fa fa-bars fa-lg"></i>
 					</a>
+					<span id="subTopicName" class="text-light">&emsp; Topic Name Here</span>
 				</li>
-				&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-				<li class="nav-item">
-					<span class="nav-link" style="padding-top: 12px;">15/30</span>
-				</li>
-				&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-				<li class="nav-item">
-					<a class="nav-link" href="#">
-						<button type="button" class="btn btn-outline-light">Next</button>
-					</a>
-				</li>
+			</ul>
+		</div>
+		<div class="navbar-nav mx-auto order-0">
+			<li class="nav-item">
+				<a class="nav-link" href="#">
+					<button type="button" class="btn btn-outline-light">Previous</button>
+				</a>
+			</li>
+			&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+			<li class="nav-item">
+				<span class="nav-link" style="padding-top: 12px;">15/30</span>
+			</li>
+			&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+			<li class="nav-item">
+				<a class="nav-link" href="#">
+					<button type="button" class="btn btn-outline-light">Next</button>
+				</a>
+			</li>
 
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-			</div>
-			<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-				<ul class="navbar-nav ml-auto">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+		<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+					<a class="btn btn-outline-light" data-toggle="modal" data-target="#savemodal"
+						style="color:#f8f9fa; cursor: pointer;" onMouseOver="this.style.color='#212529'"
+						onMouseOut="this.style.color='#f8f9fa'">Save</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<%# Topic list Menu <i class="fa fa-trash-alt text-danger"></i>%>
+	<aside class="col-1 col-sm-2 p-0 bg-dark collapse sidebar fade fixed-top h-100" id="TopicsSidebar">
+		<nav class="navbar navbar-toggleable-xl navbar-dark bg-dark flex-column align-items-start">
+			<div class="collapse navbar-collapse sidebar">
+				<ul class="flex-column navbar-nav">
 					<li class="nav-item">
-						<a class="btn btn-outline-light" data-toggle="modal" data-target="#savemodal"
-							style="color:#f8f9fa; cursor: pointer;" onMouseOver="this.style.color='#212529'"
-							onMouseOut="this.style.color='#f8f9fa'">Save</a>
+						<button type="button" class="btn btn-outline-light" data-toggle="modal"
+							data-target="#newtopicModal">New Topic</button>
 					</li>
+
+					<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
+					<li class="nav-item parent">
+						<a class="nav-link "  role="button">
+							<%= topic.title %>
+							<% if(topic.subtopics.length > 0) { %>
+							<i class="fa fa-caret-down"></i>
+							<% } %>
+						</a>
+						<ul class="flex-column navbar-nav sub-topic child">
+							<%topic.subtopics.forEach(function(subtopic){ %>
+							<li>
+								<a onclick="loadBoard()" class="nav-link">
+									&emsp;<%= subtopic.name %></a>
+							</li>
+							<%	}); %>
+						</ul>
+					</li>
+					<%	});} %>
+
 				</ul>
 			</div>
 		</nav>
+	</aside>
 
-		<!-- Topics list menu -->
-		<aside class="col-1 col-sm-2 p-0 bg-dark collapse sidebar fade fixed-top h-100" id="TopicsSidebar">
-			<nav class="navbar navbar-toggleable-xl navbar-dark bg-dark flex-column align-items-start">
-				<div class="collapse navbar-collapse sidebar">
-					<ul class="flex-column navbar-nav">
-						<li class="nav-item">
-							<a class="nav-link pl-0" href="#">
-								<button type="button" class="btn btn-outline-light" data-toggle="modal"
-									data-target="#exampleModalCenter">New Topic</button>
-							</a>
-						</li>
-						<div class="list-group list-group-flush">
-							<%	if(currentUser){currentUser.topics.forEach(function(topic){ 
-									var ident= "a"+ Math.floor(Math.random() *100000000);
-									%>
-							<li class="nav-item">
-								<a class="nav-link" style="display: inline-block;" data-toggle="collapse" href="#<%= ident %>" role="button"
-									aria-controls="collapseExample">
-									<%= topic.title %>
-									<% if(topic.subtopics.length > 0) { %>
-									<i class="fa fa-caret-down"></i>
-									
-										
-									<% } %>									
-								</a>
-								<i class="fa fa-trash-alt text-danger" style="float: right; padding-top: 13px"></i>
-							</li>
-							<div class="list-group list-group-flush collapse sub-topic" id="<%=ident %>">
-								<%topic.subtopics.forEach(function(subtopic){ %>
-
-								<li>
-								<a onclick="loadBoard( <%=subtopic.flowchart%> )" class="nav-link">
-										&emsp;<%= subtopic.name %></a>
-									<i class="fa fa-trash-alt text-danger" style="float: right; padding-top: 13px"></i>
-									</li>
-								<%	}); %>
-							</div>
-							<%	});} %>
+	<%# New Topic Modal %>
+	<div class="modal fade" id="newtopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">New Topic</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form action="/newtopic" method="post">
+						<div class="form-group">
+							<input type="text" class="form-control" name="topic" placeholder="New Topic"
+								required="required">
 						</div>
-					</ul>
-				</div>
-			</nav>
-		</aside>
-
-		<!-- New Topic modal -->
-		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-			aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLongTitle">New Topic</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<form action="/newtopic" method="post">
-							<div class="form-group">
-								<input type="text" class="form-control" name="topic" placeholder="New Topic"
-									required="required">
-							</div>
-							<div class="form-group">
-								<button type="submit" class="btn btn-info btn-lg btn-block">Add</button>
-							</div>
-						</form>
-					</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-info btn-lg btn-block">Add</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
-		<!-- Save Subtopic modal -->
-		<div class="modal fade" id="savemodal" tabindex="-1" role="dialog" aria-labelledby="savemodal"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title exampleModalLongTitle" id="">Save to topic</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<form action="/newsubtopic" method="post" id='myform'>
-							<div class="form-group">
-								Select Topic:
-								<select class="dropdown" id="dropdown" name="Topicddl">
-									<%	if(currentUser){currentUser.topics.forEach(function(topic){%>
-									<option value="<%= topic._id %>"><%= topic.title %></option>
-									<%	}); }%>
-								</select>
-								<br>
-								Add new Sub:<input type="text" class="form-control" name="subtopic" placeholder="Name"
-									required="required">
-								<input id="stagestate" type="hidden" class="form-control" name="stagestate">
-								<input id="codestate" type="hidden" class="form-control" name="codestate">
-								<input id="pcodestate" type="hidden" class="form-control" name="pcodestate">
-							</div>
-							<div class="form-group">
-								<button id="saveBrd" type="submit" class="btn btn-info btn-lg btn-block">Add</button>
-							</div>
-						</form>
-					</div>
+	</div>
+
+	<%# Save Subtopic modal %>
+	<div class="modal fade" id="savemodal" tabindex="-1" role="dialog" aria-labelledby="savemodal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title exampleModalLongTitle" id="">Save to topic</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form action="/newsubtopic" method="post" id='myform'>
+						<div class="form-group">
+							Select Topic:
+							<select class="dropdown" id="dropdown" name="Topicddl">
+								<%	if(currentUser){currentUser.topics.forEach(function(topic){%>
+								<option><%= topic.title %></option>
+								<%	}); }%>
+							</select>
+							<br>
+							Add new Sub:<input type="text" class="form-control" name="subtopic" placeholder="Name"
+								required="required">
+							<input id="stagestate" type="hidden" class="form-control" name="stagestate">
+							<input id="codestate" type="hidden" class="form-control" name="codestate">
+							<input id="pcodestate" type="hidden" class="form-control" name="pcodestate">
+						</div>
+						<div class="form-group">
+							<button id="saveBrd" type="submit" class="btn btn-info btn-lg btn-block">Add</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div id="menu">
-			<button type="button" class="btn btn-outline-dark" id="delete-button">Delete</button>
-			<button type="button" class="btn btn-outline-dark" id="mvfrnt-button">To Front</button>
-			<button type="button" class="btn btn-outline-dark" id="mvbck-button">To Back</button>
-			<button type="button" class="btn btn-outline-dark" id="mvup-button">Move Up</button>
-			<button type="button" class="btn btn-outline-dark" id="mvdwn-button">Move Down</button>
-		</div>
-	
+	<div id="menu">
+		<button type="button" class="btn btn-outline-dark" id="delete-button">Delete</button>
+		<button type="button" class="btn btn-outline-dark" id="mvfrnt-button">To Front</button>
+		<button type="button" class="btn btn-outline-dark" id="mvbck-button">To Back</button>
+		<button type="button" class="btn btn-outline-dark" id="mvup-button">Move Up</button>
+		<button type="button" class="btn btn-outline-dark" id="mvdwn-button">Move Down</button>
+	</div>
+
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -272,23 +272,13 @@
 <script src="https://unpkg.com/konva@4.0.14/konva.min.js"></script>
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
-	
-	/*jQuery.extend(jQuery.expr[':'], {
-  focus: "a == document.activeElement"
-});*/
 	$('#myform').submit(function () {
 		saveBoard();
 		$('#codestate').val() = $('#codeDivTA').val();
 		$('#pcodestate').val() = $('#psuedoDivTA').val();
 		return true;
 	});
-	/*$(window).click(function () {
-		var topicsbar=$("#TopicsSidebar").is(":focus");
-		var Topncls=$("#TopicsSidebar").hasClass("show");
-		if (!topicsbar && Topncls) {
-			$('#topicsbutton').click();
-		}
-	});*/
+
 	$('#addRowBtn1').click(function () {
 		$('#codeDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 		$('#psuedoDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
@@ -297,6 +287,12 @@
 		$('#codeDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 		$('#psuedoDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 	});
+
+	$('.child').hide();
+	$('.parent').click(function() {
+        $(this).siblings('.parent').find('ul').hide();
+        $(this).find('ul').show();
+    });
 </script>
 
 </html>

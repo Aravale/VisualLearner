@@ -61,7 +61,7 @@
       #menu button {
         border: none;
 		  display: block;
-
+width: inherit;
       }
 
       

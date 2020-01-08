@@ -10,6 +10,7 @@ function isLoggedIn(req, res, next) {
 	}
 	return next();
 }
+
 function isNotLoggedIn(req, res, next) {
 	if (!req.isAuthenticated()) {
 		req.flash('error', 'Please Login First!');

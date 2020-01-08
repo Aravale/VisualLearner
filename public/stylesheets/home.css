@@ -6,34 +6,13 @@ body {
   }
 
 #maincontent {
-    padding-top: 10px;
-    background-color: #1f2226 !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #626b79 !important;
 }
 #maincontent > div {
 	min-height: 80vh;
 }
-
-/* Flowchart things */
-.row-box {
-	border-top: 0px dashed #ccc;
-	border-bottom: 1px dashed #ccc;
-    min-height: 30px;
-    
-}
-.invisibile-texty {
-	border: none !important;
-	border-radius: 0px !important;
-    background: none !important;
-    color: #ccc;
-}
-#flowchartdiv {
-	height: 80vh;
-    background-color: #f8f9fa;
-    overflow: auto;
-}
-
-
-
 
 /* Topics menu */
 .sidebar {
@@ -64,30 +43,49 @@ body {
     cursor: pointer;
 }
 
+/* Column things */
+.row-box {
+	border-top: 0px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+    min-height: 60px;
+    
+}
+.colhead {
+	display: inline;
+}
+.colheader{
+    min-height: 70px;
+}
+.invisibile-texty {
+	border: none !important;
+	border-radius: 0px !important;
+    background: none !important;
+    color: #ccc;
+    min-height: 60px;
+    resize: none;
+    text-align: center;
+    
+}
+#flowchartdiv {
+	height: 80vh;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 /* Holder thing */
 .holder-thing {
     float: right;
-    line-height: 30px !important;
 }
-
-/* Add Row btn */
-.addRowBtn {
-    cursor: pointer;
-    font-size: 35px;
-    font-weight: normal;
-    padding-bottom: 3px;
-}
-.addRowBtn:hover {
-    font-weight: bolder;
-}
-
 
 /* Brightness slider */
+
 .slider {
     -webkit-appearance: none;
-    height: 7px;
+    height: 7.5px;
     border-radius: 5px;  
     background: #d3d3d3;
+    font-size: 0.3em;
     outline: none;
     opacity: 0.7;
     -webkit-transition: .2s;
@@ -105,8 +103,8 @@ body {
   }
   
   .slider::-moz-range-thumb {
-    width: 25px;
-    height: 25px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
     background: #1f2226;
     cursor: pointer;
