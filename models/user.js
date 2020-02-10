@@ -1,12 +1,21 @@
 var mongoose =require("mongoose");
 var passportLocalMongoose=require("passport-local-mongoose");
 
+var shapeSchema=new mongoose.Schema({
+	className: String,
+	x: Number,
+	y: Number,
+	shapeText: String
+});
+var Shape=mongoose.model("Shape",shapeSchema)
 
 var subtopicSchema=new mongoose.Schema({
 	name: String,
 	code: String,
 	psuedocode: String,
-	flowchart: String,
+	flowchart: {shapes:[shapeSchema],
+				StageH:Number,
+				StageW:Number,}
 });
 var Subtopic=mongoose.model("SubTopic",subtopicSchema)
 

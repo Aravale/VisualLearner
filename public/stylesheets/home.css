@@ -20,7 +20,7 @@ body {
     overflow-y: auto;
     overflow-x: visible;
     z-index: 1000;
-    min-width: 50px;
+    min-width: 280px;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -41,6 +41,11 @@ body {
 .sub-topic > li > a{
     color: rgba(255,255,255,.3) !important;
     cursor: pointer;
+}
+.sidebarlist>li>a {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - 48px);
 }
 
 /* Column things */
@@ -108,4 +113,23 @@ body {
     border-radius: 50%;
     background: #1f2226;
     cursor: pointer;
+  }
+  /* width */
+::-webkit-scrollbar {
+    width: 20px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
   }

@@ -10,7 +10,7 @@ var ShapeWidth = blockSnapSize * 6;
 var ShapeHeight = blockSnapSize * 2;
 var Decilength = blockSnapSize * 3;
 //Global dec for init vars
-var shadowR; var shadowRR; var shadowP; var shadowD; var shadowC;var shadowArr; var verticalBar;
+var shadowR; var shadowRR; var shadowP; var shadowD; var shadowC; var shadowArr;
 
 var stage = new Konva.Stage({
 	container: 'flowchartdiv',
@@ -19,18 +19,16 @@ var stage = new Konva.Stage({
 });
 
 var gridLayer = new Konva.Layer();
-
+var shadowLayer = new Konva.Layer();
 var layer = new Konva.Layer();
+
 var placeX = 300 - ShapeWidth / 2;
 var placeY = 0;
-
-stage.add(gridLayer);
-stage.add(layer);
 
 function makeTA(grp) {
 	var shapenode = grp.getChildren()[0];
 	var textnode = grp.getChildren()[1];
-	
+
 	textnode.hide();
 	layer.draw();
 
@@ -142,7 +140,7 @@ function makeTA(grp) {
 	});
 }
 
-function newRectangle() {
+function newRectangle(placeX, placeY, txt) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -162,7 +160,7 @@ function newRectangle() {
 	var txt = new Konva.Text({
 		text: '\nint a',
 		width: ShapeWidth,
-		fontSize: blockSnapSize/2,
+		fontSize: blockSnapSize / 2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -178,7 +176,7 @@ function newRectangle() {
 	layer.draw();
 }
 
-function newRRectangle() {
+function newRRectangle(placeX, placeY, txt) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -198,7 +196,7 @@ function newRRectangle() {
 	var txt = new Konva.Text({
 		text: '\nStart/End',
 		width: ShapeWidth,
-		fontSize: blockSnapSize/2,
+		fontSize: blockSnapSize / 2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -215,7 +213,7 @@ function newRRectangle() {
 
 }
 
-function newCircle() {
+function newCircle(placeX, placeY) {
 	var circle = new Konva.Circle({
 		x: placeX,
 		y: placeY,
@@ -232,7 +230,7 @@ function newCircle() {
 	layer.draw();
 }
 
-function newDici() {
+function newDici(placeX, placeY, txt) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -252,7 +250,7 @@ function newDici() {
 
 		text: '\nif()',
 		width: Decilength + 38,
-		fontSize: blockSnapSize/2,
+		fontSize: blockSnapSize / 2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -281,7 +279,7 @@ function newDici() {
 	layer.draw();
 }
 
-function newParallelo() {
+function newParallelo(placeX, placeY, txt) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -301,7 +299,7 @@ function newParallelo() {
 	var txt = new Konva.Text({
 		text: '\nInput X',
 		width: ShapeWidth,
-		fontSize: blockSnapSize/2,
+		fontSize: blockSnapSize / 2,
 		fontFamily: 'Calibri',
 		fill: 'black',
 		align: 'center',
@@ -325,62 +323,104 @@ function clBoard() {
 }
 
 function saveBoard() {
-	document.getElementById('stagestate').value = stage.toJSON();
+	//document.getElementById('stagestate').value = JSON.stringify(stage.toJSON());
+
+	var Shapes = [];
+	console.log("hi");
+	layer.getChildren().forEach(function (node) {
+
+		if (node.getClassName() === "Group") {
+			var shape = {
+				className: node.name(),
+				x: node.x(),
+				y: node.y(),
+				shapeText: node.getChildren()[1].text()
+			}
+			Shapes.push(shape);
+		}
+		else {
+			var shape = {
+				className: node.name(),
+				x: node.x(),
+				y: node.y()
+			}
+			Shapes.push(shape);
+		}
+	});
+	console.log(Shapes);
+	var topic = document.getElementById('dropdown').value;
+	var sbtopic = document.getElementById('sbtopic').value;
+
+	$.ajax({
+		type: 'POST',
+		url: '/newsubtopic',
+		data: { Shapes: Shapes, StageHeight: StageHeight, StageWidth: StageWidth, topic: topic, sbtopic: sbtopic }
+	})
+		.done(function (data) {
+			alert("done");
+		});
 }
 
-function loadBoard(stagestate, codestate, pcodestate) {
-	stage = Konva.Node.create(stagestate, 'flowchartdiv');
+function loadBoard(item) {
+	subid = $(item).parent().attr('id');
+	topid = $(item).parent().parent().parent().attr('id');
+	
+	$.ajax({
+		type: 'GET',
+		url: '/getsubtopic',
+		data: { topicID: topid, sbtopicID: subid }
+	})
+		.done(function (data) {
+			console.log(data);			
+			var title=data.topictitle+"\\: "+data.subtop.name;
+			$("#subTopicName").text(title);
+			stage.destroyChildren();
+			console.log(stage);
+			stageWidth=data.subtop.flowchart.StageH;
+			stageHeight=data.subtop.flowchart.StageW;
+			console.log(StageHeight);
+			stage.height(stageHeight);
+			stage.width(stageWidth);
+			console.log(stage);
+			window.gridLayer = new Konva.Layer();
+			window.shadowLayer = new Konva.Layer();
+			window.layer = new Konva.Layer();
+			
+			stageinit(gridLayer, layer);
+			data.subtop.flowchart.shapes.forEach(function (node) {
+				switch (node.className) {
+					case "SRgrp":
+						newRectangle(node.x, node.y, node.shapeText);
+						break;
+					case "SRRgrp":
+						newRRectangle(node.x, node.y, node.shapeText);
+						break;
+					case "SDgrp":
+						newDici(node.x, node.y, node.shapeText);
+						break;
+					case "SPgrp":
+						newParallelo(node.x, node.y, node.shapeText);
+						break;
+					case "objC":
+						newCircle(node.x, node.y);
+						break;
+					default:
+						break;
+				}
+				console.log(node);
+			});
+		});
 
-	layer = stage.getChildren(function (node) {
-		return node.getClassName() === 'Layer';
-	})[1];
-	gridLayer = stage.getChildren(function (node) {
-		return node.getClassName() === 'Layer';
-	})[0];
-	stageinit(gridLayer, layer, stage);
-	/*layer.on('dblclick', function (e) {
-		// prevent default behavior
-		e.evt.preventDefault();
-		if (e.target === layer) {
-			// if we are on empty place of the stage we will do nothing
-
-			return;
-		}
-
-		currentShape = e.target;
-		// show menuK
-		//Konva.grp
-		//currentShape.on('dblclick', ()=>{
-		makeTA(currentShape.getParent());
-		//});
-	});*/
-	//document.getElementById('codeDivTA').value = codestate;
-	//document.getElementById('psuedoDivTA').value = pcodestate;
-	//document.getElementById('subTopicName').value = name;
 }
 
 function newArrow() {
 	isPaint = true;
-}
-
-function getConnectorPoints(from, to) {
-	const dx = to.x - from.x;
-	const dy = to.y - from.y;
-	let angle = Math.atan2(-dy, dx);
-
-	const radius = 50;
-
-	return [
-		from.x + -radius * Math.cos(angle + Math.PI),
-		from.y + radius * Math.sin(angle + Math.PI),
-		to.x + -radius * Math.cos(angle),
-		to.y + radius * Math.sin(angle)
-	];
+	stage.container().style.cursor = 'crosshair';
 }
 
 function initShadows() {
-
-	 shadowArr = new Konva.Arrow({
+	stage.add(shadowLayer);
+	shadowArr = new Konva.Arrow({
 		x: 0,
 		y: 0,
 		points: [0, 0, 0, 0],
@@ -394,7 +434,7 @@ function initShadows() {
 		name: 'shadowRect'
 	});
 	shadowArr.hide();
-	gridLayer.add(shadowArr);
+	shadowLayer.add(shadowArr);
 
 	shadowR = new Konva.Rect({
 		x: 0,
@@ -410,7 +450,7 @@ function initShadows() {
 	});
 
 	shadowR.hide();
-	gridLayer.add(shadowR);
+	shadowLayer.add(shadowR);
 
 	shadowRR = new Konva.Rect({
 		x: 0,
@@ -427,7 +467,7 @@ function initShadows() {
 	});
 
 	shadowRR.hide();
-	gridLayer.add(shadowRR);
+	shadowLayer.add(shadowRR);
 
 	shadowP = new Konva.Rect({
 		x: 0,
@@ -444,7 +484,7 @@ function initShadows() {
 	});
 
 	shadowP.hide();
-	gridLayer.add(shadowP);
+	shadowLayer.add(shadowP);
 
 	shadowD = new Konva.Rect({
 		x: 0,
@@ -461,7 +501,7 @@ function initShadows() {
 	});
 
 	shadowD.hide();
-	gridLayer.add(shadowD);
+	shadowLayer.add(shadowD);
 
 	shadowC = new Konva.Circle({
 		x: 0,
@@ -476,10 +516,12 @@ function initShadows() {
 	});
 
 	shadowC.hide();
-	gridLayer.add(shadowC);
+	shadowLayer.add(shadowC);
 }
 
-function stageinit(gridLayer, layer, stage) {
+function stageinit(gridLayer, layer) {
+	stage.add(gridLayer);
+	stage.add(layer);
 	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
 		gridLayer.add(new Konva.Line({
 			points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, StageHeight],
@@ -488,7 +530,6 @@ function stageinit(gridLayer, layer, stage) {
 		}));
 	}
 
-	gridLayer.add(new Konva.Line({ points: [0, 0, 10, 10] }));
 	for (var j = 0; j < StageHeight / blockSnapSize; j++) {
 		gridLayer.add(new Konva.Line({
 			points: [0, Math.round(j * blockSnapSize), StageWidth, Math.round(j * blockSnapSize)],
@@ -502,13 +543,9 @@ function stageinit(gridLayer, layer, stage) {
 	layer.on('dblclick', function (e) {
 		// prevent default behavior
 		e.evt.preventDefault();
-		if (e.target === layer) {
-			// if we are on empty place of the stage we will do nothing
-			return;
-		}
 
 		currentShape = e.target;
-		if (!(currentShape.getClassName() === 'Circle')) {
+		if (!(currentShape.getClassName() === 'Circle') && !(currentShape.getClassName() === 'Circle')) {
 			makeTA(currentShape.getParent());
 		}
 	});
@@ -522,28 +559,28 @@ function stageinit(gridLayer, layer, stage) {
 	});
 
 	document.getElementById('mvfrnt-button').addEventListener('click', () => {
-				
+
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveToTop(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveToTop(); }
 		else { currentShape.getParent().moveToTop(); }
 		layer.draw();
-	
+
 	});
-	
+
 	document.getElementById('mvbck-button').addEventListener('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveToBottom(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveToBottom(); }
 		else { currentShape.getParent().moveToBottom(); }
 		layer.draw();
 	});
-	
+
 	document.getElementById('mvup-button').addEventListener('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveUp(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveUp(); }
 		else { currentShape.getParent().moveUp(); }
 		layer.draw();
 	});
-	
+
 	document.getElementById('mvdwn-button').addEventListener('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveDown(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveDown(); }
@@ -558,11 +595,9 @@ function stageinit(gridLayer, layer, stage) {
 
 	stage.on('contextmenu', function (e) {
 		// prevent default behavior
-
 		e.evt.preventDefault();
 		if (e.target === stage) {
 			// if we are on empty place of the stage we will do nothing
-
 			return;
 		}
 		currentShape = e.target;
@@ -583,8 +618,8 @@ function stageinit(gridLayer, layer, stage) {
 				fill: 'black',
 				stroke: 'black',
 				strokeWidth: 4,
-				name:'objArr',
-				hitStrokeWidth:6,
+				name: 'objArr',
+				hitStrokeWidth: 6,
 				draggable: true
 			});
 			layer.add(arrow);
@@ -603,6 +638,7 @@ function stageinit(gridLayer, layer, stage) {
 		drawarrow = false;
 		layer.getChildren().each(function (node) { node.draggable = (true); });
 		layer.draw();
+		stage.container().style.cursor = 'default';
 	});
 
 	// and core function - drawing
@@ -744,65 +780,50 @@ function addshadow() {
 
 	layer.find('.objArr').each(function (arrow, n) {
 		shadowArr.points(arrow.points());
-			arrow.on('dragstart', (e) => {
-				shadowArr.show();
-				shadowArr.moveToTop();
-				arrow.moveToTop();
-			});
-			arrow.on('dragend', (e) => {
-				arrow.position({
-					x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-					y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
-				});
-				stage.batchDraw();
-				shadowArr.hide();
-			});
-			arrow.on('dragmove', (e) => {
-				shadowArr.position({
-					x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-					y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
-				});
-				stage.batchDraw();
-			});
+		arrow.on('dragstart', (e) => {
+			shadowArr.show();
+			shadowArr.moveToTop();
+			arrow.moveToTop();
 		});
+		arrow.on('dragend', (e) => {
+			arrow.position({
+				x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
+				y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+			});
+			stage.batchDraw();
+			shadowArr.hide();
+		});
+		arrow.on('dragmove', (e) => {
+			shadowArr.position({
+				x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
+				y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+			});
+			stage.batchDraw();
+		});
+	});
 }
 
 function addstageheight() {
 	StageHeight = StageHeight + ShapeHeight * 2;
 	stage.height(StageHeight);
-	gridLayer.getChildren().each(function(node){if (node.getClassName==='Line'){
-		node.destroy();
-	}});
-	stageinit(layer, stage, gridLayer);
+	gridLayer.destroyChildren();
+	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
+		gridLayer.add(new Konva.Line({
+			points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, StageHeight],
+			stroke: '#6b6b6b',
+			strokeWidth: 1,
+		}));
+	}
+
+	for (var j = 0; j < StageHeight / blockSnapSize; j++) {
+		gridLayer.add(new Konva.Line({
+			points: [0, Math.round(j * blockSnapSize), StageWidth, Math.round(j * blockSnapSize)],
+			stroke: '#6b6b6b',
+			strokeWidth: 0.5,
+		}));
+	}
+
+	stage.batchDraw();
 }
-/*
-function dragfunc(pos) {
-	var thisRect = {x: this.x(), y: this.y(), width: this.width(), height: this.height()};
-// copy the boundary rect into a testRect which defines the extent of the dragbounds 
-// without accounting for the width and height of dragging rectangle.
-// This is changed below depending on rotation.
-var testRect={
-  left: boundary.x, 
-  top: boundary.y, 
-  right: boundary.x + boundary.width,
-  bottom: boundary.y + boundary.height
-};
-	testRect.right = testRect.right - thisRect.width;
-    testRect.bottom = testRect.bottom - thisRect.height;
-	var newX = (pos.x < testRect.left ? testRect.left : pos.x);
 
-// right edge check
-newX = (newX > testRect.right ? testRect.right : newX);
-
-// top edge check
-var newY = (pos.y < testRect.top ? testRect.top : pos.y);
-
-// bottom edge check
-newY = (newY > testRect.bottom ? testRect.bottom : newY);
-
-// return the point we calculated
-return {
-    x: newX,
-    y: newY
-  }}*/
-stageinit(gridLayer, layer, stage);
+stageinit(gridLayer, layer);

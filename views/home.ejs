@@ -58,10 +58,10 @@
 				<h2 class="colhead">
 					Flowchart
 				</h2>
-				<button class="rectangle" onclick="newRectangle()" data-toggle="tooltip" data-placement="bottom"
-					title="Process"></button>
 				<button class="rrectangle" onclick="newRRectangle()" data-toggle="tooltip" data-placement="bottom"
 					title="Terminal"></button>
+				<button class="rectangle" onclick="newRectangle()" data-toggle="tooltip" data-placement="bottom"
+					title="Process"></button>
 				<button class="parallelogram" onclick="newParallelo()" data-toggle="tooltip" data-placement="bottom"
 					title="I/O"></button>
 				<button class="dici" onclick="newDici()" data-toggle="tooltip" data-placement="bottom"
@@ -72,10 +72,9 @@
 					title="Arrow">&#8599;</button>
 
 				<div class="holder-thing">
-					<span class="addRowBtn" onclick="clBoard()" data-toggle="tooltip" data-placement="bottom"
-						title="Clear Flowchart">
-						<i class="fa fa-trash-alt"></i>
-					</span>
+					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
+						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
+						<i class="fa fa-trash-alt"></i></button>
 					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row" onclick="addstageheight()">+</button>
 				</div>
@@ -115,11 +114,10 @@
 		<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
 			<ul class="navbar-nav mr-auto">
 				<li class="float-right">
-					<a data-toggle="collapse" data-target=".sidebar" style="color: rgba(255,255,255,.5);"
-						onMouseOver="this.style.color='rgba(255,255,255,.8)'"
-						onMouseOut="this.style.color='rgba(255,255,255,.5)'" id="topicsbutton">
+					<button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target=".sidebar"
+						id="topicsbutton">
 						<i class="fa fa-bars fa-lg"></i>
-					</a>
+					</button>
 					<span id="subTopicName" class="text-light">&emsp; Topic Name Here</span>
 				</li>
 			</ul>
@@ -148,43 +146,46 @@
 		<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
-					<a class="btn btn-outline-light" data-toggle="modal" data-target="#savemodal"
-						style="color:#f8f9fa; cursor: pointer;" onMouseOver="this.style.color='#212529'"
-						onMouseOut="this.style.color='#f8f9fa'">Save</a>
+					<button type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#savemodal">Save</a>
 				</li>
 			</ul>
 		</div>
 	</nav>
 
-	<%# Topic list Menu <i class="fa fa-trash-alt text-danger"></i>%>
+	<%# Topic list Menu%>
 	<aside class="col-1 col-sm-2 p-0 bg-dark collapse sidebar fade fixed-top h-100" id="TopicsSidebar">
 		<nav class="navbar navbar-toggleable-xl navbar-dark bg-dark flex-column align-items-start">
 			<div class="collapse navbar-collapse sidebar">
-				<ul class="flex-column navbar-nav">
+				<ul class="flex-column navbar-nav sidebarlist">
 					<li class="nav-item">
 						<button type="button" class="btn btn-outline-light" data-toggle="modal"
 							data-target="#newtopicModal">New Topic</button>
 					</li>
-
 					<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
-					<li class="nav-item parent">
-						<a class="nav-link "  role="button">
+					<li class="nav-item parent" id="<%=topic._id%>">
+						<a class="nav-link" role="button">
 							<%= topic.title %>
 							<% if(topic.subtopics.length > 0) { %>
 							<i class="fa fa-caret-down"></i>
 							<% } %>
 						</a>
-						<ul class="flex-column navbar-nav sub-topic child">
+						<button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
+							<i class="fa fa-trash-alt text-danger"></i>
+						</button>
+						<ul class="flex-column navbar-nav sub-topic child sidebarlist">
 							<%topic.subtopics.forEach(function(subtopic){ %>
-							<li>
-								<a onclick="loadBoard()" class="nav-link">
-									&emsp;<%= subtopic.name %></a>
+							<li id="<%=subtopic._id%>">
+								<a onclick="loadBoard(this)" class="nav-link" role="button">
+									&thinsp;<%= subtopic.name %>
+								</a>
+								<button type="button" class="btn btn-sm btn-outline-light" onclick="deletesub(this)">
+									<i class="fa fa-trash-alt text-warning"></i>
+								</button>
 							</li>
 							<%	}); %>
 						</ul>
 					</li>
 					<%	});} %>
-
 				</ul>
 			</div>
 		</nav>
@@ -227,25 +228,22 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form action="/newsubtopic" method="post" id='myform'>
-						<div class="form-group">
-							Select Topic:
-							<select class="dropdown" id="dropdown" name="Topicddl">
-								<%	if(currentUser){currentUser.topics.forEach(function(topic){%>
-								<option><%= topic.title %></option>
-								<%	}); }%>
-							</select>
-							<br>
-							Add new Sub:<input type="text" class="form-control" name="subtopic" placeholder="Name"
-								required="required">
-							<input id="stagestate" type="hidden" class="form-control" name="stagestate">
-							<input id="codestate" type="hidden" class="form-control" name="codestate">
-							<input id="pcodestate" type="hidden" class="form-control" name="pcodestate">
-						</div>
-						<div class="form-group">
-							<button id="saveBrd" type="submit" class="btn btn-info btn-lg btn-block">Add</button>
-						</div>
-					</form>
+
+					<div class="form-group">
+						Select Topic:
+						<select class="dropdown" id="dropdown" name="Topicddl">
+							<%	if(currentUser){currentUser.topics.forEach(function(topic){%>
+							<option><%= topic.title %></option>
+							<%	}); }%>
+						</select>
+						<br>
+						Add new Sub:<input type="text" class="form-control" id="sbtopic" placeholder="Name"
+							required="required">
+					</div>
+					<div class="form-group">
+						<button id="saveBrd" class="btn btn-info btn-lg btn-block">Add</button>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -260,8 +258,7 @@
 	</div>
 
 </body>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
 	crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
 	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
@@ -272,27 +269,51 @@
 <script src="https://unpkg.com/konva@4.0.14/konva.min.js"></script>
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
-	$('#myform').submit(function () {
-		saveBoard();
-		$('#codestate').val() = $('#codeDivTA').val();
-		$('#pcodestate').val() = $('#psuedoDivTA').val();
-		return true;
+	function deletesub(item){
+		console.log(item);
+		subid=$(item).parent().attr('id');
+		topid=$(item).parent().parent().parent().attr('id');
+		console.log(topid);console.log(subid);
+		$.ajax({
+		method: 'POST',
+		url: '/delsubtopic',
+		data: {subtopicID:subid,topicID:topid}
+	})
+	.done(function(data){
+		alert("done del");
 	});
-
+	}
+	function deletetopic(item){
+		console.log(item);
+		topid=$(item).parent().attr('id');
+		console.log(topid);
+		$.ajax({
+		method: 'POST',
+		url: '/deltopic',
+		data: {topicID:topid}
+	})
+	.done(function(data){
+		alert("done del");
+	});
+	}
 	$('#addRowBtn1').click(function () {
 		$('#codeDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 		$('#psuedoDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 	});
+
 	$('#addRowBtn2').click(function () {
 		$('#codeDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 		$('#psuedoDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
 	});
 
 	$('.child').hide();
-	$('.parent').click(function() {
-        $(this).siblings('.parent').find('ul').hide();
-        $(this).find('ul').show();
-    });
+	$('.parent').click(function () {
+		$(this).siblings('.parent').find('ul').slideUp();
+		$(this).find('ul').slideToggle();
+	});
+	$('#saveBrd').click(function () {
+		saveBoard();
+	});
 </script>
 
 </html>

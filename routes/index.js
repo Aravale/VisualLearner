@@ -31,6 +31,32 @@ router.get('/register', isLoggedIn, function(req, res) {
 	res.render('reg');
 });
 
+router.get('/getsubtopic', isNotLoggedIn, function(req, res) {
+	var topid = req.query.topicID;
+	var subtopid = req.query.sbtopicID;
+
+	var cUser = req.user._id;
+
+	User.findOne({ _id: cUser }, function(err, user) {
+		if (err) {
+			console.log(err);
+		} else {
+				user.topics.forEach(function(topic) {
+			if (topic._id == topid) {
+				topic.subtopics.forEach(function(subtopic){
+		
+						if (subtopic._id==subtopid) {
+							res.send({"subtop":subtopic,"topictitle":topic.title});
+						}
+					
+				});
+				
+			}
+		});
+		}
+	});
+});
+
 router.post('/register', function(req, res) {
 	var newUser = new User({
 		first_name: req.body.first_name,
@@ -71,43 +97,90 @@ router.post('/newtopic', isNotLoggedIn, function(req, res) {
 });
 
 router.post('/newsubtopic', isNotLoggedIn, function(req, res) {
-	var Topic = req.body.Topicddl;
-		var newStage = req.body.stagestate;
-			var newCode = req.body.codestate;
+	var Topic = req.body.topic;
+	var height = req.body.StageHeight;
+	var width = req.body.StageWidth;
+	var shapes = req.body.Shapes;
+	var newsubTopic = req.body.sbtopic;
 
-			var newpsCode = req.body.pcodestate;
-
-		var newsubTopic = req.body.subtopic;
-	console.log(newStage);
-	console.log(Topic);
-
+	var fc={
+		shapes:shapes,
+		StageH:height,
+		StageW:width
+	}
 	var cUser = req.user._id;
-	console.log(cUser);
 
 	User.findOne({ _id: cUser }, function(err, user) {
 		if (err) {
 			console.log(err);
 		} else {
 				user.topics.forEach(function(topic) {
-			console.log(topic);
-			if (topic._id == Topic) {
+			//console.log(topic);
+			if (topic.title == Topic) {
 				topic.subtopics.push({ 
 					name: newsubTopic,
-					flowchart:newStage,
-					code:newCode,
-					psuedocode:newpsCode
+					flowchart:fc
 				});
-				//topic.subtopics.push({ name: 'Variables' });
+				console.log(fc);
 			}
 		});
 		user.save(function(err, user) {
 			if (err) {
 				console.log(err);
 			} else {
-				// console.log(user);
+				 console.log("Done!");
 			}
 		});
 		}
+	});
+	res.redirect('/home');
+});
+
+router.post('/delsubtopic', isNotLoggedIn, function(req, res) {
+	var subID = req.body.subtopicID;
+	var topID = req.body.topicID;
+	var cUser = req.user._id;
+console.log(cUser);
+	User.findOne({ _id: cUser }, function(err, user) {
+		if (err) {
+			console.log(err);
+		} else {
+			user.topics.forEach(function(topic) {
+				if (topic._id == topID) {
+					topic.subtopics.remove({ _id: subID });
+				}
+			});
+
+			user.save(function(err, user) {
+				if (err) {
+					console.log(err);
+				} else {
+					 console.log("Done!");
+				}
+			});
+		}	
+	});
+	res.redirect('/home');
+});
+
+router.post('/deltopic', isNotLoggedIn, function(req, res) {
+	var topID = req.body.topicID;
+	var cUser = req.user._id;
+console.log(cUser);
+	User.findOne({ _id: cUser }, function(err, user) {
+		if (err) {
+			console.log(err);
+		} else {
+			user.topics.remove({ _id: topID });
+
+			user.save(function(err, user) {
+				if (err) {
+					console.log(err);
+				} else {
+					 console.log("Done!");
+				}
+			});
+		}	
 	});
 	res.redirect('/home');
 });
