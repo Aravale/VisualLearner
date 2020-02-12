@@ -354,9 +354,10 @@ function saveBoard() {
 	$.ajax({
 		type: 'POST',
 		url: '/newsubtopic',
-		data: { Shapes: Shapes, StageHeight: StageHeight, StageWidth: StageWidth, topic: topic, sbtopic: sbtopic }
+		data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic }
 	})
 		.done(function (data) {
+			console.log(data);
 			alert("done");
 		});
 }
@@ -374,18 +375,11 @@ function loadBoard(item) {
 			console.log(data);			
 			var title=data.topictitle+"\\: "+data.subtop.name;
 			$("#subTopicName").text(title);
-			stage.destroyChildren();
-			console.log(stage);
-			stageWidth=data.subtop.flowchart.StageH;
-			stageHeight=data.subtop.flowchart.StageW;
+			StageHeight=data.subtop.flowchart.StageH;
 			console.log(StageHeight);
-			stage.height(stageHeight);
-			stage.width(stageWidth);
-			console.log(stage);
-			window.gridLayer = new Konva.Layer();
-			window.shadowLayer = new Konva.Layer();
-			window.layer = new Konva.Layer();
+			stage.height(StageHeight);
 			
+			layer.destroyChildren();
 			stageinit(gridLayer, layer);
 			data.subtop.flowchart.shapes.forEach(function (node) {
 				switch (node.className) {
@@ -522,6 +516,7 @@ function initShadows() {
 function stageinit(gridLayer, layer) {
 	stage.add(gridLayer);
 	stage.add(layer);
+	gridLayer.destroyChildren();
 	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
 		gridLayer.add(new Konva.Line({
 			points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, StageHeight],
@@ -538,7 +533,7 @@ function stageinit(gridLayer, layer) {
 		}));
 	}
 
-	gridLayer.batchDraw();
+	stage.batchDraw();
 
 	layer.on('dblclick', function (e) {
 		// prevent default behavior

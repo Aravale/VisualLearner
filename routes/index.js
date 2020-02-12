@@ -99,14 +99,12 @@ router.post('/newtopic', isNotLoggedIn, function(req, res) {
 router.post('/newsubtopic', isNotLoggedIn, function(req, res) {
 	var Topic = req.body.topic;
 	var height = req.body.StageHeight;
-	var width = req.body.StageWidth;
 	var shapes = req.body.Shapes;
 	var newsubTopic = req.body.sbtopic;
 
 	var fc={
 		shapes:shapes,
 		StageH:height,
-		StageW:width
 	}
 	var cUser = req.user._id;
 

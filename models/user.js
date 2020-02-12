@@ -15,7 +15,7 @@ var subtopicSchema=new mongoose.Schema({
 	psuedocode: String,
 	flowchart: {shapes:[shapeSchema],
 				StageH:Number,
-				StageW:Number,}
+				}
 });
 var Subtopic=mongoose.model("SubTopic",subtopicSchema)
 
