@@ -170,7 +170,36 @@ function newRectangle(placeX, placeY, txt) {
 
 	grp.add(box);
 	grp.add(txt);
-
+	/*grp.on('dragend', function (e) {
+		setshapepos();
+	});*/
+	grp.on('mouseover', function () {
+		document.body.style.cursor = 'pointer';
+	});
+	grp.on('mouseout', function () {
+		document.body.style.cursor = 'default';
+	});
+	grp.on('dragstart', () => {
+		shadowR.show();
+		shadowR.moveToTop();
+		grp.moveToTop();
+	});
+	grp.on('dragend', () => {
+		grp.position({
+			x: Math.round(grp.x() / blockSnapSize) * blockSnapSize,
+			y: Math.round(grp.y() / blockSnapSize) * blockSnapSize
+		});
+		stage.batchDraw();
+		shadowR.hide();
+		setshapepos();
+	});
+	grp.on('dragmove', () => {
+		shadowR.position({
+			x: Math.round(grp.x() / blockSnapSize) * blockSnapSize,
+			y: Math.round(grp.y() / blockSnapSize) * blockSnapSize
+		});
+		stage.batchDraw();
+	});
 	layer.add(grp);
 	addshadow();
 	layer.draw();
@@ -206,7 +235,15 @@ function newRRectangle(placeX, placeY, txt) {
 
 	grp.add(box);
 	grp.add(txt);
-
+	grp.on('dragend', function (e) {
+		setshapepos();
+	});
+	grp.on('mouseover', function () {
+		document.body.style.cursor = 'pointer';
+	});
+	grp.on('mouseout', function () {
+		document.body.style.cursor = 'default';
+	});
 	layer.add(grp);
 	addshadow();
 	layer.draw();
@@ -226,6 +263,15 @@ function newCircle(placeX, placeY) {
 	});
 
 	layer.add(circle);
+	circle.on('dragend', function (e) {
+		setshapepos();
+	});
+	circle.on('mouseover', function () {
+		document.body.style.cursor = 'pointer';
+	});
+	circle.on('mouseout', function () {
+		document.body.style.cursor = 'default';
+	});
 	addshadow();
 	layer.draw();
 }
@@ -273,7 +319,15 @@ function newDici(placeX, placeY, txt) {
 
 	grp.add(box);
 	grp.add(txt);
-
+	grp.on('dragend', function (e) {
+		setshapepos();
+	});
+	grp.on('mouseover', function () {
+		document.body.style.cursor = 'pointer';
+	});
+	grp.on('mouseout', function () {
+		document.body.style.cursor = 'default';
+	});
 	layer.add(grp);
 	addshadow();
 	layer.draw();
@@ -309,7 +363,15 @@ function newParallelo(placeX, placeY, txt) {
 
 	grp.add(box);
 	grp.add(txt);
-
+	grp.on('dragend', function (e) {
+		setshapepos();
+	});
+	grp.on('mouseover', function () {
+		document.body.style.cursor = 'pointer';
+	});
+	grp.on('mouseout', function () {
+		document.body.style.cursor = 'default';
+	});
 	layer.add(grp);
 	addshadow();
 	layer.draw();
@@ -359,26 +421,45 @@ function saveBoard() {
 		.done(function (data) {
 			console.log(data);
 			alert("done");
+			var newUL = document.createElement("ul");
+			$(newUL).addClass("flex-column navbar-nav sub-topic child sidebarlist");
+			var newLi = document.createElement("li");
+			newLi.id=data.subtopicid;
+			var newA=document.createElement("a");
+			newA.onclick = loadBoard(newA);
+			$(newA).addClass("nav-link");
+			newLi.appendChild(newA); 
+			var newContent = document.createTextNode(sbtopic);
+			newA.appendChild(newContent); 
+			var newButton = document.createElement("button");
+			$(newButton).addClass("btn btn-sm btn-outline-light");
+			newButton.onclick = loadBoard(newButton);
+			newLi.appendChild(newButton); 
+			var newI = document.createElement("i");
+			$(newI).addClass("fa fa-trash-alt text-warning");
+			newButton.appendChild(newI);
+			$('#topic').append(newUL);
+			console.log(newUL);
 		});
 }
 
 function loadBoard(item) {
 	subid = $(item).parent().attr('id');
 	topid = $(item).parent().parent().parent().attr('id');
-	
+
 	$.ajax({
 		type: 'GET',
 		url: '/getsubtopic',
 		data: { topicID: topid, sbtopicID: subid }
 	})
 		.done(function (data) {
-			console.log(data);			
-			var title=data.topictitle+"\\: "+data.subtop.name;
+			console.log(data);
+			var title = data.topictitle + "\\: " + data.subtop.name;
 			$("#subTopicName").text(title);
-			StageHeight=data.subtop.flowchart.StageH;
+			StageHeight = data.subtop.flowchart.StageH;
 			console.log(StageHeight);
 			stage.height(StageHeight);
-			
+
 			layer.destroyChildren();
 			stageinit(gridLayer, layer);
 			data.subtop.flowchart.shapes.forEach(function (node) {
@@ -540,7 +621,7 @@ function stageinit(gridLayer, layer) {
 		e.evt.preventDefault();
 
 		currentShape = e.target;
-		if (!(currentShape.getClassName() === 'Circle') && !(currentShape.getClassName() === 'Circle')) {
+		if (!(currentShape.getClassName() === 'Circle') && !(currentShape.getClassName() === 'Arrow')) {
 			makeTA(currentShape.getParent());
 		}
 	});
@@ -658,7 +739,7 @@ function stageinit(gridLayer, layer) {
 }
 
 function addshadow() {
-	layer.find('.SRgrp').each(function (grp, n) {
+	/*layer.find('.SRgrp').each(function (grp, n) {
 		grp.on('dragstart', (e) => {
 			shadowR.show();
 			shadowR.moveToTop();
@@ -679,7 +760,7 @@ function addshadow() {
 			});
 			stage.batchDraw();
 		});
-	});
+	});*/
 
 	layer.find('.SRRgrp').each(function (grp, n) {
 		grp.on('dragstart', (e) => {
@@ -820,5 +901,33 @@ function addstageheight() {
 
 	stage.batchDraw();
 }
+
+function setshapepos() {
+	node = layer.getChildren()[layer.getChildren().length - 1]; console.log(node);
+	if (node.name() == "SDgrp") {
+		placeX = node.x() - ShapeWidth / 2;
+		placeY = node.y() + blockSnapSize * 6;
+	}
+	else {
+		placeX = Math.round(node.x() / blockSnapSize) * blockSnapSize;
+		placeY = node.y() + blockSnapSize * 4;
+		placeY = Math.round(placeY / blockSnapSize) * blockSnapSize;
+	}
+	console.log(placeY);
+}
+
+$("#viewmode").click(()=>
+{
+	var arr=layer.getChildren();
+	arr.sort((a, b) => 
+	{parseFloat(a.y()) - parseFloat(b.y());
+	if(a.y()==b.y())
+	{
+		b.x()-a.x();
+	}
+	});
+
+console.log(arr);
+});
 
 stageinit(gridLayer, layer);
