@@ -116,11 +116,11 @@
 		<div class="collapse navbar-collapse d-flex justify-content-between">
 			<span id="subTopicName" class="text-light ml-2">Topic Name Here</span>
 			<div class="navbar-nav d-flex justify-content-center ">
-				<button type="button" class="btn btn-outline-light">Previous</button>
+				<button type="button" class="btn btn-outline-light" id="prv">Previous</button>
 
-				<span class="nav-link">15/30</span>
+				<span class="nav-link" id="shpN">0/0</span>
 
-				<button type="button" class="btn btn-outline-light">Next</button>
+				<button type="button" class="btn btn-outline-light" id="nxt">Next</button>
 			</div>
 			<div>
 			<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
@@ -150,7 +150,7 @@
 						<button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
 							<i class="fa fa-trash-alt text-danger"></i>
 						</button>
-						<ul class="flex-column navbar-nav sub-topic child sidebarlist">
+						<ul class="flex-column navbar-nav sub-topic child sidebarlist" id="subtopicslist">
 							<%topic.subtopics.forEach(function(subtopic){ %>
 							<li id="<%=subtopic._id%>">
 								<a onclick="loadBoard(this)" class="nav-link" role="button">
@@ -248,10 +248,8 @@
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
 	function deletesub(item) {
-		console.log(item);
 		subid = $(item).parent().attr('id');
 		topid = $(item).parent().parent().parent().attr('id');
-		console.log(topid); console.log(subid);
 		$.ajax({
 			method: 'POST',
 			url: '/delsubtopic',
@@ -264,9 +262,7 @@
 			});
 	}
 	function deletetopic(item) {
-		console.log(item);
 		topid = $(item).parent().attr('id');
-		console.log(topid);
 		$.ajax({
 			method: 'POST',
 			url: '/deltopic',
@@ -295,7 +291,6 @@
 	$('#saveBrd').click(function () {
 		saveBoard();
 	});
-
 	$('.rrectangle').click(function () {
 		newRRectangle(placeX, placeY);
 		setshapepos();
@@ -318,6 +313,9 @@
 	});
 	$('.arrow').click(function () {
 		newArrow();
+	});
+	$("#flowchartdiv").scroll(function() {
+		scrollerror=$("#flowchartdiv").scrollTop();
 	});
 </script>
 

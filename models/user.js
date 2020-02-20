@@ -5,6 +5,7 @@ var shapeSchema=new mongoose.Schema({
 	className: String,
 	x: Number,
 	y: Number,
+	points:[Number],
 	shapeText: String
 });
 var Shape=mongoose.model("Shape",shapeSchema)
