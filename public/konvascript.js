@@ -574,10 +574,24 @@ function loadBoard(item) {
 			$('#codeDiv').empty();
 			$('#psuedoDiv').empty();
 			data.subtop.code.forEach(coderow => {
-				$('#codeDiv').append(`<div class="row-box"><textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2">${coderow}</textarea></div>`);
+				$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+				<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2">${coderow}</textarea>
+				<div class="rowboxdel">
+					<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+						<i class="fa fa-trash-alt"></i>
+					</button>
+				</div>
+			</li>`);
 			});
 			data.subtop.psuedocode.forEach(pcoderow => {
-				$('#psuedoDiv').append(`<div class="row-box"><textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2">${pcoderow}</textarea></div>`);
+				$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+				<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2">${pcoderow}</textarea>
+				  <div class="rowboxdel">
+					<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+						<i class="fa fa-trash-alt"></i>
+					</button>
+				</div>
+			</li>`);
 			});
 			var title = data.topictitle + "\\: " + data.subtop.name;
 			$("#subTopicName").text(title);
@@ -682,8 +696,8 @@ function newArrow() {
 	});
 	arrow.on('dragend', (e) => {
 		arrow.position({
-			x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-			y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+			x: snap(arrow.x()),
+			y: snap(arrow.y())
 		});
 		stage.batchDraw();
 		shadowArr.hide();
@@ -703,6 +717,9 @@ function newArrow() {
 				drawarrow=false;
 				isPaint=false;
 				stage.container().style.cursor = 'default';
+				var node = layer.getChildren().toArray().length - 1;
+				var arrow = layer.getChildren()[node];
+				shadowArr.points(arrow.points());
 			}
 			if (isPaint && !drawarrow) {
 				var node = layer.getChildren().toArray().length - 1;
@@ -859,7 +876,7 @@ function stageinit(gridLayer, layer) {
 	});
 
 	var menuNode = document.getElementById('menu');
-	document.getElementById('delete-button').addEventListener('click', () => {
+	$('#delete-button').on('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.destroy(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.destroy(); }
 		else { currentShape.getParent().destroy(); }
@@ -868,7 +885,7 @@ function stageinit(gridLayer, layer) {
 		updateShapeC();
 	});
 
-	document.getElementById('mvfrnt-button').addEventListener('click', () => {
+	$('#mvfrnt-button').on('click', () => {
 
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveToTop(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveToTop(); }
@@ -877,21 +894,21 @@ function stageinit(gridLayer, layer) {
 
 	});
 
-	document.getElementById('mvbck-button').addEventListener('click', () => {
+	$('#mvbck-button').on('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveToBottom(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveToBottom(); }
 		else { currentShape.getParent().moveToBottom(); }
 		layer.draw();
 	});
 
-	document.getElementById('mvup-button').addEventListener('click', () => {
+	$('#mvup-button').on('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveUp(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveUp(); }
 		else { currentShape.getParent().moveUp(); }
 		layer.draw();
 	});
 
-	document.getElementById('mvdwn-button').addEventListener('click', () => {
+	$('#mvdwn-button').on('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.moveDown(); }
 		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveDown(); }
 		else { currentShape.getParent().moveDown(); }
@@ -902,7 +919,7 @@ function stageinit(gridLayer, layer) {
 		// hide menu 
 		menuNode.style.display = 'none';
 	})
-
+ 
 	stage.on('contextmenu', function (e) {
 		// prevent default behavior
 		e.evt.preventDefault();

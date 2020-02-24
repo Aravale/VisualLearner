@@ -39,29 +39,26 @@
 					Code
 				</h2>
 				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="50" class="slider">
+					<input type="range" min="1" max="100" value="100" class="slider">
 
-					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
+					<button type="button" class="btn btn-outline-dark btn-light addRowBtn1" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row">+</button>
-					<button type="button" class="btn btn-outline-dark btn-light space" data-toggle="tooltip"
+					<button type="button" class="btn btn-outline-dark btn-light space1" data-toggle="tooltip"
 						data-placement="bottom" title="Adds empty row">space</button>
 				</div>
 			</div>
 
-			
-				<ul class="list-group" id="codeDiv">
-					<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-						<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea>
-					</li>
-					
-					<div class="delbox">
-						<button type="button" class="btn btn-sm btn-outline-light">
-						<i class="fa fa-trash-alt text-warning"></i>
-					</button>
+
+			<ul class="flex-column list-group" id="codeDiv">
+				<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+					<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea>
+					<div class="rowboxdel">
+						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+							<i class="fa fa-trash-alt"></i>
+						</button>
 					</div>
-					
-				</ul>
-			
+				</li>
+			</ul>
 		</div>
 
 		<!-- Flowchart -->
@@ -97,16 +94,16 @@
 					Psuedocode
 				</h2>
 				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="50" class="slider">
+					<input type="range" min="1" max="100" value="100" class="slider">
 
-					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
+					<button type="button" class="btn btn-outline-dark btn-light addRowBtn2" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row">+</button>
-					<button type="button" class="btn btn-outline-dark btn-light space" data-toggle="tooltip"
+					<button type="button" class="btn btn-outline-dark btn-light space2" data-toggle="tooltip"
 						data-placement="bottom" title="Adds empty row">space</button>
 
 				</div>
 			</div>
-			
+
 			<ul class="list-group" id="psuedoDiv">
 				<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
 					<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea>
@@ -260,19 +257,51 @@
 <script src="https://unpkg.com/konva@4.0.14/konva.min.js"></script>
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
-	rowDivs = 0;
 	currentRow = 0;
-	$('.addRowBtn').click(function () {
-		rowDivs++;
-		$('#codeDiv').append('<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)"><textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea></li>');
-		$('#psuedoDiv').append('<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)"> <textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea> </div>');
+	$('.addRowBtn1').click(function () {
+		$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+								<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea>
+								<div class="rowboxdel">
+									<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+										<i class="fa fa-trash-alt"></i>
+									</button>
+								</div>
+							</li>`);
+
 	});
-	$('.space').click(function () {
-		$('#codeDiv').append('<div class="row-box"></div>');
-		$('#psuedoDiv').append('<div class="row-box"></div>');
+	$('.space1').click(function () {
+		$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+								<div class="rowboxdel">
+									<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+										<i class="fa fa-trash-alt"></i>
+									</button>
+								</div>
+							</li>`);
 	});
+	$('.addRowBtn2').click(function () {
+		$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+									<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea>
+			  						<div class="rowboxdel">
+										<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+											<i class="fa fa-trash-alt"></i>
+										</button>
+									</div>
+								</li>`);
+	});
+	$('.space2').click(function () {
+		$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+			  						<div class="rowboxdel">
+										<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+											<i class="fa fa-trash-alt"></i>
+										</button>
+									</div>
+								</li>`);
+	});
+	function delrowbox(item) {
+		$(item).parent().parent().remove();
+	}
 	function rowfocus(row) {
-		currentRow = $( "li" ).index( row );
+		currentRow = $("li").index(row);
 	}
 	$('.child').hide();
 	$('.parent').click(function () {
@@ -280,7 +309,9 @@
 		$(this).find('ul').slideToggle();
 	});
 
-
+	$('.slider').change(function() {
+		$(this).parent().parent().parent().find("ul").fadeTo(100, this.value/100);
+});
 </script>
 
 </html>
