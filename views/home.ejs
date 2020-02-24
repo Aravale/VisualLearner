@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 	<link rel="stylesheet" href="/stylesheets/home.css">
 	<link rel="stylesheet" href="/stylesheets/konva.css">
+	<link rel="stylesheet" href="/stylesheets/colstuff.css">
 	<title>Visual Learner!</title>
 </head>
 
@@ -42,14 +43,25 @@
 
 					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row">+</button>
+					<button type="button" class="btn btn-outline-dark btn-light space" data-toggle="tooltip"
+						data-placement="bottom" title="Adds empty row">space</button>
 				</div>
 			</div>
 
-			<div id="codeDiv">
-				<div class="row-box">
-					<textarea class="form-control form-control-sm invisibile-texty" rows="2" id="codeDivTA"></textarea>
-				</div>
-			</div>
+			
+				<ul class="list-group" id="codeDiv">
+					<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+						<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea>
+					</li>
+					
+					<div class="delbox">
+						<button type="button" class="btn btn-sm btn-outline-light">
+						<i class="fa fa-trash-alt text-warning"></i>
+					</button>
+					</div>
+					
+				</ul>
+			
 		</div>
 
 		<!-- Flowchart -->
@@ -89,22 +101,23 @@
 
 					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row">+</button>
+					<button type="button" class="btn btn-outline-dark btn-light space" data-toggle="tooltip"
+						data-placement="bottom" title="Adds empty row">space</button>
 
 				</div>
 			</div>
-
-			<div id="psuedoDiv">
-				<div class="row-box">
-					<textarea class="form-control form-control-sm invisibile-texty" id="psuedoDivTA"
-						rows="2"></textarea>
-				</div>
-			</div>
+			
+			<ul class="list-group" id="psuedoDiv">
+				<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+					<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea>
+				</li>
+			</ul>
 		</div>
 
 	</div>
 
 	<%# Bottom Nav %>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom" style="height: 60px;">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom" id="botnav">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -116,16 +129,16 @@
 		<div class="collapse navbar-collapse d-flex justify-content-between">
 			<span id="subTopicName" class="text-light ml-2">Topic Name Here</span>
 			<div class="navbar-nav d-flex justify-content-center ">
-				<button type="button" class="btn btn-outline-light" id="prv">Previous</button>
+				<button type="button" class="btn btn-outline-light" id="prv" disabled="true">Previous</button>
 
 				<span class="nav-link" id="shpN">0/0</span>
 
-				<button type="button" class="btn btn-outline-light" id="nxt">Next</button>
+				<button type="button" class="btn btn-outline-light" id="nxt" disabled="true">Next</button>
 			</div>
 			<div>
-			<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
-			<button type="button" class="btn btn-outline-light " data-toggle="modal"
-				data-target="#savemodal">Save</button>
+				<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
+				<button type="button" class="btn btn-outline-light " data-toggle="modal"
+					data-target="#savemodal">Save</button>
 			</div>
 		</div>
 	</nav>
@@ -247,76 +260,27 @@
 <script src="https://unpkg.com/konva@4.0.14/konva.min.js"></script>
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
-	function deletesub(item) {
-		subid = $(item).parent().attr('id');
-		topid = $(item).parent().parent().parent().attr('id');
-		$.ajax({
-			method: 'POST',
-			url: '/delsubtopic',
-			data: { subtopicID: subid, topicID: topid }
-		})
-			.done(function (data) {
-				alert("done del");				
-				$(item).parent().remove();
-
-			});
-	}
-	function deletetopic(item) {
-		topid = $(item).parent().attr('id');
-		$.ajax({
-			method: 'POST',
-			url: '/deltopic',
-			data: { topicID: topid }
-		})
-			.done(function (data) {
-				alert("done del");
-				$(item).parent().remove();
-			});
-	}
-	$('#addRowBtn1').click(function () {
-		$('#codeDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
-		$('#psuedoDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
+	rowDivs = 0;
+	currentRow = 0;
+	$('.addRowBtn').click(function () {
+		rowDivs++;
+		$('#codeDiv').append('<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)"><textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea></li>');
+		$('#psuedoDiv').append('<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)"> <textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea> </div>');
 	});
-
-	$('#addRowBtn2').click(function () {
-		$('#codeDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
-		$('#psuedoDiv').append('<div class="row-box"> <textarea class="form-control form-control-sm invisibile-texty" rows="1"></textarea> </div>');
+	$('.space').click(function () {
+		$('#codeDiv').append('<div class="row-box"></div>');
+		$('#psuedoDiv').append('<div class="row-box"></div>');
 	});
-
+	function rowfocus(row) {
+		currentRow = $( "li" ).index( row );
+	}
 	$('.child').hide();
 	$('.parent').click(function () {
 		$(this).siblings('.parent').find('ul').slideUp();
 		$(this).find('ul').slideToggle();
 	});
-	$('#saveBrd').click(function () {
-		saveBoard();
-	});
-	$('.rrectangle').click(function () {
-		newRRectangle(placeX, placeY);
-		setshapepos();
-	});
-	$('.rectangle').click(function () {
-		newRectangle(placeX, placeY);
-		setshapepos();
-	});
-	$('.parallelogram').click(function () {
-		newParallelo(placeX, placeY);
-		setshapepos();
-	});
-	$('.dici').click(function () {
-		newDici(placeX+ShapeWidth/2, placeY);
-		setshapepos();
-	});
-	$('.circle').click(function () {
-		newCircle(placeX, placeY);
-		setshapepos();
-	});
-	$('.arrow').click(function () {
-		newArrow();
-	});
-	$("#flowchartdiv").scroll(function() {
-		scrollerror=$("#flowchartdiv").scrollTop();
-	});
+
+
 </script>
 
 </html>

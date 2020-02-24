@@ -13,7 +13,9 @@ body {
 #maincontent > div {
 	min-height: 80vh;
 }
-
+#botnav {
+	min-height: 60px;
+}
 /* Topics menu */
 .sidebar {
     height: 100vh;
@@ -47,90 +49,3 @@ body {
     vertical-align: top;
     width: calc(100% - 48px);
 }
-
-/* Column things */
-.row-box {
-	border-top: 0px dashed #ccc;
-	border-bottom: 1px dashed #ccc;
-    min-height: 60px;
-    
-}
-.colhead {
-	display: inline;
-}
-.colheader{
-    min-height: 70px;
-}
-.invisibile-texty {
-	border: none !important;
-	border-radius: 0px !important;
-    background: none !important;
-    color: #ccc;
-    min-height: 60px;
-    resize: none;
-    text-align: center;
-    
-}
-#flowchartdiv {
-	height: 80vh;
-    background-color: #f8f9fa;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Holder thing */
-.holder-thing {
-    float: right;
-}
-
-/* Brightness slider */
-
-.slider {
-    -webkit-appearance: none;
-    height: 7.5px;
-    border-radius: 5px;  
-    background: #d3d3d3;
-    font-size: 0.3em;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-  }
-  
-  .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%; 
-    background: #1f2226;
-    cursor: pointer;
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: #1f2226;
-    cursor: pointer;
-  }
-  /* width */
-::-webkit-scrollbar {
-    width: 20px;
-    
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
-  }
-   
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #888; 
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555; 
-  }

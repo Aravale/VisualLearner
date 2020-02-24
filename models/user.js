@@ -12,8 +12,8 @@ var Shape=mongoose.model("Shape",shapeSchema)
 
 var subtopicSchema=new mongoose.Schema({
 	name: String,
-	code: String,
-	psuedocode: String,
+	code: [String],
+	psuedocode: [String],
 	flowchart: {shapes:[shapeSchema],
 				StageH:Number,
 				}

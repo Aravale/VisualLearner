@@ -8,8 +8,8 @@ var drawarrow = false;
 var currentShape;
 const ShapeWidth = blockSnapSize * 6;
 const ShapeHeight = blockSnapSize * 2;
-const Decilength = blockSnapSize * 3;
-var scrollerror=0;
+const Decilength = 3.5 * (blockSnapSize / Math.sqrt(2));
+var scrollerror = 0;
 var shapecount = 0;
 var arrP = 0;
 var arr = [];
@@ -48,7 +48,7 @@ function makeTA(grp) {
 	// so position of textarea will be the sum of positions above:
 	var areaPosition = {
 		x: stageBox.left + textPosition.x,
-		y: stageBox.top + textPosition.y-scrollerror
+		y: stageBox.top + textPosition.y - scrollerror
 	};
 	// create textarea and style it
 	var textarea = document.createElement('textarea');
@@ -346,7 +346,7 @@ function newDici(placeX, placeY, txty) {
 	var txt = new Konva.Text({
 
 		text: '\nif()',
-		width: Decilength + 38,
+		width: Decilength * Math.sqrt(2),
 		fontSize: blockSnapSize / 2,
 		fontFamily: 'Calibri',
 		fill: 'black',
@@ -474,8 +474,13 @@ function newParallelo(placeX, placeY, txty) {
 
 function clBoard() {
 	if (confirm("Are you sure?")) {
+		shapecount = 0;
+		arrP = 0;
+		placeY = 0
+		updateShapeC();
 		layer.destroyChildren();
 		layer.draw();
+
 	}
 }
 
@@ -483,6 +488,9 @@ function saveBoard() {
 	//document.getElementById('stagestate').value = JSON.stringify(stage.toJSON());
 
 	var Shapes = [];
+	var codearr = [];
+	var psuedoarr = [];
+
 	layer.getChildren().forEach(function (node) {
 
 		if (node.getClassName() === "Group") {
@@ -510,13 +518,24 @@ function saveBoard() {
 			Shapes.push(shape);
 		}
 	});
+
+	$(".codetexty").map(function () {
+		console.log($(this).val());
+		codearr.push($(this).val());
+	});
+
+	$(".psuedotexty").map(function () {
+		console.log($(this).val());
+		psuedoarr.push($(this).val());
+	});
+
 	var topic = document.getElementById('dropdown').value;
 	var sbtopic = document.getElementById('sbtopic').value;
 
 	$.ajax({
 		type: 'POST',
 		url: '/newsubtopic',
-		data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic }
+		data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, codearr: codearr, psuedoarr: psuedoarr }
 	})
 		.done(function (data) {
 
@@ -552,6 +571,14 @@ function loadBoard(item) {
 		data: { topicID: topid, sbtopicID: subid }
 	})
 		.done(function (data) {
+			$('#codeDiv').empty();
+			$('#psuedoDiv').empty();
+			data.subtop.code.forEach(coderow => {
+				$('#codeDiv').append(`<div class="row-box"><textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2">${coderow}</textarea></div>`);
+			});
+			data.subtop.psuedocode.forEach(pcoderow => {
+				$('#psuedoDiv').append(`<div class="row-box"><textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2">${pcoderow}</textarea></div>`);
+			});
 			var title = data.topictitle + "\\: " + data.subtop.name;
 			$("#subTopicName").text(title);
 			StageHeight = data.subtop.flowchart.StageH;
@@ -559,7 +586,7 @@ function loadBoard(item) {
 
 			layer.destroyChildren();
 			stageinit(gridLayer, layer);
-			data.subtop.flowchart.shapes.forEach(function (node) {
+			data.subtop.flowchart.shapes.forEach(node => {
 				switch (node.className) {
 					case "SRgrp":
 						newRectangle(node.x, node.y, node.shapeText);
@@ -598,9 +625,104 @@ function loadBoard(item) {
 
 }
 
+function deletesub(item) {
+	subid = $(item).parent().attr('id');
+	topid = $(item).parent().parent().parent().attr('id');
+	$.ajax({
+		method: 'POST',
+		url: '/delsubtopic',
+		data: { subtopicID: subid, topicID: topid }
+	})
+		.done(function (data) {
+			alert("done del");
+			$(item).parent().remove();
+
+		});
+}
+
+function deletetopic(item) {
+	topid = $(item).parent().attr('id');
+	$.ajax({
+		method: 'POST',
+		url: '/deltopic',
+		data: { topicID: topid }
+	})
+		.done(function (data) {
+			alert("done del");
+			$(item).parent().remove();
+		});
+}
+
+function snap(num) {
+	return Math.round(num / blockSnapSize) * blockSnapSize;
+}
+
 function newArrow() {
 	isPaint = true;
+	var pos={
+		x: 0,
+		y: 0,
+	};
+	var arrow = new Konva.Arrow({
+		points: [snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)],
+		pointerLength: 10,
+		pointerWidth: 10,
+		fill: 'black',
+		stroke: 'black',
+		strokeWidth: 4,
+		name: 'objArr',
+		hitStrokeWidth: 6,
+		draggable: true
+	});
+	shadowArr.points(arrow.points());
+	arrow.on('dragstart', (e) => {
+		shadowArr.show();
+		shadowArr.moveToTop();
+		arrow.moveToTop();
+	});
+	arrow.on('dragend', (e) => {
+		arrow.position({
+			x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
+			y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+		});
+		stage.batchDraw();
+		shadowArr.hide();
+	});
+	arrow.on('dragmove', (e) => {
+		shadowArr.position({
+			x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
+			y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+		});
+		stage.batchDraw();
+	});
+	layer.add(arrow);
 	stage.container().style.cursor = 'crosshair';
+
+	stage.on('click', function () {
+			if (isPaint && drawarrow) {
+				drawarrow=false;
+				isPaint=false;
+				stage.container().style.cursor = 'default';
+			}
+			if (isPaint && !drawarrow) {
+				var node = layer.getChildren().toArray().length - 1;
+				var arrow = layer.getChildren()[node];
+				pos = stage.getPointerPosition();
+				arrow.points([snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)]);
+				layer.draw();
+				drawarrow = true;
+			}
+		});
+		stage.on('contentMousemove', function () {
+			if (drawarrow) {
+				var node = layer.getChildren().toArray().length - 1;
+				var arrow = layer.getChildren()[node];
+				pos = stage.getPointerPosition();
+				arrow.points([arrow.points()[0], arrow.points()[1], snap(pos.x), snap(pos.y)]);
+				layer.draw();
+			}
+		});
+	
 }
 
 function initShadows() {
@@ -796,77 +918,77 @@ function stageinit(gridLayer, layer) {
 		menuNode.style.left = containerRect.left + stage.getPointerPosition().x + 4 + 'px';
 	});
 
-	stage.on('contentMousedown', function (e) {
-		if (isPaint) {
-			var pos = stage.getPointerPosition();
-			var arrow = new Konva.Arrow({
-				points: [pos.x, pos.y, pos.x, pos.y],
-				pointerLength: 10,
-				pointerWidth: 10,
-				fill: 'black',
-				stroke: 'black',
-				strokeWidth: 4,
-				name: 'objArr',
-				hitStrokeWidth: 6,
-				draggable: true
-			});
-			layer.add(arrow);
-			drawarrow = true;
-		}
-	});
-
-	stage.on('contentMouseup', function () {
-		if (isPaint && drawarrow) {
-			var node = layer.getChildren().toArray().length - 1;
-			var arrow = layer.getChildren()[node];
-			if (arrow.points()[0] === arrow.points()[2] && arrow.points()[1] === arrow.points()[3]) { arrow.destroy(); }
-		}
-		isPaint = false;
-		drawarrow = false;
-		layer.getChildren().each(function (node) { node.draggable = (true); });
-		layer.draw();
-		stage.container().style.cursor = 'default';
-	});
-
-	// and core function - drawing
-	stage.on('contentMousemove', function () {
-
-		if (!isPaint) {
-			return;
-		}
-		if (drawarrow) {
-			var node = layer.getChildren().toArray().length - 1;
-			var arrow = layer.getChildren()[node];
-			var pos = stage.getPointerPosition();
-			var oldPoints = arrow.points();
-			//arrow.points([oldPoints[0], oldPoints[1], pos.x, pos.y])
-			arrow.points([Math.round(oldPoints[0] / blockSnapSize) * blockSnapSize, Math.round(oldPoints[1] / blockSnapSize) * blockSnapSize, Math.round(pos.x / blockSnapSize) * blockSnapSize, Math.round(pos.y / blockSnapSize) * blockSnapSize])
+	/* 	stage.on('contentMousedown', function (e) {
+			if (isPaint) {
+				var pos = stage.getPointerPosition();
+				var arrow = new Konva.Arrow({
+					points: [pos.x, pos.y, pos.x, pos.y],
+					pointerLength: 10,
+					pointerWidth: 10,
+					fill: 'black',
+					stroke: 'black',
+					strokeWidth: 4,
+					name: 'objArr',
+					hitStrokeWidth: 6,
+					draggable: true
+				});
+				layer.add(arrow);
+				drawarrow = true;
+			}
+		});
+	
+		stage.on('contentMouseup', function () {
+			if (isPaint && drawarrow) {
+				var node = layer.getChildren().toArray().length - 1;
+				var arrow = layer.getChildren()[node];
+				if (arrow.points()[0] === arrow.points()[2] && arrow.points()[1] === arrow.points()[3]) { arrow.destroy(); }
+			}
+			isPaint = false;
+			drawarrow = false;
+			layer.getChildren().each(function (node) { node.draggable = (true); });
 			layer.draw();
-		}
-	});
-	layer.find('.objArr').each(function (arrow, n) {
-		shadowArr.points(arrow.points());
-		arrow.on('dragstart', (e) => {
-			shadowArr.show();
-			shadowArr.moveToTop();
-			arrow.moveToTop();
+			stage.container().style.cursor = 'default';
 		});
-		arrow.on('dragend', (e) => {
-			arrow.position({
-				x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-				y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+	
+		// and core function - drawing
+		stage.on('contentMousemove', function () {
+	
+			if (!isPaint) {
+				return;
+			}
+			if (drawarrow) {
+				var node = layer.getChildren().toArray().length - 1;
+				var arrow = layer.getChildren()[node];
+				var pos = stage.getPointerPosition();
+				var oldPoints = arrow.points();
+				//arrow.points([oldPoints[0], oldPoints[1], pos.x, pos.y])
+				arrow.points([Math.round(oldPoints[0] / blockSnapSize) * blockSnapSize, Math.round(oldPoints[1] / blockSnapSize) * blockSnapSize, Math.round(pos.x / blockSnapSize) * blockSnapSize, Math.round(pos.y / blockSnapSize) * blockSnapSize])
+				layer.draw();
+			}
+		});
+		layer.find('.objArr').each(function (arrow, n) {
+			shadowArr.points(arrow.points());
+			arrow.on('dragstart', (e) => {
+				shadowArr.show();
+				shadowArr.moveToTop();
+				arrow.moveToTop();
 			});
-			stage.batchDraw();
-			shadowArr.hide();
-		});
-		arrow.on('dragmove', (e) => {
-			shadowArr.position({
-				x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-				y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+			arrow.on('dragend', (e) => {
+				arrow.position({
+					x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
+					y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+				});
+				stage.batchDraw();
+				shadowArr.hide();
 			});
-			stage.batchDraw();
-		});
-	});
+			arrow.on('dragmove', (e) => {
+				shadowArr.position({
+					x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
+					y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
+				});
+				stage.batchDraw();
+			});
+		}); */
 	initShadows();
 }
 
@@ -907,28 +1029,40 @@ function setshapepos() {
 }
 
 $("#viewmode").click(() => {
-	arrP = 0;
-	vf = 1;
-	layer.getChildren().forEach((node) => {
-		if (node.getClassName() == "Arrow") {
-		}
-		arr.push(node);
-	});
-	arr.forEach((node, index, ar) => {
-		if (node.getClassName() == "Arrow") {
-			ar.splice(index, 1);
-		}
-	})
-	arr.sort((a, b) => {
-		parseFloat(a.y()) - parseFloat(b.y());
-		if (a.y() == b.y()) {
-			b.x() - a.x();
-		}
-	});
+	if (vf == 0) {
+		vf = 1;
+		$('#nxt').prop('disabled', false);
+		$('#prv').prop('disabled', false);
+		arrP = 0;
+		layer.getChildren().forEach((node) => {
+			if (node.getClassName() == "Arrow") {
+			}
+			arr.push(node);
+		});
+		arr.forEach((node, index, ar) => {
+			if (node.getClassName() == "Arrow") {
+				ar.splice(index, 1);
+			}
+		})
+		arr.sort((a, b) => {
+			parseFloat(a.y()) - parseFloat(b.y());
+			if (a.y() == b.y()) {
+				b.x() - a.x();
+			}
+		});
 
-	arr[arrP].getChildren()[0].fill("#a2c1f2");
-	layer.draw();
-	updateShapeC();
+		arr[arrP].getChildren()[0].fill("#a2c1f2");
+		layer.draw();
+		updateShapeC();
+
+	}
+	else {
+		vf = 0;
+		$('#nxt').prop('disabled', true);
+		$('#prv').prop('disabled', true);
+	}
+
+
 });
 
 $("#nxt").click(() => {
@@ -936,10 +1070,11 @@ $("#nxt").click(() => {
 		arr[arrP].getChildren()[0].fill("#efefef");
 		arrP++;
 		arr[arrP].getChildren()[0].fill("#a2c1f2");
-		layer.draw(); 
+		layer.draw();
 		updateShapeC();
 	}
 });
+
 $("#prv").click(() => {
 	if (arrP > 0) {
 		arr[arrP].getChildren()[0].fill("#efefef");
@@ -951,4 +1086,34 @@ $("#prv").click(() => {
 	}
 });
 
+$('#saveBrd').click(function () {
+	saveBoard();
+});
+$('.rrectangle').click(function () {
+	newRRectangle(placeX, placeY);
+	setshapepos();
+});
+$('.rectangle').click(function () {
+	newRectangle(placeX, placeY);
+	setshapepos();
+});
+$('.parallelogram').click(function () {
+	newParallelo(placeX, placeY);
+	setshapepos();
+});
+$('.dici').click(function () {
+	newDici(placeX + ShapeWidth / 2, placeY);
+	setshapepos();
+});
+$('.circle').click(function () {
+	newCircle(placeX, placeY);
+	setshapepos();
+});
+$('.arrow').click(function () {
+	newArrow();
+});
+
+$("#flowchartdiv").scroll(function () {
+	scrollerror = $("#flowchartdiv").scrollTop();
+});
 stageinit(gridLayer, layer);

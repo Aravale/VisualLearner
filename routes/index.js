@@ -101,7 +101,8 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 	var height = req.body.StageHeight;
 	var shapes = req.body.Shapes;
 	var newsubTopic = req.body.sbtopic;
-
+var codearr=req.body.codearr;
+var psuedoarr=req.body.psuedoarr;
 	var fc = {
 		shapes: shapes,
 		StageH: height,
@@ -117,7 +118,9 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 				if (topic._id == Topic) {
 					topic.subtopics.push({
 						name: newsubTopic,
-						flowchart: fc
+						flowchart: fc,
+						code:codearr,
+						psuedocode:psuedoarr
 					});
 					console.log(fc);
 				}
