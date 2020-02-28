@@ -6,16 +6,11 @@ body {
   }
 
 #maincontent {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background-color: #626b79 !important;
+    padding: 0px;
+    min-height: 89vh;
+    background-color: #1e2022; 
 }
-#maincontent > div {
-	min-height: 80vh;
-}
-#botnav {
-	min-height: 60px;
-}
+
 /* Topics menu */
 .sidebar {
     height: 100vh;

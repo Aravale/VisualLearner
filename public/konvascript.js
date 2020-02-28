@@ -1,4 +1,4 @@
-const StageWidth = 650;
+const StageWidth = $('#flowchartdiv').width();
 var StageHeight = $('#flowchartdiv').height();
 const shadowOffset = 20;
 var tween = null;
@@ -8,7 +8,7 @@ var drawarrow = false;
 var currentShape;
 const ShapeWidth = blockSnapSize * 6;
 const ShapeHeight = blockSnapSize * 2;
-const Decilength = 3.5 * (blockSnapSize / Math.sqrt(2));
+const Decilength = 4 * (blockSnapSize / Math.sqrt(2));
 var scrollerror = 0;
 var shapecount = 0;
 var arrP = 0;
@@ -150,7 +150,7 @@ function makeTA(grp) {
 	});
 }
 
-function newRectangle(placeX, placeY, txty) {
+function newRectangle(placeX, placeY, txty,anchors) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -210,13 +210,23 @@ function newRectangle(placeX, placeY, txty) {
 		});
 		stage.batchDraw();
 	});
+
+	newAnchor(ShapeWidth / 2, 0, grp);//top
+	newAnchor(ShapeWidth, ShapeHeight / 2, grp);//right
+	newAnchor(ShapeWidth / 2, ShapeHeight, grp);//bot
+	newAnchor(0, ShapeHeight / 2, grp);//left
+	
+	if (anchors!=null) {
+		grp.getChildren().forEach((subnode,index)=>{if (index>1){ subnode.name(anchors[index-2][0]);subnode.id(anchors[index-2][1]);}});
+	}
+
 	layer.add(grp);
 	layer.draw();
 	shapecount++;
 	updateShapeC();
 }
 
-function newRRectangle(placeX, placeY, txty) {
+function newRRectangle(placeX, placeY, txty,anchors) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -275,6 +285,13 @@ function newRRectangle(placeX, placeY, txty) {
 		});
 		stage.batchDraw();
 	});
+	newAnchor(ShapeWidth / 2, 0, grp);//top
+	newAnchor(ShapeWidth, ShapeHeight / 2, grp);//right
+	newAnchor(ShapeWidth / 2, ShapeHeight, grp);//bot
+	newAnchor(0, ShapeHeight / 2, grp);//left
+	if (anchors!=null) {
+		grp.getChildren().forEach((subnode,index)=>{if (index>1){ subnode.name(anchors[index-2][0]);subnode.id(anchors[index-2][1]);}});
+	}
 	layer.add(grp);
 	layer.draw();
 
@@ -327,7 +344,80 @@ function newCircle(placeX, placeY) {
 	updateShapeC();
 }
 
-function newDici(placeX, placeY, txty) {
+function newAnchor(placeX, placeY, grp) {
+	var anchor = new Konva.Circle({
+		x: placeX,
+		y: placeY,
+		radius: 4,
+		fill: '#efefef',
+		stroke: 'black',
+		name: 'anc',
+		strokeWidth: 2,
+	});
+	grp.add(anchor);
+	var pos = {
+		x: 0,
+		y: 0,
+	};
+	anchor.id("anc" + anchor._id);
+	grp.on('dragmove', (e) => {
+		var nmarr = anchor.name().split(' ');
+		if (nmarr[0] == "arrstart") {
+			var arrow = layer.findOne("#" + nmarr[1]);
+			arrow.points([snap(grp.x() + anchor.x()), snap(grp.y() + anchor.y()), arrow.points()[2], arrow.points()[3]]);
+			arrow.moveToTop();
+			layer.draw();
+		}
+		else if (nmarr[0] == "arrend") {
+			var arrow = layer.findOne("#" + nmarr[1]);
+			arrow.points([arrow.points()[0], arrow.points()[1], snap(grp.x() + anchor.x()), snap(grp.y() + anchor.y())]);
+			arrow.moveToTop();
+			layer.draw();
+		}
+	});
+	anchor.on('click', function () {
+		isPaint = true;
+		stage.container().style.cursor = 'crosshair';
+		anchor.name("arrstart");
+		if (isPaint && drawarrow) {
+			drawarrow = false;
+			isPaint = false;
+			stage.container().style.cursor = 'default';
+			anchor.name("arrend");
+			var node = layer.getChildren().toArray().length - 1;
+			var arrow = layer.getChildren()[node];
+			anchor.addName("arr" + arrow._id);
+			arrow.addName("anc" + anchor._id);
+			console.log(arrow.name());
+
+		}
+		if (isPaint && !drawarrow) {
+			var arrow = new Konva.Arrow({
+				points: [snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)],
+				pointerLength: 10,
+				pointerWidth: 10,
+				fill: 'black',
+				stroke: 'black',
+				strokeWidth: 4,
+				name: 'objArr',
+				hitStrokeWidth: 0,
+			});
+			arrow.id("arr" + arrow._id);
+			arrow.name("anc" + anchor._id);
+			layer.add(arrow);
+
+			anchor.addName("arr" + arrow._id);
+
+			pos = stage.getPointerPosition();
+			arrow.points([snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)]);
+			layer.draw();
+			drawarrow = true;
+		}
+	});
+	layer.draw();
+}
+
+function newDici(placeX, placeY, txty,anchors) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -400,6 +490,13 @@ function newDici(placeX, placeY, txty) {
 		});
 		stage.batchDraw();
 	});
+	newAnchor(0, 0, grp);//top
+	newAnchor(Decilength / Math.sqrt(2), Decilength / Math.sqrt(2), grp);//right
+	newAnchor(0, Decilength * Math.sqrt(2), grp);//bot
+	newAnchor(-(Decilength / Math.sqrt(2)), Decilength / Math.sqrt(2), grp);//left
+	if (anchors!=null) {
+		grp.getChildren().forEach((subnode,index)=>{if (index>1){ subnode.name(anchors[index-2][0]);subnode.id(anchors[index-2][1]);}});
+	}
 	layer.add(grp);
 	layer.draw();
 
@@ -407,7 +504,7 @@ function newDici(placeX, placeY, txty) {
 	updateShapeC();
 }
 
-function newParallelo(placeX, placeY, txty) {
+function newParallelo(placeX, placeY, txty,anchors) {
 	var grp = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -466,6 +563,13 @@ function newParallelo(placeX, placeY, txty) {
 		});
 		stage.batchDraw();
 	});
+	newAnchor(ShapeWidth / 2, 0, grp);//top
+	newAnchor(ShapeWidth + (blockSnapSize / 2), ShapeHeight / 2, grp);//right
+	newAnchor(ShapeWidth / 2, ShapeHeight, grp);//bot
+	newAnchor(0 - (blockSnapSize / 2), ShapeHeight / 2, grp);//left
+	if (anchors!=null) {
+		grp.getChildren().forEach((subnode,index)=>{if (index>1){ subnode.name(anchors[index-2][0]);subnode.id(anchors[index-2][1]);}});
+	}
 	layer.add(grp);
 	layer.draw();
 	shapecount++;
@@ -491,27 +595,32 @@ function saveBoard() {
 	var codearr = [];
 	var psuedoarr = [];
 
+	//Saving Stage
 	layer.getChildren().forEach(function (node) {
 
 		if (node.getClassName() === "Group") {
+			var anchorsArr=[]
+			 node.getChildren().forEach((subnode,index)=>{if (index>1 && index<6){ anchorsArr.push([subnode.name(),subnode.id()])}});
 			var shape = {
-				className: node.name(),
+				SName: node.name(),
 				x: node.x(),
 				y: node.y(),
-				shapeText: node.getChildren()[1].text()
+				shapeText: node.getChildren()[1].text(),
+				anchors:anchorsArr
 			}
 			Shapes.push(shape);
+			console.log(shape); 
 		}
 		else if (node.getClassName() === "Arrow") {
 			var shape = {
-				className: node.name(),
+				AName: [node.name(),node.id()],
 				points: node.points()
 			}
 			Shapes.push(shape);
 		}
 		else {
 			var shape = {
-				className: node.name(),
+				SName: node.name(),
 				x: node.x(),
 				y: node.y()
 			}
@@ -519,14 +628,16 @@ function saveBoard() {
 		}
 	});
 
+	//Saving code column
 	$(".codetexty").map(function () {
-		console.log($(this).val());
-		codearr.push($(this).val());
+		console.log($(this).text());
+		codearr.push($(this).text());
 	});
 
+	//Saving psuedocode column
 	$(".psuedotexty").map(function () {
-		console.log($(this).val());
-		psuedoarr.push($(this).val());
+		console.log($(this).text());
+		psuedoarr.push($(this).text());
 	});
 
 	var topic = document.getElementById('dropdown').value;
@@ -538,9 +649,6 @@ function saveBoard() {
 		data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, codearr: codearr, psuedoarr: psuedoarr }
 	})
 		.done(function (data) {
-
-			/*var newUL = document.createElement("ul");
-			$(newUL).addClass("flex-column navbar-nav sub-topic child sidebarlist");*/
 			var newLi = document.createElement("li");
 			newLi.id = data.subtopicid;
 			var newA = document.createElement("a");
@@ -575,7 +683,7 @@ function loadBoard(item) {
 			$('#psuedoDiv').empty();
 			data.subtop.code.forEach(coderow => {
 				$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-				<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2">${coderow}</textarea>
+				<div class="form-control invisibile-texty codetexty" rows="2" contenteditable="true">${coderow}</div>
 				<div class="rowboxdel">
 					<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 						<i class="fa fa-trash-alt"></i>
@@ -585,7 +693,7 @@ function loadBoard(item) {
 			});
 			data.subtop.psuedocode.forEach(pcoderow => {
 				$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-				<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2">${pcoderow}</textarea>
+				<div class="form-control invisibile-texty psuedotexty" rows="2" contenteditable="true">${pcoderow}</div>
 				  <div class="rowboxdel">
 					<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 						<i class="fa fa-trash-alt"></i>
@@ -601,38 +709,39 @@ function loadBoard(item) {
 			layer.destroyChildren();
 			stageinit(gridLayer, layer);
 			data.subtop.flowchart.shapes.forEach(node => {
-				switch (node.className) {
+				switch (node.SName) {
 					case "SRgrp":
-						newRectangle(node.x, node.y, node.shapeText);
+						newRectangle(node.x, node.y, node.shapeText,node.anchors);
 						break;
 					case "SRRgrp":
-						newRRectangle(node.x, node.y, node.shapeText);
+						newRRectangle(node.x, node.y, node.shapeText,node.anchors);
 						break;
 					case "SDgrp":
-						newDici(node.x, node.y, node.shapeText);
+						newDici(node.x, node.y, node.shapeText,node.anchors);
 						break;
 					case "SPgrp":
-						newParallelo(node.x, node.y, node.shapeText);
+						newParallelo(node.x, node.y, node.shapeText,node.anchors);
 						break;
 					case "objC":
 						newCircle(node.x, node.y);
 						break;
-					case "objArr":
-						var arrow = new Konva.Arrow({
-							points: node.points,
-							pointerLength: 10,
-							pointerWidth: 10,
-							fill: 'black',
-							stroke: 'black',
-							strokeWidth: 4,
-							name: 'objArr',
-							hitStrokeWidth: 6,
-							draggable: true
-						});
-						layer.add(arrow);
-						break;
 					default:
 						break;
+				}
+				if (node.AName!=null) {
+					var arrow = new Konva.Arrow({
+						points: node.points,
+						pointerLength: 10,
+						pointerWidth: 10,
+						fill: 'black',
+						stroke: 'black',
+						strokeWidth: 4,
+						name: node.AName[0],
+						id:node.AName[1],
+						hitStrokeWidth: 6,
+						draggable: true
+					});
+					layer.add(arrow);
 				}
 			});
 		});
@@ -669,77 +778,6 @@ function deletetopic(item) {
 
 function snap(num) {
 	return Math.round(num / blockSnapSize) * blockSnapSize;
-}
-
-function newArrow() {
-	isPaint = true;
-	var pos={
-		x: 0,
-		y: 0,
-	};
-	var arrow = new Konva.Arrow({
-		points: [snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)],
-		pointerLength: 10,
-		pointerWidth: 10,
-		fill: 'black',
-		stroke: 'black',
-		strokeWidth: 4,
-		name: 'objArr',
-		hitStrokeWidth: 6,
-		draggable: true
-	});
-	shadowArr.points(arrow.points());
-	arrow.on('dragstart', (e) => {
-		shadowArr.show();
-		shadowArr.moveToTop();
-		arrow.moveToTop();
-	});
-	arrow.on('dragend', (e) => {
-		arrow.position({
-			x: snap(arrow.x()),
-			y: snap(arrow.y())
-		});
-		stage.batchDraw();
-		shadowArr.hide();
-	});
-	arrow.on('dragmove', (e) => {
-		shadowArr.position({
-			x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-			y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
-		});
-		stage.batchDraw();
-	});
-	layer.add(arrow);
-	stage.container().style.cursor = 'crosshair';
-
-	stage.on('click', function () {
-			if (isPaint && drawarrow) {
-				drawarrow=false;
-				isPaint=false;
-				stage.container().style.cursor = 'default';
-				var node = layer.getChildren().toArray().length - 1;
-				var arrow = layer.getChildren()[node];
-				shadowArr.points(arrow.points());
-			}
-			if (isPaint && !drawarrow) {
-				var node = layer.getChildren().toArray().length - 1;
-				var arrow = layer.getChildren()[node];
-				pos = stage.getPointerPosition();
-				arrow.points([snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)]);
-				layer.draw();
-				drawarrow = true;
-			}
-		});
-		stage.on('contentMousemove', function () {
-			if (drawarrow) {
-				var node = layer.getChildren().toArray().length - 1;
-				var arrow = layer.getChildren()[node];
-				pos = stage.getPointerPosition();
-				arrow.points([arrow.points()[0], arrow.points()[1], snap(pos.x), snap(pos.y)]);
-				layer.draw();
-			}
-		});
-	
 }
 
 function initShadows() {
@@ -846,31 +884,24 @@ function initShadows() {
 function stageinit(gridLayer, layer) {
 	stage.add(gridLayer);
 	stage.add(layer);
-	gridLayer.destroyChildren();
-	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
-		gridLayer.add(new Konva.Line({
-			points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, StageHeight],
-			stroke: '#6b6b6b',
-			strokeWidth: 1,
-		}));
-	}
+	setstageheight();
 
-	for (var j = 0; j < StageHeight / blockSnapSize; j++) {
-		gridLayer.add(new Konva.Line({
-			points: [0, Math.round(j * blockSnapSize), StageWidth, Math.round(j * blockSnapSize)],
-			stroke: '#6b6b6b',
-			strokeWidth: 0.5,
-		}));
-	}
-
-	stage.batchDraw();
+	stage.on('contentMousemove', function () {
+		if (drawarrow) {
+			var node = layer.getChildren().toArray().length - 1;
+			var arrow = layer.getChildren()[node];
+			pos = stage.getPointerPosition();
+			arrow.points([arrow.points()[0], arrow.points()[1], pos.x, pos.y]);
+			layer.draw();
+		}
+	});
 
 	layer.on('dblclick', function (e) {
 		// prevent default behavior
 		e.evt.preventDefault();
 
 		currentShape = e.target;
-		if (!(currentShape.getClassName() === 'Circle') && !(currentShape.getClassName() === 'Arrow')) {
+		if ((currentShape.getClassName() === 'Text')) {
 			makeTA(currentShape.getParent());
 		}
 	});
@@ -878,11 +909,20 @@ function stageinit(gridLayer, layer) {
 	var menuNode = document.getElementById('menu');
 	$('#delete-button').on('click', () => {
 		if (currentShape.getClassName() === 'Circle') { currentShape.destroy(); }
-		else if (currentShape.getClassName() === 'Arrow') { currentShape.destroy(); }
+		else if (currentShape.getClassName() === 'Arrow') {
+			if (currentShape.name() != "objArr") {
+				var nmarr = currentShape.name().split(' ');
+				var anc1 = layer.findOne("#" + nmarr[0]);
+				var anc2 = layer.findOne("#" + nmarr[1]);
+				anc1.name("anc"); anc2.name("anc");
+			}
+			currentShape.destroy();
+		}
 		else { currentShape.getParent().destroy(); }
 		layer.draw();
 		shapecount--;
 		updateShapeC();
+		placeY = oldplaceY;
 	});
 
 	$('#mvfrnt-button').on('click', () => {
@@ -919,7 +959,7 @@ function stageinit(gridLayer, layer) {
 		// hide menu 
 		menuNode.style.display = 'none';
 	})
- 
+
 	stage.on('contextmenu', function (e) {
 		// prevent default behavior
 		e.evt.preventDefault();
@@ -934,83 +974,11 @@ function stageinit(gridLayer, layer) {
 		menuNode.style.top = containerRect.top + stage.getPointerPosition().y + 4 + 'px';
 		menuNode.style.left = containerRect.left + stage.getPointerPosition().x + 4 + 'px';
 	});
-
-	/* 	stage.on('contentMousedown', function (e) {
-			if (isPaint) {
-				var pos = stage.getPointerPosition();
-				var arrow = new Konva.Arrow({
-					points: [pos.x, pos.y, pos.x, pos.y],
-					pointerLength: 10,
-					pointerWidth: 10,
-					fill: 'black',
-					stroke: 'black',
-					strokeWidth: 4,
-					name: 'objArr',
-					hitStrokeWidth: 6,
-					draggable: true
-				});
-				layer.add(arrow);
-				drawarrow = true;
-			}
-		});
-	
-		stage.on('contentMouseup', function () {
-			if (isPaint && drawarrow) {
-				var node = layer.getChildren().toArray().length - 1;
-				var arrow = layer.getChildren()[node];
-				if (arrow.points()[0] === arrow.points()[2] && arrow.points()[1] === arrow.points()[3]) { arrow.destroy(); }
-			}
-			isPaint = false;
-			drawarrow = false;
-			layer.getChildren().each(function (node) { node.draggable = (true); });
-			layer.draw();
-			stage.container().style.cursor = 'default';
-		});
-	
-		// and core function - drawing
-		stage.on('contentMousemove', function () {
-	
-			if (!isPaint) {
-				return;
-			}
-			if (drawarrow) {
-				var node = layer.getChildren().toArray().length - 1;
-				var arrow = layer.getChildren()[node];
-				var pos = stage.getPointerPosition();
-				var oldPoints = arrow.points();
-				//arrow.points([oldPoints[0], oldPoints[1], pos.x, pos.y])
-				arrow.points([Math.round(oldPoints[0] / blockSnapSize) * blockSnapSize, Math.round(oldPoints[1] / blockSnapSize) * blockSnapSize, Math.round(pos.x / blockSnapSize) * blockSnapSize, Math.round(pos.y / blockSnapSize) * blockSnapSize])
-				layer.draw();
-			}
-		});
-		layer.find('.objArr').each(function (arrow, n) {
-			shadowArr.points(arrow.points());
-			arrow.on('dragstart', (e) => {
-				shadowArr.show();
-				shadowArr.moveToTop();
-				arrow.moveToTop();
-			});
-			arrow.on('dragend', (e) => {
-				arrow.position({
-					x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-					y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
-				});
-				stage.batchDraw();
-				shadowArr.hide();
-			});
-			arrow.on('dragmove', (e) => {
-				shadowArr.position({
-					x: Math.round(arrow.x() / blockSnapSize) * blockSnapSize,
-					y: Math.round(arrow.y() / blockSnapSize) * blockSnapSize
-				});
-				stage.batchDraw();
-			});
-		}); */
 	initShadows();
 }
 
-function addstageheight() {
-	StageHeight = StageHeight + ShapeHeight * 2;
+function setstageheight() {
+
 	stage.height(StageHeight);
 	gridLayer.destroyChildren();
 	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
@@ -1033,6 +1001,7 @@ function addstageheight() {
 }
 
 function setshapepos() {
+	oldplaceY = placeY;
 	node = layer.getChildren()[layer.getChildren().length - 1];
 	if (node.name() == "SDgrp") {
 		placeX = node.x() - ShapeWidth / 2;
@@ -1052,21 +1021,14 @@ $("#viewmode").click(() => {
 		$('#prv').prop('disabled', false);
 		arrP = 0;
 		layer.getChildren().forEach((node) => {
-			if (node.getClassName() == "Arrow") {
-			}
-			arr.push(node);
-		});
-		arr.forEach((node, index, ar) => {
-			if (node.getClassName() == "Arrow") {
-				ar.splice(index, 1);
-			}
-		})
-		arr.sort((a, b) => {
-			parseFloat(a.y()) - parseFloat(b.y());
-			if (a.y() == b.y()) {
-				b.x() - a.x();
+			if (node.name() == "SRRgrp") {
+				var txt=node.getChildren()[1];
+				if (txt.text()=="\nStart/End") {
+				arr.push(node);	
+				}	
 			}
 		});
+
 
 		arr[arrP].getChildren()[0].fill("#a2c1f2");
 		layer.draw();
@@ -1126,11 +1088,14 @@ $('.circle').click(function () {
 	newCircle(placeX, placeY);
 	setshapepos();
 });
-$('.arrow').click(function () {
-	newArrow();
-});
 
 $("#flowchartdiv").scroll(function () {
 	scrollerror = $("#flowchartdiv").scrollTop();
 });
+/*fcdiv=document.getElementById("flowchartdiv");
+$(fcdiv).on('wheel', function(e)
+{
+	var scroll = e.originalEvent.deltaY < 0 ? 'up' : 'down';
+    console.log(e.originalEvent.deltaY);
+});*/
 stageinit(gridLayer, layer);

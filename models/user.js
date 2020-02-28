@@ -2,11 +2,13 @@ var mongoose =require("mongoose");
 var passportLocalMongoose=require("passport-local-mongoose");
 
 var shapeSchema=new mongoose.Schema({
-	className: String,
+	SName: String,
+	AName: [String,String],
 	x: Number,
 	y: Number,
 	points:[Number],
-	shapeText: String
+	shapeText: String,
+	anchors:[[String,String]]
 });
 var Shape=mongoose.model("Shape",shapeSchema)
 

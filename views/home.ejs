@@ -33,7 +33,7 @@
 	<div class="row " id="maincontent">
 
 		<!-- Code -->
-		<div class="col-md-4 py-0 " id="code">
+		<div class="col-md-4 p-0" id="code">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Code
@@ -48,21 +48,24 @@
 				</div>
 			</div>
 
-
-			<ul class="flex-column list-group" id="codeDiv">
-				<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-					<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea>
-					<div class="rowboxdel">
-						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-							<i class="fa fa-trash-alt"></i>
-						</button>
-					</div>
-				</li>
-			</ul>
+			<div class="textcol">
+				<ul class="flex-column list-group" id="codeDiv">
+					<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+						<!-- <textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea> -->
+						<div class="form-control invisibile-texty codetexty" rows="2" contenteditable="true"></div>
+						<div class="rowboxdel">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
+								onclick="delrowbox(this)">
+								<i class="fa fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</div>
 
 		<!-- Flowchart -->
-		<div class="col-md-4 p-0 " id="flowchart">
+		<div class="col-md-4 p-0" id="flowchart">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Flowchart
@@ -72,7 +75,6 @@
 				<button class="parallelogram" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
 				<button class="dici" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
 				<button class="circle" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
-				<button class="arrow" data-toggle="tooltip" data-placement="bottom" title="Arrow">&#8599;</button>
 
 				<div class="holder-thing">
 					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
@@ -88,7 +90,7 @@
 		</div>
 
 		<!-- Psuedocode -->
-		<div class="col-md-4 py-0 " id="psuedo">
+		<div class="col-md-4 p-0" id="psuedo">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Psuedocode
@@ -103,12 +105,19 @@
 
 				</div>
 			</div>
-
-			<ul class="list-group" id="psuedoDiv">
-				<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-					<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea>
-				</li>
-			</ul>
+			<div class="textcol">
+				<ul class="list-group" id="psuedoDiv">
+					<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
+						<div class="form-control invisibile-texty psuedotexty" rows="2" contenteditable="true"></div>						
+						<div class="rowboxdel">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
+								onclick="delrowbox(this)">
+								<i class="fa fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</div>
 
 	</div>
@@ -258,9 +267,10 @@
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
 	currentRow = 0;
+
 	$('.addRowBtn1').click(function () {
 		$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-								<textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea>
+								<div class="form-control invisibile-texty codetexty" rows="2" contenteditable="true"></div>								
 								<div class="rowboxdel">
 									<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 										<i class="fa fa-trash-alt"></i>
@@ -280,7 +290,7 @@
 	});
 	$('.addRowBtn2').click(function () {
 		$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-									<textarea class="form-control form-control-sm invisibile-texty psuedotexty" rows="2"></textarea>
+									<div class="form-control invisibile-texty psuedotexty" rows="2" contenteditable="true"></div>								
 			  						<div class="rowboxdel">
 										<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 											<i class="fa fa-trash-alt"></i>
@@ -297,6 +307,10 @@
 									</div>
 								</li>`);
 	});
+	function addstageheight(){
+		StageHeight = StageHeight + ShapeHeight * 2;
+		setstageheight();
+	}
 	function delrowbox(item) {
 		$(item).parent().parent().remove();
 	}
@@ -309,9 +323,9 @@
 		$(this).find('ul').slideToggle();
 	});
 
-	$('.slider').change(function() {
-		$(this).parent().parent().parent().find("ul").fadeTo(100, this.value/100);
-});
+	$('.slider').change(function () {
+		$(this).parent().parent().parent().find("ul").fadeTo(100, this.value / 100);
+	});
 </script>
 
 </html>

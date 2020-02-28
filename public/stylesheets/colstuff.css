@@ -1,10 +1,9 @@
 .invisibile-texty {
-	border: none !important;
-	border-radius: 10px !important;
-    background: rgb(211, 211, 211) !important;
+  border-bottom: 1px dashed #000;
+	border-radius: 30px;
+    background: #f0f5f9;
     color: rgb(0, 0, 0);
     min-height: 60px;
-    resize: none;
     text-align: center;   
 }
 .invisibile-texty:focus {
@@ -13,9 +12,8 @@
  
 }
 .row-box {
-	border-top: 0px dashed #ccc;
-    border-bottom: 1px dashed #ccc;
-    background:none !important;
+    border-bottom: 1px dashed #000;
+    background-color: #1e2022 ;
     min-height: 60px;
     
 }
@@ -23,12 +21,19 @@
     position: absolute;
     z-index: 100;
     top: 0;
-    right: 5px;
+    right: 15px;
   width: fit-content;
   height: fit-content;
   opacity: 40%;
   
 }
+#maincontent > div {
+  background-color: #52616b;
+}
+/*#flowchart{
+  border-left: 3px solid black;
+  border-right: 3px solid black;
+}*/
 .colhead {
 	display: inline;
 }
@@ -44,19 +49,23 @@
     display:run-in;  
  }
 #flowchartdiv {
-	height: 80vh;
+	height:82vh;
     background-color: #f8f9fa;
     overflow-y: auto;
     overflow-x: hidden;
 }
-
+.textcol{
+  height:82vh;
+  background-color: #52616b;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 /* Holder thing */
 .holder-thing {
     float: right;
 }
 
 /* Brightness slider */
-
 .slider {
     -webkit-appearance: none;
     height: 7.5px;
