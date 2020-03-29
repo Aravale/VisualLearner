@@ -30,7 +30,7 @@
 	<% } %>
 
 	<%# Main Content %>
-	<div class="row " id="maincontent">
+	<div class="row m-0" id="maincontent">
 
 		<!-- Code -->
 		<div class="col-md-4 p-0" id="code">
@@ -43,23 +43,23 @@
 
 					<button type="button" class="btn btn-outline-dark btn-light addRowBtn1" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row">+</button>
-					<button type="button" class="btn btn-outline-dark btn-light space1" data-toggle="tooltip"
-						data-placement="bottom" title="Adds empty row">space</button>
 				</div>
 			</div>
 
 			<div class="textcol">
 				<ul class="flex-column list-group" id="codeDiv">
-					<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-						<!-- <textarea class="form-control form-control-sm invisibile-texty codetexty" rows="2"></textarea> -->
-						<div class="form-control invisibile-texty codetexty" rows="2" contenteditable="true"></div>
+					<div class="row-box"></div>
+<%for(i=0;i<=7;i++){%>
+					<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+						<div class="form-control invisibile-texty codetexty" contenteditable="true"></div>
+						<div class="row-box"></div>
 						<div class="rowboxdel">
-							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
-								onclick="delrowbox(this)">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 								<i class="fa fa-trash-alt"></i>
 							</button>
 						</div>
 					</li>
+				<% } %> 
 				</ul>
 			</div>
 		</div>
@@ -85,7 +85,7 @@
 				</div>
 
 			</div>
-			<div id="flowchartdiv">
+			<div id="flowchartdiv" class="textcol">
 			</div>
 		</div>
 
@@ -100,22 +100,22 @@
 
 					<button type="button" class="btn btn-outline-dark btn-light addRowBtn2" data-toggle="tooltip"
 						data-placement="bottom" title="Add Row">+</button>
-					<button type="button" class="btn btn-outline-dark btn-light space2" data-toggle="tooltip"
-						data-placement="bottom" title="Adds empty row">space</button>
-
 				</div>
 			</div>
 			<div class="textcol">
 				<ul class="list-group" id="psuedoDiv">
-					<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-						<div class="form-control invisibile-texty psuedotexty" rows="2" contenteditable="true"></div>						
+					<div class="row-box"></div>
+<%for(i=0;i<=7;i++){%>
+					<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+						<div class="form-control invisibile-texty psuedotexty" contenteditable="true"></div>
+						<div class="row-box"></div>
 						<div class="rowboxdel">
-							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
-								onclick="delrowbox(this)">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 								<i class="fa fa-trash-alt"></i>
 							</button>
 						</div>
 					</li>
+				<% } %> 
 				</ul>
 			</div>
 		</div>
@@ -255,6 +255,7 @@
 	</div>
 
 </body>
+
 <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
 	crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
@@ -269,44 +270,30 @@
 	currentRow = 0;
 
 	$('.addRowBtn1').click(function () {
-		$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-								<div class="form-control invisibile-texty codetexty" rows="2" contenteditable="true"></div>								
-								<div class="rowboxdel">
-									<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-										<i class="fa fa-trash-alt"></i>
-									</button>
-								</div>
-							</li>`);
+		$('#codeDiv').append(`<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+						<div class="form-control invisibile-texty codetexty" contenteditable="true"></div>
+						<div class="row-box"></div>
+						<div class="rowboxdel">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+								<i class="fa fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>`);
 
 	});
-	$('.space1').click(function () {
-		$('#codeDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-								<div class="rowboxdel">
-									<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-										<i class="fa fa-trash-alt"></i>
-									</button>
-								</div>
-							</li>`);
-	});
+	
 	$('.addRowBtn2').click(function () {
-		$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-									<div class="form-control invisibile-texty psuedotexty" rows="2" contenteditable="true"></div>								
-			  						<div class="rowboxdel">
-										<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-											<i class="fa fa-trash-alt"></i>
-										</button>
-									</div>
-								</li>`);
+		$('#psuedoDiv').append(`<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+						<div class="form-control invisibile-texty psuedotexty" contenteditable="true"></div>
+						<div class="row-box"></div>
+						<div class="rowboxdel">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+								<i class="fa fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>`);
 	});
-	$('.space2').click(function () {
-		$('#psuedoDiv').append(`<li class="row-box list-group-item p-0" onfocusin="rowfocus(this)">
-			  						<div class="rowboxdel">
-										<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-											<i class="fa fa-trash-alt"></i>
-										</button>
-									</div>
-								</li>`);
-	});
+	
 	function addstageheight(){
 		StageHeight = StageHeight + ShapeHeight * 2;
 		setstageheight();

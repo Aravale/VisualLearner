@@ -7,7 +7,7 @@ body {
 
 #maincontent {
     padding: 0px;
-    min-height: 89vh;
+    height: fit-content;
     background-color: #1e2022; 
 }
 
