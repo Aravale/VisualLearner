@@ -7,11 +7,11 @@
   margin: 0px;
 }
 .invisibile-texty {
-    background: #f0f5f9;
+    background: #EDEDED;
     color: rgb(0, 0, 0);
     height: 60px;
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     font-family: Calibri;
     text-align: center;
   }
@@ -92,7 +92,7 @@
   }
   /* width */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 0px;
     
   }
   

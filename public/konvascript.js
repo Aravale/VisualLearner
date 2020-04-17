@@ -7,18 +7,18 @@ var currentShape;
 const ShapeWidth = blockSnapSize * 6;
 const ShapeHeight = blockSnapSize * 2;
 var ShapeStyle = {
-	fill: '#efefef',
+	fill: '#DCDCDC',
 	stroke: 'black',
 	strokeWidth: 0.5,
 	shadowColor: 'black',
-	shadowBlur: 10,
-	shadowOffset: { x: 10, y: 10 },
-	shadowOpacity: 0.5,
-	opacity: 0.9
+	shadowBlur: 15,
+	shadowOffset: { x: 5, y: 5 },
+	shadowOpacity: 0.4,
+	opacity: 0.98
 }
 var ShapeText = {
 	width: ShapeWidth,
-	fontSize: 24,
+	fontSize: 20,
 	fontFamily: 'Calibri',
 	fill: 'black',
 	align: 'center',
@@ -31,12 +31,14 @@ var shapecount = 0;
 var arrP = 0;
 var arr = [];
 var vf = 0;
-
+var subid = null;
+var topid = null;
 var stage = new Konva.Stage({
 	container: 'flowchartdiv',
 	width: StageWidth,
 	height: StageHeight
 });
+
 
 var gridLayer = new Konva.Layer();
 var layer = new Konva.Layer();
@@ -75,7 +77,7 @@ function makeTA(grp) {
 	textarea.style.width = textnode.width() - textnode.padding() + 5 + 'px';
 	textarea.style.height = shapenode.height() - textnode.padding() + 5 + 'px';
 	textarea.style.fontSize = textnode.fontSize() + 'px';
-	textarea.style.border = 'solid 1px';
+	textarea.style.border = 'none'; //'solid 1px';
 	textarea.style.padding = '5px';
 	textarea.style.margin = '0px';
 	textarea.style.overflow = 'hidden';
@@ -86,28 +88,8 @@ function makeTA(grp) {
 	textarea.style.fontFamily = textnode.fontFamily();
 	textarea.style.transformOrigin = 'left top';
 	textarea.style.textAlign = textnode.align();
-
 	textarea.style.color = textnode.fill();
 	rotation = textnode.rotation();
-	var transform = '';
-	if (rotation) {
-		transform += 'rotateZ(' + rotation + 'deg)';
-	}
-
-	var px = 0;
-	// also we need to slightly move textarea on firefox
-	// because it jumps a bit
-	var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-	if (isFirefox) {
-		px += 2 + Math.round(textnode.fontSize() / 20);
-	}
-	transform += 'translateY(-' + px + 'px)';
-	textarea.style.transform = transform;
-	// reset height
-	textarea.style.height = 'auto';
-	// after browsers resized it we can set actual value
-	textarea.style.height = textarea.scrollHeight + 3 + 'px';
-	textarea.focus();
 
 	function removeTextarea() {
 		textarea.parentNode.removeChild(textarea);
@@ -136,21 +118,47 @@ function makeTA(grp) {
 		textarea.style.width = newWidth + 'px';
 	}
 
+	function setTextNodeWidth(nW) {
+		if (grp.name() == "SRRgrp") {
+			grp.width(nW);
+			shapenode.width(nW);
+			textnode.width(nW);
+			//repositioning anchors
+			grp.getChildren()[2].x(grp.width() / 2);
+			grp.getChildren()[4].x(grp.width() / 2);
+			grp.getChildren()[5].x(grp.width());
+		}
+	}
 	textarea.addEventListener('keydown', function (e) {
 		if (e.keyCode === 13 && !e.shiftKey) {
 			textnode.text(textarea.value);
 			removeTextarea();
 		}
 		// on esc do not set value back to node
-		if (e.keyCode === 27) {
+		else if (e.keyCode === 27) {
 			removeTextarea();
 		}
-	});
+		else {
+			var txtlen = textarea.value.length;
+			var blockadder;
+			if (txtlen > 15) {
+				blockadder = Math.min(parseInt((txtlen - 14) / 3) * 30, 90);
+				setTextareaWidth(ShapeWidth + blockadder);
+				setTextNodeWidth(ShapeWidth + blockadder);
+				layer.draw();
+			}
+			if (txtlen > 52) {
+				shapenode.stroke("#DC143C");
+				shapenode.strokeWidth(2);
+				layer.draw();
+			}
+			if (txtlen < 52) {
+				shapenode.stroke("black");
+				shapenode.strokeWidth(0.5);
+				layer.draw();
+			}
+		}
 
-	textarea.addEventListener('keydown', function (e) {
-		scale = textnode.getAbsoluteScale().x;
-		setTextareaWidth(textnode.width() * scale);
-		textarea.style.width = 'auto';
 	});
 
 	function handleOutsideClick(e) {
@@ -162,6 +170,9 @@ function makeTA(grp) {
 	setTimeout(() => {
 		window.addEventListener('click', handleOutsideClick);
 	});
+
+	textarea.focus();
+
 }
 
 function newProcess(placeX, placeY, txty, anchors) {
@@ -189,12 +200,12 @@ function newProcess(placeX, placeY, txty, anchors) {
 	grp.add(txt);
 	grp.on('mouseover', function () {
 		document.body.style.cursor = 'pointer';
-		box.strokeWidth(2);
+		box.opacity(1);
 		layer.draw();
 	});
 	grp.on('mouseout', function () {
 		document.body.style.cursor = 'default';
-		box.strokeWidth(0.5);
+		box.opacity(0.9);
 		layer.draw();
 	});
 	grp.on('dragend', () => {
@@ -252,7 +263,7 @@ function newTerminal(placeX, placeY, txty, anchors) {
 	grp.add(txt);
 	grp.on('mouseover', function () {
 		document.body.style.cursor = 'pointer';
-		box.strokeWidth(2);
+		box.strokeWidth(1);
 		layer.draw();
 	});
 	grp.on('mouseout', function () {
@@ -292,35 +303,39 @@ function newTerminal(placeX, placeY, txty, anchors) {
 }
 
 function newConnector(placeX, placeY) {
+	var grp = new Konva.Group({
+		x: placeX,
+		y: placeY,
+		draggable: true,
+		name: "Cgrp"
+	});
 	var circle = new Konva.Circle(ShapeStyle);
-	circle.name("objC");
-	circle.x(placeX);
-	circle.y(placeY);
 	circle.radius(blockSnapSize / 2);
-	circle.draggable(true);
-	layer.add(circle);
-	circle.on('mouseover', function () {
+	grp.add(circle);
+	newAnchor(0, 0, grp);
+	grp.on('mouseover', function () {
 		document.body.style.cursor = 'pointer';
+		circle.opacity(1);
+		layer.draw();
 	});
-	circle.on('mouseout', function () {
+	grp.on('mouseout', function () {
 		document.body.style.cursor = 'default';
+		circle.opacity(0.9);
+		layer.draw();
 	});
-
-	circle.on('dragend', () => {
+	grp.on('dragend', () => {
 		setshapepos();
 	});
-	circle.on('dragmove', () => {
-		circle.position({
-			x: snap(circle.x()),
-			y: snap(circle.y())
+	grp.on('dragmove', () => {
+		grp.position({
+			x: snap(grp.x()),
+			y: snap(grp.y())
 		});
 		layer.batchDraw();
 	});
 
+	layer.add(grp);
 	layer.draw();
-
-	shapecount++;
-	updateShapeC();
 }
 
 function newAnchor(placeX, placeY, grp) {
@@ -371,6 +386,18 @@ function newAnchor(placeX, placeY, grp) {
 	});
 
 	anchor.on('click', function () {
+		console.log(anchor.name());
+		if(anchor.name().includes("arrstart")){
+			anchor.stroke("red");
+			layer.draw();
+			console.log("hi1");
+			setTimeout(() => {
+				anchor.stroke("black");
+			layer.draw();console.log("hi2")
+			}, 1000);
+			return;
+		}
+
 		startarrow = true;
 		pos.x = anchor.x() + grp.x();
 		pos.y = anchor.y() + grp.y();
@@ -595,31 +622,67 @@ function saveBoard() {
 
 	var topic = document.getElementById('dropdown').value;
 	var sbtopic = document.getElementById('sbtopic').value;
-
-	$.ajax({
-		type: 'POST',
-		url: '/newsubtopic',
-		data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, codearr: codearr, psuedoarr: psuedoarr }
-	})
+	console.log(subid);
+	if (subid != null) {
+		$.ajax({
+			type: 'POST',
+			url: '/updatesubtopic',
+			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, sbtopicID: subid, codearr: codearr, psuedoarr: psuedoarr }
+		})
 		.done(function (data) {
-			var newLi = document.createElement("li");
-			newLi.id = data.subtopicid;
-			var newA = document.createElement("a");
-			newA.onclick = loadBoard(newA);
-			$(newA).addClass("nav-link");
-			newLi.appendChild(newA);
-			var newContent = document.createTextNode(sbtopic);
-			newA.appendChild(newContent);
-			var newButton = document.createElement("button");
-			$(newButton).addClass("btn btn-sm btn-outline-light");
-			newButton.onclick = loadBoard(newButton);
-			newLi.appendChild(newButton);
-			var newI = document.createElement("i");
-			$(newI).addClass("fa fa-trash-alt text-warning");
-			newButton.appendChild(newI);
-			//alert(newLi);
-			$('#subtopicslist').append(newLi);
+			var title = $('#dropdown option:selected').text() + "\\: " + sbtopic;
+			$("#subTopicName").text(title);
+
+			subid = data.subtopicid;
+			topid = topic;
+			console.log("Subdated");
+			Swal.fire({
+				title: 'Updated!',
+				icon: 'success',
+				confirmButtonText: 'Nice'
+			});
 		});
+	}
+	else {
+		$.ajax({
+			type: 'POST',
+			url: '/newsubtopic',
+			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, codearr: codearr, psuedoarr: psuedoarr }
+		})
+			.done(function (data) {
+				var newLi = document.createElement("li");
+				newLi.id = data.subtopicid;
+				var newA = document.createElement("a");
+				newA.onclick = loadBoard(newA);
+				$(newA).addClass("nav-link");
+				newLi.appendChild(newA);
+				var newContent = document.createTextNode(sbtopic);
+				newA.appendChild(newContent);
+				var newButton = document.createElement("button");
+				$(newButton).addClass("btn btn-sm btn-outline-light");
+				newButton.onclick = loadBoard(newButton);
+				newLi.appendChild(newButton);
+				var newI = document.createElement("i");
+				$(newI).addClass("fa fa-trash-alt text-warning");
+				newButton.appendChild(newI);
+				//alert(newLi);
+				$('#' + topid + " .subtopicslist").append(newLi);
+
+				var title = $('#dropdown option:selected').text() + "\\: " + sbtopic;
+				$("#subTopicName").text(title);
+
+				subid = data.subtopicid;
+				topid = topic;
+				console.log("Subadded");
+				Swal.fire({
+					title: 'Sub Saved!',
+					icon: 'success',
+					confirmButtonText: 'Nice'
+				});
+			});
+	}
+
+
 }
 
 function loadBoard(item) {
@@ -632,6 +695,8 @@ function loadBoard(item) {
 		data: { topicID: topid, sbtopicID: subid }
 	})
 		.done(function (data) {
+			document.getElementById('dropdown').value = topid;
+			document.getElementById('sbtopic').value = data.subtop.name;
 			layer.destroyChildren();
 			$('#codeDiv').empty();
 			$('#psuedoDiv').empty();
@@ -711,7 +776,12 @@ function deletesub(item) {
 		data: { subtopicID: subid, topicID: topid }
 	})
 		.done(function (data) {
-			alert("done del");
+			Swal.fire({
+				title: 'Deleted Sub!',
+				icon: 'success',
+				showConfirmButton: false,
+				timer: 1000
+			});
 			$(item).parent().remove();
 
 		});
@@ -719,15 +789,33 @@ function deletesub(item) {
 
 function deletetopic(item) {
 	topid = $(item).parent().attr('id');
-	$.ajax({
-		method: 'POST',
-		url: '/deltopic',
-		data: { topicID: topid }
-	})
-		.done(function (data) {
-			alert("done del");
-			$(item).parent().remove();
-		});
+
+	Swal.fire({
+		title: 'Are you sure?',
+		text: "All subtopics will be deleted too!",
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonText: 'Yes, delete it!'
+	  }).then((result) => {
+		if (result.value) {
+			$.ajax({
+				method: 'POST',
+				url: '/deltopic',
+				data: { topicID: topid }
+			})
+				.done(function (data) {
+					Swal.fire({
+						title: 'Deleted Topic!',
+						icon: 'success',
+						showConfirmButton: false,
+						timer: 1000
+					});
+					$(item).parent().remove();
+				});
+		}
+	  })
+
+	
 }
 
 function snap(num) {
@@ -751,8 +839,7 @@ function stageinit(gridLayer, layer) {
 
 	var menuNode = document.getElementById('menu');
 	$('#delete-button').on('click', () => {
-		if (currentShape.getClassName() === 'Circle') { currentShape.destroy(); }
-		else if (currentShape.getClassName() === 'Arrow') {
+		if (currentShape.getClassName() === 'Arrow') {
 			if (currentShape.name() != "objArr") {
 				var nmarr = currentShape.name().split(' ');
 				var anc1 = layer.findOne("#" + nmarr[0]);
@@ -834,22 +921,23 @@ function stageinit(gridLayer, layer) {
 	});
 
 	$("#viewmode").click(() => {
+		//View ON
 		if (vf == 0) {
 			vf = 1;
 			$('#nxt').prop('disabled', false);
 			$('#prv').prop('disabled', false);
 			$(".rowboxdel").hide();
 			//Fullscreen on
-			if ((document.fullScreenElement && document.fullScreenElement !== null) ||
-				(!document.mozFullScreen && !document.webkitIsFullScreen)) {
-				if (document.documentElement.requestFullScreen) {
-					document.documentElement.requestFullScreen();
-				} else if (document.documentElement.mozRequestFullScreen) {
-					document.documentElement.mozRequestFullScreen();
-				} else if (document.documentElement.webkitRequestFullScreen) {
-					document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-				}
-			}
+			/* 	if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+					(!document.mozFullScreen && !document.webkitIsFullScreen)) {
+					if (document.documentElement.requestFullScreen) {
+						document.documentElement.requestFullScreen();
+					} else if (document.documentElement.mozRequestFullScreen) {
+						document.documentElement.mozRequestFullScreen();
+					} else if (document.documentElement.webkitRequestFullScreen) {
+						document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+					}
+				} */
 			arrP = 0;
 			layer.getChildren().forEach((node) => {
 				if (node.name() == "SRRgrp") {
@@ -868,15 +956,16 @@ function stageinit(gridLayer, layer) {
 			updateShapeC();
 
 		}
+		//View OFF
 		else {
 			vf = 0;
-			if (document.cancelFullScreen) {
+			/* if (document.cancelFullScreen) {
 				document.cancelFullScreen();
 			} else if (document.mozCancelFullScreen) {
 				document.mozCancelFullScreen();
 			} else if (document.webkitCancelFullScreen) {
 				document.webkitCancelFullScreen();
-			}
+			} */
 			arr[arrP].getChildren()[0].fill("#efefef");
 			$(".codetexty:eq(" + arrP + ")").css("background", "#efefef");
 			$(".psuedotexty:eq(" + arrP + ")").css("background", "#efefef");
@@ -895,12 +984,16 @@ function stageinit(gridLayer, layer) {
 	$("#nxt").click(() => {
 		if (arrP < arr.length - 1) {
 			arr[arrP].getChildren()[0].fill("#efefef");
-			$(".codetexty:eq(" + arrP % shapecount + ")").css("background", "#efefef");
-			$(".psuedotexty:eq(" + arrP % shapecount + ")").css("background", "#efefef");
+			var textpointer = (arr[arrP].y() + 60) / 90 - 1;
+			console.log(textpointer + " / " + arr[arrP].y());
+			$(".codetexty:eq(" + textpointer + ")").css("background", "#efefef");
+			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#efefef");
 			arrP++;
 			arr[arrP].getChildren()[0].fill("#a2c1f2");
-			$(".codetexty:eq(" + arrP % shapecount + ")").css("background", "#a2c1f2");
-			$(".psuedotexty:eq(" + arrP % shapecount + ")").css("background", "#a2c1f2");
+			textpointer = (arr[arrP].y() + 60) / 90 - 1;
+			console.log(textpointer + " / " + arr[arrP].y());
+			$(".codetexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
+			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			layer.draw();
 			updateShapeC();
 		}
@@ -908,13 +1001,15 @@ function stageinit(gridLayer, layer) {
 
 	$("#prv").click(() => {
 		if (arrP > 0) {
+			var textpointer = (arr[arrP].y() + 60) / 90 - 1;
 			arr[arrP].getChildren()[0].fill("#efefef");
-			$(".codetexty:eq(" + arrP + ")").css("background", "#efefef");
-			$(".psuedotexty:eq(" + arrP + ")").css("background", "#efefef");
+			$(".codetexty:eq(" + textpointer + ")").css("background", "#efefef");
+			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#efefef");
 			arrP--;
 			arr[arrP].getChildren()[0].fill("#a2c1f2");
-			$(".codetexty:eq(" + arrP + ")").css("background", "#a2c1f2");
-			$(".psuedotexty:eq(" + arrP + ")").css("background", "#a2c1f2");
+			textpointer = (arr[arrP].y() + 60) / 90 - 1;
+			$(".codetexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
+			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			layer.draw();
 			updateShapeC();
 

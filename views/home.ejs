@@ -49,17 +49,18 @@
 			<div class="textcol">
 				<ul class="flex-column list-group" id="codeDiv">
 					<div class="row-box"></div>
-<%for(i=0;i<=7;i++){%>
+					<%for(i=0;i<=8;i++){%>
 					<li class="list-group-item p-0" onfocusin="rowfocus(this)">
 						<div class="form-control invisibile-texty codetexty" contenteditable="true"></div>
 						<div class="row-box"></div>
 						<div class="rowboxdel">
-							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
+								onclick="delrowbox(this)">
 								<i class="fa fa-trash-alt"></i>
 							</button>
 						</div>
 					</li>
-				<% } %> 
+					<% } %>
 				</ul>
 			</div>
 		</div>
@@ -105,17 +106,18 @@
 			<div class="textcol">
 				<ul class="list-group" id="psuedoDiv">
 					<div class="row-box"></div>
-<%for(i=0;i<=7;i++){%>
+					<%for(i=0;i<=8;i++){%>
 					<li class="list-group-item p-0" onfocusin="rowfocus(this)">
 						<div class="form-control invisibile-texty psuedotexty" contenteditable="true"></div>
 						<div class="row-box"></div>
 						<div class="rowboxdel">
-							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
+								onclick="delrowbox(this)">
 								<i class="fa fa-trash-alt"></i>
 							</button>
 						</div>
 					</li>
-				<% } %> 
+					<% } %>
 				</ul>
 			</div>
 		</div>
@@ -155,8 +157,7 @@
 			<div class="collapse navbar-collapse sidebar">
 				<ul class="flex-column navbar-nav sidebarlist" id="mytopicslist">
 					<li class="nav-item">
-						<button type="button" class="btn btn-outline-light" data-toggle="modal"
-							data-target="#newtopicModal">New Topic</button>
+						<button type="button" class="btn btn-outline-light" id="newTopicbtn">New Topic</button>
 					</li>
 					<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
 					<li class="nav-item parent" id="<%=topic._id%>">
@@ -169,7 +170,7 @@
 						<button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
 							<i class="fa fa-trash-alt text-danger"></i>
 						</button>
-						<ul class="flex-column navbar-nav sub-topic child sidebarlist" id="subtopicslist">
+						<ul class="flex-column navbar-nav sub-topic child sidebarlist subtopicslist">
 							<%topic.subtopics.forEach(function(subtopic){ %>
 							<li id="<%=subtopic._id%>">
 								<a onclick="loadBoard(this)" class="nav-link" role="button">
@@ -187,32 +188,6 @@
 			</div>
 		</nav>
 	</aside>
-
-	<%# New Topic Modal %>
-	<div class="modal fade" id="newtopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-		aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLongTitle">New Topic</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form action="/newtopic" method="post">
-						<div class="form-group">
-							<input type="text" class="form-control" name="topic" placeholder="New Topic"
-								required="required">
-						</div>
-						<div class="form-group">
-							<button type="submit" class="btn btn-info btn-lg btn-block">Add</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<%# Save Subtopic modal %>
 	<div class="modal fade" id="savemodal" tabindex="-1" role="dialog" aria-labelledby="savemodal" aria-hidden="true">
@@ -265,10 +240,10 @@
 	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 	crossorigin="anonymous"></script>
 <script src="https://unpkg.com/konva@4.0.14/konva.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript" src="/konvascript.js"></script>
 <script>
 	currentRow = 0;
-
 	$('.addRowBtn1').click(function () {
 		$('#codeDiv').append(`<li class="list-group-item p-0" onfocusin="rowfocus(this)">
 						<div class="form-control invisibile-texty codetexty" contenteditable="true"></div>
@@ -281,7 +256,7 @@
 					</li>`);
 
 	});
-	
+
 	$('.addRowBtn2').click(function () {
 		$('#psuedoDiv').append(`<li class="list-group-item p-0" onfocusin="rowfocus(this)">
 						<div class="form-control invisibile-texty psuedotexty" contenteditable="true"></div>
@@ -293,8 +268,8 @@
 						</div>
 					</li>`);
 	});
-	
-	function addstageheight(){
+
+	function addstageheight() {
 		StageHeight = StageHeight + ShapeHeight * 2;
 		setstageheight();
 	}
@@ -308,6 +283,67 @@
 	$('.parent').click(function () {
 		$(this).siblings('.parent').find('ul').slideUp();
 		$(this).find('ul').slideToggle();
+	});
+
+
+	$('#newTopicbtn').click(function () {
+		Swal.fire({
+			title: 'Name ',
+			input: 'text',
+			showCancelButton: true,
+			confirmButtonText: 'Add topic',
+			showLoaderOnConfirm: true,
+			allowOutsideClick: () => !Swal.isLoading(),
+			inputValidator: (value) => {
+				if (!value) {
+					return 'You need to write something!'
+				}
+			},
+			preConfirm: (result) => {
+				return $.ajax({
+					type: 'POST',
+					url: '/newtopic',
+					data: { topic: result.value }
+				}).done(function (data) {
+					if (data.error) {
+						return data;
+					}
+					else {
+						$('#mytopicslist').append(`<li class="nav-item parent" id="${data.topicid}">
+						<a class="nav-link" role="button">
+							${data.topictitle}
+						</a>
+						<button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
+							<i class="fa fa-trash-alt text-danger"></i>
+						</button>
+						<ul class="flex-column navbar-nav sub-topic child sidebarlist subtopicslist">
+						</ul>
+					</li>`);
+						return data;
+					}
+				});
+			}
+			,
+		}).then(result => {
+			console.log(result);
+			if (result.value.error) {
+				Swal.fire({
+					title: `${result.value.error}`,
+					icon: 'error',
+					showConfirmButton: false,
+					timer: 1000
+				});
+			}
+			else {
+				Swal.fire({
+					title: 'Topic Added!',
+					icon: 'success',
+					showConfirmButton: false,
+					timer: 1000
+				});
+			}
+		});
+
 	});
 
 	$('.slider').change(function () {

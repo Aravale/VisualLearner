@@ -5,9 +5,9 @@ var express = require('express'),
 	passport = require('passport'),
 	flash = require("connect-flash"),
 	LocalStrategy = require('passport-local'),
-	User = require('./models/user');
+	{User} = require('./models/user');
 
-var indexRoutes = require('./routes/index');
+var indexRoutes = require('./routes/routes');
 //App Config
 mongoose.connect('mongodb://localhost:27017/TestDB', {
 	useNewUrlParser: true,
@@ -33,14 +33,24 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(function (req, res, next) {
-	res.locals.currentUser = req.user;
+	if (req.user) {
+		res.locals.currentUser={
+			_id:req.user._id,
+			first_name:req.user.first_name,
+			last_name:req.user.last_name,
+			username:req.user.username,
+			topics:req.user.topics
+		}
+	}
+	else{
+		res.locals.currentUser=null;
+	}
 	res.locals.error = req.flash("error");
 	res.locals.success = req.flash("success");
 	next();
 });
 
 app.use(indexRoutes);
-
 
 app.listen(3000, function () {
 	console.log('server is running');
