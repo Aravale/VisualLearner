@@ -29,7 +29,7 @@ const Decilength = 2 * (blockSnapSize / Math.sqrt(2));
 var scrollerror = 0;
 var shapecount = 0;
 var arrP = 0;
-var arr = [];
+var VShapesArray = [];
 var vf = 0;
 var subid = null;
 var topid = null;
@@ -119,7 +119,7 @@ function makeTA(grp) {
 	}
 
 	function setTextNodeWidth(nW) {
-		if (grp.name() == "SRRgrp") {
+		if (grp.name() == "TerminalGrp") {
 			grp.width(nW);
 			shapenode.width(nW);
 			textnode.width(nW);
@@ -181,7 +181,7 @@ function newProcess(placeX, placeY, txty, anchors) {
 		y: placeY,
 		draggable: true,
 		//dragBoundFunc: dragfunc,
-		name: "SRgrp"
+		name: "ProcessGrp"
 	});
 
 	var box = new Konva.Rect(ShapeStyle);
@@ -244,7 +244,7 @@ function newTerminal(placeX, placeY, txty, anchors) {
 		x: placeX,
 		y: placeY,
 		draggable: true,
-		name: "SRRgrp"
+		name: "TerminalGrp"
 	});
 
 	var box = new Konva.Rect(ShapeStyle);
@@ -307,7 +307,7 @@ function newConnector(placeX, placeY) {
 		x: placeX,
 		y: placeY,
 		draggable: true,
-		name: "Cgrp"
+		name: "ConnectorGrp"
 	});
 	var circle = new Konva.Circle(ShapeStyle);
 	circle.radius(blockSnapSize / 2);
@@ -355,7 +355,9 @@ function newAnchor(placeX, placeY, grp) {
 		y: 0,
 	};
 	anchor.id("anc" + anchor._id);
-
+	if (grp.name() == "ConnectorGrp") {
+		anchor.name("ConAnc");
+	}
 	//Drag arrow with shape anchor
 	grp.on('dragmove', (e) => {
 		var nmarr = anchor.name().split(' ');
@@ -363,7 +365,6 @@ function newAnchor(placeX, placeY, grp) {
 			var arrow = layer.findOne("#" + nmarr[1]);
 			arrow.points([grp.x() + anchor.x(), grp.y() + anchor.y(), arrow.points()[2], arrow.points()[3]]);
 			arrow.moveToTop();
-			node.setAttr('hitStrokeWidth', 8);
 			layer.draw();
 		}
 		else if (nmarr[0] == "arrend") {
@@ -371,6 +372,24 @@ function newAnchor(placeX, placeY, grp) {
 			arrow.points([arrow.points()[0], arrow.points()[1], grp.x() + anchor.x(), grp.y() + anchor.y()]);
 			arrow.moveToTop();
 			layer.draw();
+		}
+		else if (nmarr[0] == "ConAnc") {
+			nmarr.forEach((ArrPoint, index) => {
+				if (ArrPoint.substring(0, 5) == "Arrow") {
+					if (nmarr[index - 1] == "Astart") {
+						var arrow = layer.findOne("#" + ArrPoint);
+						arrow.points([snap(grp.x()), snap(grp.y()), arrow.points()[2], arrow.points()[3]]);
+						arrow.moveToTop();
+						layer.draw();
+					}
+					else {
+						var arrow = layer.findOne("#" + ArrPoint);
+						arrow.points([arrow.points()[0], arrow.points()[1], snap(grp.x()), snap(grp.y())]);
+						arrow.moveToTop();
+						layer.draw();
+					}
+				}
+			})
 		}
 	});
 
@@ -386,14 +405,14 @@ function newAnchor(placeX, placeY, grp) {
 	});
 
 	anchor.on('click', function () {
-		console.log(anchor.name());
-		if(anchor.name().includes("arrstart")){
+
+		//If anchor already has arrow on it prevent another
+		if (anchor.name().includes("arrstart") || anchor.name().includes("Astart") || anchor.name().includes("arrend")) {
 			anchor.stroke("red");
 			layer.draw();
-			console.log("hi1");
 			setTimeout(() => {
 				anchor.stroke("black");
-			layer.draw();console.log("hi2")
+				layer.draw();
 			}, 1000);
 			return;
 		}
@@ -402,20 +421,22 @@ function newAnchor(placeX, placeY, grp) {
 		pos.x = anchor.x() + grp.x();
 		pos.y = anchor.y() + grp.y();
 		stage.container().style.cursor = 'crosshair';
-		anchor.name("arrstart");
 		if (startarrow && drawingarrow) {
+
 			drawingarrow = false;
 			startarrow = false;
 			stage.container().style.cursor = 'default';
-			anchor.name("arrend");
 			var node = layer.getChildren().toArray().length - 1;
 			var arrow = layer.getChildren()[node];
-			anchor.addName("arr" + arrow._id);
+			(anchor.name().includes("ConAnc")) ? anchor.addName("Aend") : anchor.name("arrend");
+			anchor.addName("Arrow" + arrow._id);
 			arrow.addName("anc" + anchor._id);
 			arrow.points([arrow.points()[0], arrow.points()[1], pos.x, pos.y]);
 			layer.draw();
 		}
+
 		if (startarrow && !drawingarrow) {
+			(anchor.name().includes("ConAnc")) ? anchor.addName("Astart") : anchor.name("arrstart");
 			var arrow = new Konva.Arrow({
 				points: [snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)],
 				pointerLength: 10,
@@ -426,10 +447,10 @@ function newAnchor(placeX, placeY, grp) {
 				name: 'objArr',
 				hitStrokeWidth: 0,
 			});
-			arrow.id("arr" + arrow._id);
+			arrow.id("Arrow" + arrow._id);
 			arrow.name("anc" + anchor._id);
 			layer.add(arrow);
-			anchor.addName("arr" + arrow._id);
+			anchor.addName("Arrow" + arrow._id);
 			arrow.points([pos.x, pos.y, pos.x, pos.y]);
 			layer.draw();
 			drawingarrow = true;
@@ -443,7 +464,7 @@ function newDecision(placeX, placeY, txty, anchors) {
 		x: placeX,
 		y: placeY,
 		draggable: true,
-		name: 'SDgrp'
+		name: 'DecisionGrp'
 	});
 
 	var box = new Konva.Rect(ShapeStyle);
@@ -507,7 +528,7 @@ function newIO(placeX, placeY, txty, anchors) {
 		x: placeX,
 		y: placeY,
 		draggable: true,
-		name: 'SPgrp'
+		name: 'IOGrp'
 	});
 
 	var box = new Konva.Rect(ShapeStyle);
@@ -582,29 +603,33 @@ function saveBoard() {
 	layer.getChildren().forEach(function (node) {
 
 		if (node.getClassName() === "Group") {
-			var anchorsArr = []
-			node.getChildren().forEach((subnode, index) => { if (index > 1 && index < 6) { anchorsArr.push([subnode.name(), subnode.id()]) } });
-			var shape = {
-				SName: node.name(),
-				x: node.x(),
-				y: node.y(),
-				shapeText: node.getChildren()[1].text(),
-				anchors: anchorsArr
+			var anchorsArr = [];
+			if (node.name() == "ConnectorGrp") {
+				anchorsArr.push([node.getChildren()[1].name(), node.getChildren()[1].id()]);
+				var shape = {
+					SName: node.name(),
+					x: node.x(),
+					y: node.y(),
+					anchors: anchorsArr
+				}
 			}
+			else {
+				node.getChildren().forEach((subnode, index) => { if (index > 1 && index < 6) { anchorsArr.push([subnode.name(), subnode.id()]) } });
+				var shape = {
+					SName: node.name(),
+					x: node.x(),
+					y: node.y(),
+					shapeText: node.getChildren()[1].text(),
+					anchors: anchorsArr
+				}
+			}
+
 			Shapes.push(shape);
 		}
 		else if (node.getClassName() === "Arrow") {
 			var shape = {
 				AName: [node.name(), node.id()],
 				points: node.points()
-			}
-			Shapes.push(shape);
-		}
-		else {
-			var shape = {
-				SName: node.name(),
-				x: node.x(),
-				y: node.y()
 			}
 			Shapes.push(shape);
 		}
@@ -629,19 +654,19 @@ function saveBoard() {
 			url: '/updatesubtopic',
 			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, sbtopicID: subid, codearr: codearr, psuedoarr: psuedoarr }
 		})
-		.done(function (data) {
-			var title = $('#dropdown option:selected').text() + "\\: " + sbtopic;
-			$("#subTopicName").text(title);
+			.done(function (data) {
+				var title = $('#dropdown option:selected').text() + "\\: " + sbtopic;
+				$("#subTopicName").text(title);
 
-			subid = data.subtopicid;
-			topid = topic;
-			console.log("Subdated");
-			Swal.fire({
-				title: 'Updated!',
-				icon: 'success',
-				confirmButtonText: 'Nice'
+				subid = data.subtopicid;
+				topid = topic;
+				console.log("Subdated");
+				Swal.fire({
+					title: 'Updated!',
+					icon: 'success',
+					confirmButtonText: 'Nice'
+				});
 			});
-		});
 	}
 	else {
 		$.ajax({
@@ -729,20 +754,20 @@ function loadBoard(item) {
 			setstageheight();
 			data.subtop.flowchart.shapes.forEach(node => {
 				switch (node.SName) {
-					case "SRgrp":
+					case "ProcessGrp":
 						newProcess(node.x, node.y, node.shapeText, node.anchors);
 						break;
-					case "SRRgrp":
+					case "TerminalGrp":
 						newTerminal(node.x, node.y, node.shapeText, node.anchors);
 						break;
-					case "SDgrp":
+					case "DecisionGrp":
 						newDecision(node.x, node.y, node.shapeText, node.anchors);
 						break;
-					case "SPgrp":
+					case "IOGrp":
 						newIO(node.x, node.y, node.shapeText, node.anchors);
 						break;
-					case "objC":
-						newConnector(node.x, node.y);
+					case "ConnectorGrp":
+						newConnector(node.x, node.y, node.anchors);
 						break;
 					default:
 						break;
@@ -796,7 +821,7 @@ function deletetopic(item) {
 		icon: 'warning',
 		showCancelButton: true,
 		confirmButtonText: 'Yes, delete it!'
-	  }).then((result) => {
+	}).then((result) => {
 		if (result.value) {
 			$.ajax({
 				method: 'POST',
@@ -813,9 +838,9 @@ function deletetopic(item) {
 					$(item).parent().remove();
 				});
 		}
-	  })
+	})
 
-	
+
 }
 
 function snap(num) {
@@ -853,12 +878,12 @@ function stageinit(gridLayer, layer) {
 				if (index > 1 && index < 6) {
 					var nmarr = subnode.name().split(' ');
 					if (nmarr[0] == "arrend" || nmarr[0] == "arrstart") {
-						var arr = layer.findOne("#" + nmarr[1]);
-						var nmarr2 = arr.name().split(' ');
+						var ArrowTo = layer.findOne("#" + nmarr[1]);
+						var nmarr2 = ArrowTo.name().split(' ');
 						var anc1 = layer.findOne("#" + nmarr2[0]);
 						var anc2 = layer.findOne("#" + nmarr2[1]);
 						anc1.name("anc"); anc2.name("anc");
-						arr.destroy();
+						ArrowTo.destroy();
 					}
 				}
 			});
@@ -872,8 +897,7 @@ function stageinit(gridLayer, layer) {
 
 	$('#mvfrnt-button').on('click', () => {
 
-		if (currentShape.getClassName() === 'Circle') { currentShape.moveToTop(); }
-		else if (currentShape.getClassName() === 'Arrow') { currentShape.moveToTop(); }
+		if (currentShape.getClassName() === 'Arrow') { currentShape.moveToTop(); }
 		else { currentShape.getParent().moveToTop(); }
 		layer.draw();
 
@@ -909,7 +933,17 @@ function stageinit(gridLayer, layer) {
 		// prevent default behavior
 		e.evt.preventDefault();
 		if (e.target === stage) {
-			// if we are on empty place of the stage we will do nothing
+			if (startarrow && drawingarrow) {
+				startarrow = false;
+				drawingarrow = false;
+				document.body.style.cursor = 'default';
+				var node = layer.getChildren().toArray().length - 1;
+				var arrow = layer.getChildren()[node];
+				var anc = layer.findOne("#" + arrow.name());
+				anc.name("anc")
+				arrow.destroy();
+				layer.draw();
+			}
 			return;
 		}
 		currentShape = e.target;
@@ -940,10 +974,10 @@ function stageinit(gridLayer, layer) {
 				} */
 			arrP = 0;
 			layer.getChildren().forEach((node) => {
-				if (node.name() == "SRRgrp") {
+				if (node.name() == "TerminalGrp") {
 					var txt = node.getChildren()[1];
 					if (txt.text() == "Start") {
-						arr.push(node);
+						VShapesArray.push(node);
 						NextNode(node);
 					}
 				}
@@ -951,7 +985,7 @@ function stageinit(gridLayer, layer) {
 			$(".codetexty:eq(" + arrP + ")").css("background", "#a2c1f2");
 			$(".psuedotexty:eq(" + arrP + ")").css("background", "#a2c1f2");
 
-			arr[arrP].getChildren()[0].fill("#a2c1f2");
+			VShapesArray[arrP].getChildren()[0].fill("#a2c1f2");
 			layer.draw();
 			updateShapeC();
 
@@ -966,12 +1000,12 @@ function stageinit(gridLayer, layer) {
 			} else if (document.webkitCancelFullScreen) {
 				document.webkitCancelFullScreen();
 			} */
-			arr[arrP].getChildren()[0].fill("#efefef");
+			VShapesArray[arrP].getChildren()[0].fill("#efefef");
 			$(".codetexty:eq(" + arrP + ")").css("background", "#efefef");
 			$(".psuedotexty:eq(" + arrP + ")").css("background", "#efefef");
 			$(".rowboxdel").show();
 			layer.draw();
-			arr = [];
+			VShapesArray = [];
 			$('#nxt').prop('disabled', true);
 			$('#prv').prop('disabled', true);
 			arrP = 0;
@@ -982,18 +1016,24 @@ function stageinit(gridLayer, layer) {
 	});
 
 	$("#nxt").click(() => {
-		if (arrP < arr.length - 1) {
-			arr[arrP].getChildren()[0].fill("#efefef");
-			var textpointer = (arr[arrP].y() + 60) / 90 - 1;
-			console.log(textpointer + " / " + arr[arrP].y());
+		if (arrP < VShapesArray.length - 1) {
+			VShapesArray[arrP].getChildren()[0].fill("#efefef");
+			var textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			console.log(textpointer + " / " + VShapesArray[arrP].y());
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#efefef");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#efefef");
 			arrP++;
-			arr[arrP].getChildren()[0].fill("#a2c1f2");
-			textpointer = (arr[arrP].y() + 60) / 90 - 1;
-			console.log(textpointer + " / " + arr[arrP].y());
+			VShapesArray[arrP].getChildren()[0].fill("#a2c1f2");
+			textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			console.log(textpointer + " / " + VShapesArray[arrP].y());
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
+			/* $('#codeDiv').animate({
+				scrollTop: $('#codeDiv li:nth-child('+textpointer+')').position().top
+			}, 'slow');
+			$('#psuedoDiv').animate({
+				scrollTop: $('#psuedoDiv li:nth-child('+textpointer+')').position().top,
+			}, 'slow'); */
 			layer.draw();
 			updateShapeC();
 		}
@@ -1001,13 +1041,13 @@ function stageinit(gridLayer, layer) {
 
 	$("#prv").click(() => {
 		if (arrP > 0) {
-			var textpointer = (arr[arrP].y() + 60) / 90 - 1;
-			arr[arrP].getChildren()[0].fill("#efefef");
+			var textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			VShapesArray[arrP].getChildren()[0].fill("#efefef");
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#efefef");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#efefef");
 			arrP--;
-			arr[arrP].getChildren()[0].fill("#a2c1f2");
-			textpointer = (arr[arrP].y() + 60) / 90 - 1;
+			VShapesArray[arrP].getChildren()[0].fill("#a2c1f2");
+			textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			layer.draw();
@@ -1050,22 +1090,30 @@ function NextNode(node) {
 	node.getChildren().forEach((subnode) => {
 		var nmarr = subnode.name().split(' ');
 		if (subnode.name().includes("loopend")) { return }
-		if (nmarr[0] == "arrstart") {
-			var arr1 = layer.findOne("#" + nmarr[1]);
-			var nmarr2 = arr1.name().split(' ');
+		if (subnode.name().includes("arrstart")) {
+			var ArrPoint = layer.findOne("#" + nmarr[1]);
+			var nmarr2 = ArrPoint.name().split(' ');
 			var nextNodeAnc = layer.findOne("#" + nmarr2[1]);
-
-			console.log(looped);
-			arr.forEach((node) => {
+			if (nextNodeAnc.name().includes("ConAnc")) {
+				if(nextNodeAnc.name().includes("Astart")){
+					var ConAncNameArr=nextNodeAnc.name().split(' ');
+					NextArrowID=ConAncNameArr[ConAncNameArr.indexOf("Astart")+1];
+					ArrPoint = layer.findOne("#" + NextArrowID);
+					nmarr2 = ArrPoint.name().split(' ');
+					nextNodeAnc = layer.findOne("#" + nmarr2[1]);
+				}
+			}
+			VShapesArray.forEach((node) => {
 				if (nextNodeAnc.getParent() == node) {
 					subnode.addName("loopend");
+					console.log("Loopend: "+nextNodeAnc.getParent())
 				}
 			});
 			if (looped == 0) {
-				arr.push(nextNodeAnc.getParent());
+				console.log("Pushed node:" +nextNodeAnc.getParent());
+				VShapesArray.push(nextNodeAnc.getParent());
 				NextNode(nextNodeAnc.getParent());
 			}
-
 		}
 	});
 }
@@ -1130,3 +1178,5 @@ function setshapepos() {
 stageinit(gridLayer, layer);
 newTerminal(placeX, placeY, "Start");
 setshapepos();
+
+//$('#codeDiv').scrollTop($('#codeDiv li:nth-child(10)').position().top);
