@@ -51,7 +51,8 @@ function updateShapeC() {
 	$("#shpN").text(arrP + vf + "/" + shapecount);
 }
 
-function makeTA(grp) {
+function makeTextInput() {
+	var grp=this;
 	var shapenode = grp.getChildren()[0];
 	var textnode = grp.getChildren()[1];
 
@@ -67,7 +68,7 @@ function makeTA(grp) {
 		y: stageBox.top + textPosition.y - scrollerror
 	};
 	// create textarea and style it
-	var textarea = document.createElement('textarea');
+	var textarea = document.createElement('input');
 	document.body.appendChild(textarea);
 
 	textarea.value = textnode.text();
@@ -77,7 +78,7 @@ function makeTA(grp) {
 	textarea.style.width = textnode.width() - textnode.padding() + 5 + 'px';
 	textarea.style.height = shapenode.height() - textnode.padding() + 5 + 'px';
 	textarea.style.fontSize = textnode.fontSize() + 'px';
-	textarea.style.border = 'none'; //'solid 1px';
+	textarea.style.border = 'solid 1px';//'none';
 	textarea.style.padding = '5px';
 	textarea.style.margin = '0px';
 	textarea.style.overflow = 'hidden';
@@ -119,14 +120,14 @@ function makeTA(grp) {
 	}
 
 	function setTextNodeWidth(nW) {
-		if (grp.name() == "TerminalGrp") {
+		if (grp.name() != "ConnectorGrp") {
 			grp.width(nW);
 			shapenode.width(nW);
 			textnode.width(nW);
 			//repositioning anchors
 			grp.getChildren()[2].x(grp.width() / 2);
 			grp.getChildren()[4].x(grp.width() / 2);
-			grp.getChildren()[5].x(grp.width());
+			(grp.name() == "IOGrp") ? grp.getChildren()[5].x(grp.width() - (blockSnapSize / 2)) : grp.getChildren()[5].x(grp.width());
 		}
 	}
 	textarea.addEventListener('keydown', function (e) {
@@ -175,413 +176,6 @@ function makeTA(grp) {
 
 }
 
-function newProcess(placeX, placeY, txty, anchors) {
-	var grp = new Konva.Group({
-		x: placeX,
-		y: placeY,
-		draggable: true,
-		//dragBoundFunc: dragfunc,
-		name: "ProcessGrp"
-	});
-
-	var box = new Konva.Rect(ShapeStyle);
-
-	box.width(ShapeWidth);
-	box.height(ShapeHeight);
-
-	var txt = new Konva.Text(ShapeText);
-	txt.width(ShapeWidth);
-	txt.height(ShapeHeight);
-	txt.text('int a')
-	if (txty != null) {
-		txt.text(txty);
-	}
-	grp.add(box);
-	grp.add(txt);
-	grp.on('mouseover', function () {
-		document.body.style.cursor = 'pointer';
-		box.opacity(1);
-		layer.draw();
-	});
-	grp.on('mouseout', function () {
-		document.body.style.cursor = 'default';
-		box.opacity(0.9);
-		layer.draw();
-	});
-	grp.on('dragend', () => {
-		setshapepos();
-	});
-	grp.on('dragmove', () => {
-		grp.position({
-			x: snap(grp.x()),
-			y: snap(grp.y())
-		});
-		layer.batchDraw();
-	});
-
-	grp.on('dblclick', function (e) {
-		makeTA(grp);
-	});
-
-	newAnchor(ShapeWidth / 2, 0, grp);//top
-	newAnchor(0, ShapeHeight / 2, grp);//left
-	newAnchor(ShapeWidth / 2, ShapeHeight, grp);//bot
-	newAnchor(ShapeWidth, ShapeHeight / 2, grp);//right
-
-
-	if (anchors != null) {
-		grp.getChildren().forEach((subnode, index) => { if (index > 1) { subnode.name(anchors[index - 2][0]); subnode.id(anchors[index - 2][1]); } });
-	}
-
-	layer.add(grp);
-	layer.draw();
-	shapecount++;
-	updateShapeC();
-}
-
-function newTerminal(placeX, placeY, txty, anchors) {
-	var grp = new Konva.Group({
-		x: placeX,
-		y: placeY,
-		draggable: true,
-		name: "TerminalGrp"
-	});
-
-	var box = new Konva.Rect(ShapeStyle);
-
-	box.cornerRadius(20);
-	box.width(ShapeWidth);
-	box.height(ShapeHeight);
-	var txt = new Konva.Text(ShapeText);
-	txt.width(ShapeWidth);
-	txt.height(ShapeHeight);
-	txt.text('Start/End');
-	if (txty != null) {
-		txt.text(txty);
-	}
-	grp.add(box);
-	grp.add(txt);
-	grp.on('mouseover', function () {
-		document.body.style.cursor = 'pointer';
-		box.strokeWidth(1);
-		layer.draw();
-	});
-	grp.on('mouseout', function () {
-		document.body.style.cursor = 'default';
-		box.strokeWidth(0.5);
-		layer.draw();
-	});
-
-	grp.on('dragend', () => {
-		setshapepos();
-	});
-	grp.on('dragmove', () => {
-		grp.position({
-			x: snap(grp.x()),
-			y: snap(grp.y())
-		});
-		layer.batchDraw();
-	});
-
-	grp.on('dblclick', function (e) {
-		makeTA(grp);
-	});
-
-	newAnchor(ShapeWidth / 2, 0, grp);//top
-	newAnchor(0, ShapeHeight / 2, grp);//left
-	newAnchor(ShapeWidth / 2, ShapeHeight, grp);//bot
-	newAnchor(ShapeWidth, ShapeHeight / 2, grp);//right
-
-	if (anchors != null) {
-		grp.getChildren().forEach((subnode, index) => { if (index > 1) { subnode.name(anchors[index - 2][0]); subnode.id(anchors[index - 2][1]); } });
-	}
-	layer.add(grp);
-	layer.draw();
-
-	shapecount++;
-	updateShapeC();
-}
-
-function newConnector(placeX, placeY) {
-	var grp = new Konva.Group({
-		x: placeX,
-		y: placeY,
-		draggable: true,
-		name: "ConnectorGrp"
-	});
-	var circle = new Konva.Circle(ShapeStyle);
-	circle.radius(blockSnapSize / 2);
-	grp.add(circle);
-	newAnchor(0, 0, grp);
-	grp.on('mouseover', function () {
-		document.body.style.cursor = 'pointer';
-		circle.opacity(1);
-		layer.draw();
-	});
-	grp.on('mouseout', function () {
-		document.body.style.cursor = 'default';
-		circle.opacity(0.9);
-		layer.draw();
-	});
-	grp.on('dragend', () => {
-		setshapepos();
-	});
-	grp.on('dragmove', () => {
-		grp.position({
-			x: snap(grp.x()),
-			y: snap(grp.y())
-		});
-		layer.batchDraw();
-	});
-
-	layer.add(grp);
-	layer.draw();
-}
-
-function newAnchor(placeX, placeY, grp) {
-	var anchor = new Konva.Circle({
-		x: placeX,
-		y: placeY,
-		radius: 5,
-		fill: '#efefef',
-		stroke: 'black',
-		name: 'anc',
-		strokeWidth: 2,
-		opacity: 0.6
-	});
-	grp.add(anchor);
-	var pos = {
-		x: 0,
-		y: 0,
-	};
-	anchor.id("anc" + anchor._id);
-	if (grp.name() == "ConnectorGrp") {
-		anchor.name("ConAnc");
-	}
-	//Drag arrow with shape anchor
-	grp.on('dragmove', (e) => {
-		var nmarr = anchor.name().split(' ');
-		if (nmarr[0] == "arrstart") {
-			var arrow = layer.findOne("#" + nmarr[1]);
-			arrow.points([grp.x() + anchor.x(), grp.y() + anchor.y(), arrow.points()[2], arrow.points()[3]]);
-			arrow.moveToTop();
-			layer.draw();
-		}
-		else if (nmarr[0] == "arrend") {
-			var arrow = layer.findOne("#" + nmarr[1]);
-			arrow.points([arrow.points()[0], arrow.points()[1], grp.x() + anchor.x(), grp.y() + anchor.y()]);
-			arrow.moveToTop();
-			layer.draw();
-		}
-		else if (nmarr[0] == "ConAnc") {
-			nmarr.forEach((ArrPoint, index) => {
-				if (ArrPoint.substring(0, 5) == "Arrow") {
-					if (nmarr[index - 1] == "Astart") {
-						var arrow = layer.findOne("#" + ArrPoint);
-						arrow.points([snap(grp.x()), snap(grp.y()), arrow.points()[2], arrow.points()[3]]);
-						arrow.moveToTop();
-						layer.draw();
-					}
-					else {
-						var arrow = layer.findOne("#" + ArrPoint);
-						arrow.points([arrow.points()[0], arrow.points()[1], snap(grp.x()), snap(grp.y())]);
-						arrow.moveToTop();
-						layer.draw();
-					}
-				}
-			})
-		}
-	});
-
-	anchor.on('mouseover', function () {
-		anchor.opacity(1);
-		anchor.strokeWidth(3);
-		layer.draw();
-	});
-	anchor.on('mouseout', function () {
-		anchor.opacity(0.6);
-		anchor.strokeWidth(2);
-		layer.draw();
-	});
-
-	anchor.on('click', function () {
-
-		//If anchor already has arrow on it prevent another
-		if (anchor.name().includes("arrstart") || anchor.name().includes("Astart") || anchor.name().includes("arrend")) {
-			anchor.stroke("red");
-			layer.draw();
-			setTimeout(() => {
-				anchor.stroke("black");
-				layer.draw();
-			}, 1000);
-			return;
-		}
-
-		startarrow = true;
-		pos.x = anchor.x() + grp.x();
-		pos.y = anchor.y() + grp.y();
-		stage.container().style.cursor = 'crosshair';
-		if (startarrow && drawingarrow) {
-
-			drawingarrow = false;
-			startarrow = false;
-			stage.container().style.cursor = 'default';
-			var node = layer.getChildren().toArray().length - 1;
-			var arrow = layer.getChildren()[node];
-			(anchor.name().includes("ConAnc")) ? anchor.addName("Aend") : anchor.name("arrend");
-			anchor.addName("Arrow" + arrow._id);
-			arrow.addName("anc" + anchor._id);
-			arrow.points([arrow.points()[0], arrow.points()[1], pos.x, pos.y]);
-			layer.draw();
-		}
-
-		if (startarrow && !drawingarrow) {
-			(anchor.name().includes("ConAnc")) ? anchor.addName("Astart") : anchor.name("arrstart");
-			var arrow = new Konva.Arrow({
-				points: [snap(pos.x), snap(pos.y), snap(pos.x), snap(pos.y)],
-				pointerLength: 10,
-				pointerWidth: 10,
-				fill: 'black',
-				stroke: 'black',
-				strokeWidth: 4,
-				name: 'objArr',
-				hitStrokeWidth: 0,
-			});
-			arrow.id("Arrow" + arrow._id);
-			arrow.name("anc" + anchor._id);
-			layer.add(arrow);
-			anchor.addName("Arrow" + arrow._id);
-			arrow.points([pos.x, pos.y, pos.x, pos.y]);
-			layer.draw();
-			drawingarrow = true;
-		}
-	});
-	layer.draw();
-}
-
-function newDecision(placeX, placeY, txty, anchors) {
-	var grp = new Konva.Group({
-		x: placeX,
-		y: placeY,
-		draggable: true,
-		name: 'DecisionGrp'
-	});
-
-	var box = new Konva.Rect(ShapeStyle);
-
-	box.width(Decilength);
-	box.height(Decilength);
-
-	var txt = new Konva.Text(ShapeText);
-	box.rotation(45);
-	txt.x(box.x() - (Decilength / Math.sqrt(2)));
-	txt.y(box.y());
-	txt.text('if()');
-	txt.width(Decilength * Math.sqrt(2));
-	txt.height(Decilength * Math.sqrt(2));
-	if (txty != null) {
-		txt.text(txty);
-	}
-	grp.add(box);
-	grp.add(txt);
-
-	grp.on('mouseover', function () {
-		document.body.style.cursor = 'pointer';
-		box.strokeWidth(2);
-		layer.draw();
-	});
-	grp.on('mouseout', function () {
-		document.body.style.cursor = 'default';
-		box.strokeWidth(0.5);
-		layer.draw();
-	});
-	grp.on('dragend', () => {
-		setshapepos();
-	});
-	grp.on('dragmove', () => {
-		grp.position({
-			x: snap(grp.x()),
-			y: snap(grp.y())
-		});
-		layer.batchDraw();
-	});
-	grp.on('dblclick', function (e) {
-		makeTA(grp);
-	});
-	newAnchor(0, 0, grp);//top
-	newAnchor(-(Decilength / Math.sqrt(2)), Decilength / Math.sqrt(2), grp);//left
-	newAnchor(0, Decilength * Math.sqrt(2), grp);//bot
-	newAnchor(Decilength / Math.sqrt(2), Decilength / Math.sqrt(2), grp);//right
-
-	if (anchors != null) {
-		grp.getChildren().forEach((subnode, index) => { if (index > 1) { subnode.name(anchors[index - 2][0]); subnode.id(anchors[index - 2][1]); } });
-	}
-	layer.add(grp);
-	layer.draw();
-
-	shapecount++;
-	updateShapeC();
-}
-
-function newIO(placeX, placeY, txty, anchors) {
-	var grp = new Konva.Group({
-		x: placeX,
-		y: placeY,
-		draggable: true,
-		name: 'IOGrp'
-	});
-
-	var box = new Konva.Rect(ShapeStyle);
-	box.skewX(-0.5);
-	box.width(ShapeWidth + blockSnapSize);
-	box.height(ShapeHeight);
-	var txt = new Konva.Text(ShapeText);
-	txt.width(ShapeWidth);
-	txt.height(ShapeHeight);
-	txt.text('Input X');
-
-	if (txty != null) {
-		txt.text(txty);
-	}
-	grp.add(box);
-	grp.add(txt);
-	grp.on('mouseover', function () {
-		document.body.style.cursor = 'pointer';
-		box.strokeWidth(2);
-		layer.draw();
-	});
-	grp.on('mouseout', function () {
-		document.body.style.cursor = 'default';
-		box.strokeWidth(0.5);
-		layer.draw();
-	});
-	grp.on('dragend', () => {
-		setshapepos();
-	});
-	grp.on('dragmove', () => {
-		grp.position({
-			x: snap(grp.x()),
-			y: snap(grp.y())
-		});
-		layer.batchDraw();
-	});
-	grp.on('dblclick', function (e) {
-		makeTA(grp);
-	});
-	newAnchor(ShapeWidth / 2, 0, grp);//top
-	newAnchor(0 - (blockSnapSize / 2), ShapeHeight / 2, grp);//left
-	newAnchor(ShapeWidth / 2, ShapeHeight, grp);//bot
-	newAnchor(ShapeWidth + (blockSnapSize / 2), ShapeHeight / 2, grp);//right
-
-	if (anchors != null) {
-		grp.getChildren().forEach((subnode, index) => { if (index > 1) { subnode.name(anchors[index - 2][0]); subnode.id(anchors[index - 2][1]); } });
-	}
-	layer.add(grp);
-	layer.draw();
-	shapecount++;
-	updateShapeC();
-}
-
 function clBoard() {
 	if (confirm("Are you sure?")) {
 		shapecount = 0;
@@ -594,7 +188,7 @@ function clBoard() {
 	}
 }
 
-function saveBoard() {
+function saveBoard(formdata) {
 
 	var Shapes = [];
 	var codearr = [];
@@ -645,8 +239,8 @@ function saveBoard() {
 		psuedoarr.push($(this).text());
 	});
 
-	var topic = document.getElementById('dropdown').value;
-	var sbtopic = document.getElementById('sbtopic').value;
+	var topic = formdata[0];
+	var sbtopic = formdata[2];
 	console.log(subid);
 	if (subid != null) {
 		$.ajax({
@@ -675,7 +269,8 @@ function saveBoard() {
 			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, codearr: codearr, psuedoarr: psuedoarr }
 		})
 			.done(function (data) {
-				var newLi = document.createElement("li");
+
+				/* var newLi = document.createElement("li");
 				newLi.id = data.subtopicid;
 				var newA = document.createElement("a");
 				newA.onclick = loadBoard(newA);
@@ -689,11 +284,11 @@ function saveBoard() {
 				newLi.appendChild(newButton);
 				var newI = document.createElement("i");
 				$(newI).addClass("fa fa-trash-alt text-warning");
-				newButton.appendChild(newI);
+				newButton.appendChild(newI); */
 				//alert(newLi);
 				$('#' + topid + " .subtopicslist").append(newLi);
 
-				var title = $('#dropdown option:selected').text() + "\\: " + sbtopic;
+				var title = formdata[1] + "\\: " + sbtopic;
 				$("#subTopicName").text(title);
 
 				subid = data.subtopicid;
@@ -720,32 +315,14 @@ function loadBoard(item) {
 		data: { topicID: topid, sbtopicID: subid }
 	})
 		.done(function (data) {
-			document.getElementById('dropdown').value = topid;
-			document.getElementById('sbtopic').value = data.subtop.name;
 			layer.destroyChildren();
 			$('#codeDiv').empty();
 			$('#psuedoDiv').empty();
 			data.subtop.code.forEach(coderow => {
-				$('#codeDiv').append(`<li class="list-group-item p-0" onfocusin="rowfocus(this)">
-				<div class="form-control invisibile-texty codetexty" rows="2" contenteditable="true">${coderow}</div>
-				<div class="row-box"></div>								
-				  <div class="rowboxdel">
-					<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-						<i class="fa fa-trash-alt"></i>
-					</button>
-				</div>
-			</li>`);
+				$('#codeDiv').append(addtexty("codetexty",coderow));
 			});
 			data.subtop.psuedocode.forEach(pcoderow => {
-				$('#psuedoDiv').append(`<li class="list-group-item p-0" onfocusin="rowfocus(this)">
-				<div class="form-control invisibile-texty psuedotexty" rows="2" contenteditable="true">${pcoderow}</div>
-				<div class="row-box"></div>								
-				  <div class="rowboxdel">
-					<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-						<i class="fa fa-trash-alt"></i>
-					</button>
-				</div>
-			</li>`);
+				$('#psuedoDiv').append(addtexty("psuedotexty",pcoderow));
 			});
 			var title = data.topictitle + "\\: " + data.subtop.name;
 			$("#subTopicName").text(title);
@@ -858,7 +435,7 @@ function stageinit(gridLayer, layer) {
 			var arrow = layer.getChildren()[node];
 			pos = stage.getPointerPosition();
 			arrow.points([arrow.points()[0], arrow.points()[1], pos.x, pos.y]);
-			layer.draw();
+			layer.batchDraw();
 		}
 	});
 
@@ -973,15 +550,33 @@ function stageinit(gridLayer, layer) {
 					}
 				} */
 			arrP = 0;
+			var startnode=null;
 			layer.getChildren().forEach((node) => {
 				if (node.name() == "TerminalGrp") {
 					var txt = node.getChildren()[1];
 					if (txt.text() == "Start") {
 						VShapesArray.push(node);
-						NextNode(node);
+						startnode= node;
 					}
 				}
 			});
+			console.log(startnode);
+			if(startnode==null){
+				Swal.fire({
+					title: 'No Start terminal found!',
+					icon: 'error',
+					showConfirmButton: false,
+					timer: 1000
+				});
+				vf = 0;
+				$('#nxt').prop('disabled', true);
+				$('#prv').prop('disabled', true);
+				return
+			}
+			else{
+				NextNode(startnode);
+			}
+			//if(vf==0){return};
 			$(".codetexty:eq(" + arrP + ")").css("background", "#a2c1f2");
 			$(".psuedotexty:eq(" + arrP + ")").css("background", "#a2c1f2");
 
@@ -1095,9 +690,9 @@ function NextNode(node) {
 			var nmarr2 = ArrPoint.name().split(' ');
 			var nextNodeAnc = layer.findOne("#" + nmarr2[1]);
 			if (nextNodeAnc.name().includes("ConAnc")) {
-				if(nextNodeAnc.name().includes("Astart")){
-					var ConAncNameArr=nextNodeAnc.name().split(' ');
-					NextArrowID=ConAncNameArr[ConAncNameArr.indexOf("Astart")+1];
+				if (nextNodeAnc.name().includes("Astart")) {
+					var ConAncNameArr = nextNodeAnc.name().split(' ');
+					NextArrowID = ConAncNameArr[ConAncNameArr.indexOf("Astart") + 1];
 					ArrPoint = layer.findOne("#" + NextArrowID);
 					nmarr2 = ArrPoint.name().split(' ');
 					nextNodeAnc = layer.findOne("#" + nmarr2[1]);
@@ -1106,11 +701,11 @@ function NextNode(node) {
 			VShapesArray.forEach((node) => {
 				if (nextNodeAnc.getParent() == node) {
 					subnode.addName("loopend");
-					console.log("Loopend: "+nextNodeAnc.getParent())
+					console.log("Loopend: " + nextNodeAnc.getParent())
 				}
 			});
 			if (looped == 0) {
-				console.log("Pushed node:" +nextNodeAnc.getParent());
+				console.log("Pushed node:" + nextNodeAnc.getParent());
 				VShapesArray.push(nextNodeAnc.getParent());
 				NextNode(nextNodeAnc.getParent());
 			}
@@ -1162,21 +757,34 @@ function setstageheight() {
 }
 
 function setshapepos() {
-	oldplaceY = placeY;
-	node = layer.getChildren()[layer.getChildren().length - 1];
-	if (node.name() == "SXgrp") {
-		placeX = node.x() - ShapeWidth / 2;
-		placeY = node.y() + blockSnapSize * 6;
+	this==window?node=layer.getChildren()[layer.getChildren().length-1]:node = this;
+	if (node.name() == "DecisionGrp") {
+		placeX = node.x() - blockSnapSize * 3;
+		console.log("from deci X:"+placeX);
 	}
-	else {
+	else if(node.name() == "ConnectorGrp") {
+		placeX = node.x() - blockSnapSize * 3;
+		placeY = node.y() - blockSnapSize;
+		console.log("from connec X:"+placeX+" Y:"+placeY);
+	}
 		placeX = Math.round(node.x() / blockSnapSize) * blockSnapSize;
 		placeY = node.y() + blockSnapSize * 3;
 		placeY = Math.round(placeY / blockSnapSize) * blockSnapSize;
-	}
+		console.log("X:"+placeX+" Y:"+placeY);
 }
 
+function addtexty(whichcol,text){
+	return `<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+						<div class="row-box"></div>
+						<div class="form-control invisibile-texty ${whichcol}" contenteditable="true">${text}</div>
+						<div class="rowboxdel">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+								<i class="fa fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>`
+}
 stageinit(gridLayer, layer);
-newTerminal(placeX, placeY, "Start");
-setshapepos();
+
 
 //$('#codeDiv').scrollTop($('#codeDiv li:nth-child(10)').position().top);

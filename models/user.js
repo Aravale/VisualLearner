@@ -10,7 +10,7 @@ var shapeSchema=new mongoose.Schema({
 	shapeText: String,
 	anchors:[[String,String]]
 });
-var Shape=mongoose.model("Shape",shapeSchema)
+//var Shape=mongoose.model("Shape",shapeSchema)
 
 var subtopicSchema=new mongoose.Schema({
 	name: String,
@@ -20,13 +20,13 @@ var subtopicSchema=new mongoose.Schema({
 				StageH:Number,
 				}
 });
-var Subtopic=mongoose.model("SubTopic",subtopicSchema)
+//var Subtopic=mongoose.model("SubTopic",subtopicSchema)
 
 var topicSchema=new mongoose.Schema({
 	title: String,
 	subtopics:[subtopicSchema]
 });
-var Topic=mongoose.model("Topic",topicSchema)
+//var Topic=mongoose.model("Topic",topicSchema)
 
 var userSchema=new mongoose.Schema({
 	first_name: String,

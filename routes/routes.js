@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var { User} = require('../models/user'),
+var { User } = require('../models/user'),
 	passport = require('passport');
 
 function isLoggedIn(req, res, next) {
 	if (req.isAuthenticated()) {
-		req.flash('error', 'Please Logout First!');
-		res.redirect('/login');
+		res.redirect('/home');
+		return;
 	}
 	return next();
 }
@@ -14,17 +14,13 @@ function isLoggedIn(req, res, next) {
 function isNotLoggedIn(req, res, next) {
 	console.log(req.isAuthenticated());
 	if (!req.isAuthenticated()) {
-		res.send({error:'Please Login First!'});
+		res.send({ error: 'Please Login First!' });
 		return
 	}
 	return next();
 }
 
-router.get('/', function (req, res) {
-	res.render('home');
-});
-
-router.get('/login', isLoggedIn, function (req, res) {
+router.get('/', isLoggedIn, function (req, res) {
 	res.render('login');
 });
 
@@ -33,28 +29,19 @@ router.get('/register', isLoggedIn, function (req, res) {
 });
 
 router.get('/getsubtopic', isNotLoggedIn, function (req, res) {
-	var topid = req.query.topicID;
-	var subtopid = req.query.sbtopicID;
+	var topID = req.query.topicID;
+	var subID = req.query.sbtopicID;
 
 	var cUser = req.user._id;
 
 	User.findOne({ _id: cUser }, function (err, user) {
-		if (err) {
-			console.log(err);
-		} else {
-			user.topics.forEach(function (topic) {
-				if (topic._id == topid) {
-					topic.subtopics.forEach(function (subtopic) {
+		var subtopic = user.topics.id(topID).subtopics.id(subID);
+		console.log(subtopic);
 
-						if (subtopic._id == subtopid) {
-							res.send({ "subtop": subtopic, "topictitle": topic.title });
-						}
-
-					});
-
-				}
-			});
-		}
+		user.save(function (err) {
+			if (err) { return handleError(err); }
+			console.log('Success!');
+		});
 	});
 });
 
@@ -69,8 +56,8 @@ router.post('/register', function (req, res) {
 			req.flash('error', err.message);
 			return res.render('reg');
 		}
-		res.redirect('/login');
 	});
+	return res.redirect('/');
 });
 
 router.post('/newtopic', isNotLoggedIn, function (req, res) {
@@ -80,16 +67,16 @@ router.post('/newtopic', isNotLoggedIn, function (req, res) {
 	User.findOne({ _id: cUser }, function (err, user) {
 		if (err) { return handleError(err); }
 		user.topics.push({ title: newTopic });
-		
-		var topicid,toptitle;
+
+		var topicid, toptitle;
 		user.topics.forEach(function (topic) {
-			topicid=topic._id;
-			toptitle=topic.title;
+			topicid = topic._id;
+			toptitle = topic.title;
 		});
 		user.save(function (err) {
 			if (err) { return handleError(err); }
 			console.log('Success!');
-			res.send({"topicid":topicid,"topictitle":toptitle});
+			res.send({ "topicid": topicid, "topictitle": toptitle });
 		});
 	});
 });
@@ -223,24 +210,24 @@ router.post('/deltopic', isNotLoggedIn, function (req, res) {
 	res.redirect('/home');
 });
 
-router.post(
-	'/login',
-	passport.authenticate('local', {
-		successRedirect: '/home',
-		failureRedirect: '/login',
-		failureFlash: true
-	}),
-	function (req, res) { }
+router.post('/login', passport.authenticate('local', {
+	successRedirect: '/home',
+	failureRedirect: '/',
+	failureFlash: true
+}),
+	function (req, res) {
+		
+	 }
 );
 
 router.get('/logout', function (req, res) {
 	req.logout();
 	req.flash('success', 'Logged you out!');
-	res.redirect('/login');
+	res.redirect('/');
 });
 
-router.get('/home', function (req, res) {
+ router.get('/home', function (req, res) {
 	res.render('home');
-});
+}); 
 
 module.exports = router;

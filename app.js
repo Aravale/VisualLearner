@@ -29,11 +29,24 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) {
+	done(null, user.id);
+  });
+passport.deserializeUser(function(id, done) {
+	User.findById(id, function(err, user) {
+	let	cUser={
+			_id:user._id,
+			first_name:user.first_name,
+			last_name:user.last_name,
+			username:user.username,
+			topics:user.topics
+		}
+	  done(err, cUser);
+	});});
 
 app.use(function (req, res, next) {
 	if (req.user) {
+		console.log(req.user);
 		res.locals.currentUser={
 			_id:req.user._id,
 			first_name:req.user.first_name,
