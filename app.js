@@ -46,7 +46,6 @@ passport.deserializeUser(function(id, done) {
 
 app.use(function (req, res, next) {
 	if (req.user) {
-		console.log(req.user);
 		res.locals.currentUser={
 			_id:req.user._id,
 			first_name:req.user.first_name,

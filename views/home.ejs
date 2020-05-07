@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
 	<link rel="stylesheet" href="/stylesheets/home.css">
 	<link rel="stylesheet" href="/stylesheets/konva.css">
 	<link rel="stylesheet" href="/stylesheets/colstuff.css">
@@ -14,42 +15,18 @@
 </head>
 
 <body>
-
-	<%- include ./partials/header -%>
-
-	<%# Main Content %>
-	<div class="row m-0" id="maincontent">
-
-		<!-- Code -->
-		<div class="col-md-4 p-0" id="code">
+	<!-- <div class="row m-0 topbar">
+		<div class="col-lg-4 p-0">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Code
 				</h2>
 				<div class="holder-thing">
 					<input type="range" min="1" max="100" value="100" class="slider">
-
-					<button type="button" class="btn btn-outline-dark btn-light addRowBtn1" data-toggle="tooltip"
-						data-placement="bottom" title="Add Row">+</button>
 				</div>
 			</div>
-			<ul class="list-group textcol" id="codeDiv">
-				<%for(i=0;i<=8;i++){%>
-				<li class="list-group-item p-0" onfocusin="rowfocus(this)">
-					<div class="row-box"></div>
-					<div class="form-control invisibile-texty codetexty" contenteditable="true"></div>
-					<div class="rowboxdel">
-						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-							<i class="fa fa-trash-alt"></i>
-						</button>
-					</div>
-				</li>
-				<% } %>
-			</ul>
 		</div>
-
-		<!-- Flowchart -->
-		<div class="col-md-4 p-0" id="flowchart">
+		<div class="col-lg-4 p-0">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Flowchart
@@ -64,34 +41,98 @@
 					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
 						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
 						<i class="fa fa-trash-alt"></i></button>
-					<button type="button" class="btn btn-outline-dark btn-light addRowBtn" data-toggle="tooltip"
-						data-placement="bottom" title="Add Row" onclick="addstageheight()">+</button>
 				</div>
 
 			</div>
-			<div id="flowchartdiv" class="textcol">
-			</div>
 		</div>
-
-		<!-- Psuedocode -->
-		<div class="col-md-4 p-0" id="psuedo">
+		<div class="col-lg-4 p-0">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Psuedocode
 				</h2>
 				<div class="holder-thing">
 					<input type="range" min="1" max="100" value="100" class="slider">
-
-					<button type="button" class="btn btn-outline-dark btn-light addRowBtn2" data-toggle="tooltip"
-						data-placement="bottom" title="Add Row">+</button>
 				</div>
 			</div>
+		</div>
+	</div> -->
+	<nav class="navbar p-0">
+		<div class="col-lg-4 p-0">
+			<div class="card-header bg-light rounded-0 colheader">
+				<h2 class="colhead">
+					Code
+				</h2>
+				<div class="holder-thing">
+					<input type="range" min="1" max="100" value="100" class="slider">
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 p-0">
+			<div class="card-header bg-light rounded-0 colheader">
+				<h2 class="colhead">
+					Flowchart
+				</h2>
+				<button class="rrectangle" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
+				<button class="rectangle" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
+				<button class="parallelogram" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
+				<button class="dici" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
+				<button class="circle" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
+
+				<div class="holder-thing">
+					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
+						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
+						<i class="fa fa-trash-alt"></i></button>
+				</div>
+
+			</div>
+		</div>
+		<div class="col-lg-4 p-0">
+			<div class="card-header bg-light rounded-0 colheader">
+				<h2 class="colhead">
+					Psuedocode
+				</h2>
+				<div class="holder-thing">
+					<input type="range" min="1" max="100" value="100" class="slider">
+				</div>
+			</div>
+		</div>
+	</nav>
+	<%# Main Content %>
+	<div class="row m-0" id="maincontent">
+		<!-- Code -->
+		<div class="col-lg-4 p-0" id="code">
+
+			<ul class="list-group textcol" id="codeDiv">
+				<%for(i=0;i<=6;i++){%>
+				<li class="list-group-item p-0">
+					<div class="row-box"></div>
+					<div class="invisibile-texty codetexty" contenteditable="true"></div>
+					<div class="rowboxdel">
+						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+							<i class="fa fa-trash-alt"></i>
+						</button>
+					</div>
+				</li>
+				<% } %>
+			</ul>
+		</div>
+
+		<!-- Flowchart -->
+		<div class="col-lg-4 p-0" id="flowchart">
+
+			<div id="flowchartdiv" class="textcol">
+			</div>
+		</div>
+
+		<!-- Psuedocode -->
+		<div class="col-lg-4 p-0" id="psuedo">
+
 
 			<ul class="list-group textcol" id="psuedoDiv">
-				<%for(i=0;i<=8;i++){%>
-				<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+				<%for(i=0;i<=6;i++){%>
+				<li class="list-group-item p-0">
 					<div class="row-box"></div>
-					<div class="form-control invisibile-texty psuedotexty" contenteditable="true"></div>
+					<div class="invisibile-texty psuedotexty" contenteditable="true"></div>
 					<div class="rowboxdel">
 						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 							<i class="fa fa-trash-alt"></i>
@@ -109,12 +150,12 @@
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target=".sidebar"
-			id="topicsbutton">
+		<button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#mySidenav">
 			<i class="fa fa-bars fa-lg"></i>
 		</button>
 
 		<div class="collapse navbar-collapse d-flex justify-content-between">
+
 			<span id="subTopicName" class="text-light ml-2">Topic Name Here</span>
 			<div class="navbar-nav d-flex justify-content-center ">
 				<button type="button" class="btn btn-outline-light" id="prv" disabled="true">Previous</button>
@@ -124,6 +165,7 @@
 				<button type="button" class="btn btn-outline-light" id="nxt" disabled="true">Next</button>
 			</div>
 			<div>
+				<button type="button" id="addRow" class="btn btn-outline-light">Add Row</button>
 				<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
 				<button type="button" class="btn btn-outline-light" onclick="saveSwal()">Save</button>
 			</div>
@@ -131,49 +173,71 @@
 	</nav>
 
 	<%# Topic list Menu%>
-	<aside class="col-1 col-sm-2 p-0 bg-dark collapse sidebar fade fixed-top h-100" id="TopicsSidebar">
-		<nav class="navbar navbar-toggleable-xl navbar-dark bg-dark flex-column align-items-start">
-			<div class="collapse navbar-collapse sidebar">
-				<ul class="flex-column navbar-nav sidebarlist" id="mytopicslist">
-					<li class="nav-item">
-						<button type="button" class="btn btn-outline-light" id="newTopicbtn">New Topic</button>
-					</li>
-					<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
-					<li class="nav-item parent" id="<%=topic._id%>">
-						<a class="nav-link" role="button">
-							<%= topic.title %>
-							<% if(topic.subtopics.length > 0) { %>
-							<i class="fa fa-caret-down"></i>
-							<% } %>
-						</a>
-						<button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
-							<i class="fa fa-trash-alt text-danger"></i>
-						</button>
-						<ul class="flex-column navbar-nav sub-topic child sidebarlist subtopicslist">
-							<%topic.subtopics.forEach(function(subtopic){ %>
-							<li id="<%=subtopic._id%>">
-								<a onclick="loadBoard(this)" class="nav-link" role="button">
-									&thinsp;<%= subtopic.name %>
-								</a>
-								<button type="button" class="btn btn-sm btn-outline-light" onclick="deletesub(this)">
-									<i class="fa fa-trash-alt text-warning"></i>
-								</button>
-							</li>
-							<%	}); %>
-						</ul>
-					</li>
-					<%	});} %>
-				</ul>
+	<div id="mySidenav" class="sidenav bg-secondary show">
+
+		<div>
+			<h2 class="text-light px-2 title-text">Visual Learner</h2>
+		</div>
+
+		<div id="topicInfo">
+			<ul class="topiclist" id="topiclist">
+				<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
+				<li id="<%=topic._id%>">
+
+					<span class="dir topiclisttext"><%= topic.title %></span>
+					<button type="button" class="btn btn-sm btn-outline-light float-right" onclick="deletetopic(this)"
+						style="margin-right: 11px;">
+						<i class="fa fa-trash-alt text-dark"></i>
+					</button>
+
+					<ul class="subtopiclist">
+						<%topic.subtopics.forEach(function(subtopic){ %>
+						<li id="<%=subtopic._id%>">
+							<span class="topiclisttext" onclick="loadBoard(this)"><%= subtopic.name %></span>
+							<button type="button" class="btn btn-sm btn-outline-light float-right"
+								onclick="deletesub(this)">
+								<i class="fa fa-trash-alt text-light"></i>
+							</button>
+						</li>
+						<%	}); %>
+					</ul>
+				</li>
+				<hr style="margin-bottom: 10px; margin-top: 5px;">
+				<%	});} %>
+			</ul>
+		</div>
+
+		<div id="userInfo">
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" onclick="newTopic()" class="btn btn-outline-light">New Topic</button>
+				</div>
 			</div>
-		</nav>
-	</aside>
-	
+			<div class="row">
+				<div class="col-md-3">
+					<img src="avatar.jpg" / height="60" width="60">
+				</div>
+				<div class="col-md-9">
+					<% if(currentUser){ %>
+					<%= currentUser.first_name %> <%= currentUser.last_name %>
+					&nbsp;&nbsp;
+					<br />
+					<a class="text-link" href="/logout">Logout</a>
+				</div>
+			</div>
+			<% } %>
+		</div>
+
+	</div>
+
 	<div id="menu">
 		<button type="button" class="btn btn-outline-dark" id="delete-button">Delete</button>
 		<button type="button" class="btn btn-outline-dark" id="mvfrnt-button">To Front</button>
 		<button type="button" class="btn btn-outline-dark" id="mvbck-button">To Back</button>
 		<button type="button" class="btn btn-outline-dark" id="mvup-button">Move Up</button>
 		<button type="button" class="btn btn-outline-dark" id="mvdwn-button">Move Down</button>
+		<button type="button" class="btn btn-outline-dark" id="trArr-button">True Arrow</button>
+		<button type="button" class="btn btn-outline-dark" id="flArr-button">False Arrow</button>
 	</div>
 
 </body>
@@ -190,32 +254,41 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript" src="/konvascript.js"></script>
 <script type="text/javascript" src="/konvashapes.js"></script>
+<script type="text/javascript" src="/topics.js"></script>
 <script>
-	$('.addRowBtn1').click(function () {
-		$('#codeDiv').append(addtexty("codetexty"));
 
+
+	/* 	$('.topiclisttext').dblclick(function () {
+			this.attr('contenteditable',true);
+		}); */
+
+	$('.dir').click(function (e) {
+		e.stopPropagation();
+		$(this).parent().children("ul").slideToggle();
 	});
 
-	$('.addRowBtn2').click(function () {
-		$('#psuedoDiv').append(addtexty("psuedotexty"));
-	});
-
-	function addstageheight() {
-		StageHeight = StageHeight + ShapeHeight * 2;
-		setstageheight();
+	function setrowsIndex() {
+		$(".codetexty").each(function (index, element) {
+			$(this).siblings('.row-box').html("<span class='codeCounter'>" + index + "</span>");
+		});
+		$(".psuedotexty").each(function (index, element) {
+			$(this).siblings('.row-box').html("<span class='codeCounter'>" + index + "</span>");
+		});
 	}
+
+	$('#addRow').click(function () {
+		$('#codeDiv').append(addtexty("codetexty"));
+		$('#psuedoDiv').append(addtexty("psuedotexty"));
+		StageHeight = StageHeight + (blockSnapSize * 3);
+		setstageheight();
+		setrowsIndex();
+
+	});
+
 	function delrowbox(item) {
 		$(item).parent().parent().remove();
+		setrowsIndex();
 	}
-	function rowfocus(row) {
-		currentRow = $(row).index();
-		//console.log(currentRow);
-	}
-	$('.child').hide();
-	$('.parent').click(function () {
-		$(this).siblings('.parent').find('ul').slideUp();
-		$(this).find('ul').slideToggle();
-	});
 
 	async function saveSwal() {
 		let { value: formValues } = await Swal.fire({
@@ -230,78 +303,22 @@
 			focusConfirm: false,
 			preConfirm: () => {
 				return [
-					$( "#swal-input1" ).val(),
+					$("#swal-input1").val(),
 					$("#swal-input1 option:selected").text(),
 					document.getElementById('swal-input2').value
 				]
 			}
 		});
-	console.log(formValues);
-	saveBoard(formValues);
+		console.log(formValues);
+		saveBoard(formValues);
 	}
-	$('#newTopicbtn').click(function () {
-		Swal.fire({
-			title: 'Name ',
-			input: 'text',
-			showCancelButton: true,
-			confirmButtonText: 'Add topic',
-			showLoaderOnConfirm: true,
-			allowOutsideClick: () => !Swal.isLoading(),
-			inputValidator: (value) => {
-				if (!value) {
-					return 'You need to write something!'
-				}
-			},
-			preConfirm: (result) => {
-				return $.ajax({
-					type: 'POST',
-					url: '/newtopic',
-					data: { topic: result.value }
-				}).done(function (data) {
-					if (data.error) {
-						return data;
-					}
-					else {
-						$('#mytopicslist').append(`<li class="nav-item parent" id="${data.topicid}">
-						<a class="nav-link" role="button">
-							${data.topictitle}
-						</a>
-						<button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
-							<i class="fa fa-trash-alt text-danger"></i>
-						</button>
-						<ul class="flex-column navbar-nav sub-topic child sidebarlist subtopicslist">
-						</ul>
-					</li>`);
-						return data;
-					}
-				});
-			}
-			,
-		}).then(result => {
-			console.log(result);
-			if (result.value.error) {
-				Swal.fire({
-					title: `${result.value.error}`,
-					icon: 'error',
-					showConfirmButton: false,
-					timer: 1000
-				});
-			}
-			else {
-				Swal.fire({
-					title: 'Topic Added!',
-					icon: 'success',
-					showConfirmButton: false,
-					timer: 1000
-				});
-			}
-		});
 
-	});
 
 	$('.slider').change(function () {
 		$(this).parent().parent().parent().find("ul").fadeTo(100, this.value / 100);
 	});
+
+	setrowsIndex();
 </script>
 
 </html>

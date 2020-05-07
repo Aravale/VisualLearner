@@ -1,6 +1,6 @@
 const StageWidth = $('#flowchartdiv').width();
-var StageHeight = $('#flowchartdiv').height();
-const blockSnapSize = 30;
+var StageHeight = 840;//$('#flowchartdiv').height();
+const blockSnapSize = 40;
 var startarrow = false;
 var drawingarrow = false;
 var currentShape;
@@ -18,14 +18,13 @@ var ShapeStyle = {
 }
 var ShapeText = {
 	width: ShapeWidth,
-	fontSize: 20,
+	fontSize: 30,
 	fontFamily: 'Calibri',
 	fill: 'black',
 	align: 'center',
 	verticalAlign: "middle",
 	padding: 5
 }
-const Decilength = 2 * (blockSnapSize / Math.sqrt(2));
 var scrollerror = 0;
 var shapecount = 0;
 var arrP = 0;
@@ -43,7 +42,7 @@ var stage = new Konva.Stage({
 var gridLayer = new Konva.Layer();
 var layer = new Konva.Layer();
 
-var placeX = 300 - ShapeWidth / 2;
+var placeX = blockSnapSize * 5;
 var placeY = blockSnapSize;
 
 function updateShapeC() {
@@ -52,7 +51,7 @@ function updateShapeC() {
 }
 
 function makeTextInput() {
-	var grp=this;
+	var grp = this;
 	var shapenode = grp.getChildren()[0];
 	var textnode = grp.getChildren()[1];
 
@@ -68,7 +67,7 @@ function makeTextInput() {
 		y: stageBox.top + textPosition.y - scrollerror
 	};
 	// create textarea and style it
-	var textarea = document.createElement('input');
+	var textarea = document.createElement('textarea');
 	document.body.appendChild(textarea);
 
 	textarea.value = textnode.text();
@@ -214,6 +213,7 @@ function saveBoard(formdata) {
 					x: node.x(),
 					y: node.y(),
 					shapeText: node.getChildren()[1].text(),
+					shapeW: node.width(),
 					anchors: anchorsArr
 				}
 			}
@@ -240,16 +240,16 @@ function saveBoard(formdata) {
 	});
 
 	var topic = formdata[0];
-	var sbtopic = formdata[2];
+	var NewSubtopicName = formdata[2];
 	console.log(subid);
 	if (subid != null) {
 		$.ajax({
 			type: 'POST',
 			url: '/updatesubtopic',
-			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, sbtopicID: subid, codearr: codearr, psuedoarr: psuedoarr }
+			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: NewSubtopicName, sbtopicID: subid, codearr: codearr, psuedoarr: psuedoarr }
 		})
 			.done(function (data) {
-				var title = $('#dropdown option:selected').text() + "\\: " + sbtopic;
+				var title = formdata[1] + "\\: " + NewSubtopicName;
 				$("#subTopicName").text(title);
 
 				subid = data.subtopicid;
@@ -266,33 +266,21 @@ function saveBoard(formdata) {
 		$.ajax({
 			type: 'POST',
 			url: '/newsubtopic',
-			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: sbtopic, codearr: codearr, psuedoarr: psuedoarr }
+			data: { Shapes: Shapes, StageHeight: StageHeight, topic: topic, sbtopic: NewSubtopicName, codearr: codearr, psuedoarr: psuedoarr }
 		})
 			.done(function (data) {
-
-				/* var newLi = document.createElement("li");
-				newLi.id = data.subtopicid;
-				var newA = document.createElement("a");
-				newA.onclick = loadBoard(newA);
-				$(newA).addClass("nav-link");
-				newLi.appendChild(newA);
-				var newContent = document.createTextNode(sbtopic);
-				newA.appendChild(newContent);
-				var newButton = document.createElement("button");
-				$(newButton).addClass("btn btn-sm btn-outline-light");
-				newButton.onclick = loadBoard(newButton);
-				newLi.appendChild(newButton);
-				var newI = document.createElement("i");
-				$(newI).addClass("fa fa-trash-alt text-warning");
-				newButton.appendChild(newI); */
-				//alert(newLi);
-				$('#' + topid + " .subtopicslist").append(newLi);
-
-				var title = formdata[1] + "\\: " + sbtopic;
-				$("#subTopicName").text(title);
-
-				subid = data.subtopicid;
 				topid = topic;
+				subid = data.subtopicid;
+				var newLi = `<li id="${data.subtopicid}" onclick="loadBoard(this)">
+									${NewSubtopicName}
+								<button type="button" class="btn btn-sm btn-outline-light" onclick="deletesub(this)">
+					 				<i class="fa fa-trash-alt text-warning"></i>
+				 				</button>
+			 				</li>`
+				$('#' + topid + " .subtopiclist").append(newLi);
+
+				var title = formdata[1] + " > " + NewSubtopicName;
+				$("#subTopicName").text(title);			
 				console.log("Subadded");
 				Swal.fire({
 					title: 'Sub Saved!',
@@ -306,6 +294,7 @@ function saveBoard(formdata) {
 }
 
 function loadBoard(item) {
+
 	subid = $(item).parent().attr('id');
 	topid = $(item).parent().parent().parent().attr('id');
 
@@ -319,10 +308,10 @@ function loadBoard(item) {
 			$('#codeDiv').empty();
 			$('#psuedoDiv').empty();
 			data.subtop.code.forEach(coderow => {
-				$('#codeDiv').append(addtexty("codetexty",coderow));
+				$('#codeDiv').append(addtexty("codetexty", coderow));
 			});
 			data.subtop.psuedocode.forEach(pcoderow => {
-				$('#psuedoDiv').append(addtexty("psuedotexty",pcoderow));
+				$('#psuedoDiv').append(addtexty("psuedotexty", pcoderow));
 			});
 			var title = data.topictitle + "\\: " + data.subtop.name;
 			$("#subTopicName").text(title);
@@ -332,16 +321,16 @@ function loadBoard(item) {
 			data.subtop.flowchart.shapes.forEach(node => {
 				switch (node.SName) {
 					case "ProcessGrp":
-						newProcess(node.x, node.y, node.shapeText, node.anchors);
+						newProcess(node.x, node.y, node.shapeText, node.anchors, node.shapeW);
 						break;
 					case "TerminalGrp":
 						newTerminal(node.x, node.y, node.shapeText, node.anchors);
 						break;
 					case "DecisionGrp":
-						newDecision(node.x, node.y, node.shapeText, node.anchors);
+						newDecision(node.x, node.y, node.shapeText, node.anchors, node.shapeW);
 						break;
 					case "IOGrp":
-						newIO(node.x, node.y, node.shapeText, node.anchors);
+						newIO(node.x, node.y, node.shapeText, node.anchors, node.shapeW);
 						break;
 					case "ConnectorGrp":
 						newConnector(node.x, node.y, node.anchors);
@@ -359,8 +348,7 @@ function loadBoard(item) {
 						strokeWidth: 4,
 						name: node.AName[0],
 						id: node.AName[1],
-						hitStrokeWidth: 6,
-						draggable: true
+						hitStrokeWidth: 4,
 					});
 					layer.add(arrow);
 				}
@@ -389,37 +377,6 @@ function deletesub(item) {
 		});
 }
 
-function deletetopic(item) {
-	topid = $(item).parent().attr('id');
-
-	Swal.fire({
-		title: 'Are you sure?',
-		text: "All subtopics will be deleted too!",
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonText: 'Yes, delete it!'
-	}).then((result) => {
-		if (result.value) {
-			$.ajax({
-				method: 'POST',
-				url: '/deltopic',
-				data: { topicID: topid }
-			})
-				.done(function (data) {
-					Swal.fire({
-						title: 'Deleted Topic!',
-						icon: 'success',
-						showConfirmButton: false,
-						timer: 1000
-					});
-					$(item).parent().remove();
-				});
-		}
-	})
-
-
-}
-
 function snap(num) {
 	return (Math.round(num / blockSnapSize) * blockSnapSize);
 }
@@ -428,7 +385,6 @@ function stageinit(gridLayer, layer) {
 	stage.add(gridLayer);
 	stage.add(layer);
 	setstageheight();
-
 	stage.on('contentMousemove', function () {
 		if (drawingarrow) {
 			var node = layer.getChildren().toArray().length - 1;
@@ -500,6 +456,14 @@ function stageinit(gridLayer, layer) {
 		else { currentShape.getParent().moveDown(); }
 		layer.draw();
 	});
+	$('#trArr-button').on('click', () => {
+		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#00CC00"); }
+		layer.draw();
+	});
+	$('#flArr-button').on('click', () => {
+		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#FF0000"); }
+		layer.draw();
+	});
 
 	window.addEventListener('click', () => {
 		// hide menu 
@@ -509,7 +473,7 @@ function stageinit(gridLayer, layer) {
 	stage.on('contextmenu', function (e) {
 		// prevent default behavior
 		e.evt.preventDefault();
-		if (e.target === stage) {
+		if (e.target === stage || e.target.getParent() == gridLayer) {
 			if (startarrow && drawingarrow) {
 				startarrow = false;
 				drawingarrow = false;
@@ -523,14 +487,23 @@ function stageinit(gridLayer, layer) {
 			}
 			return;
 		}
+	});
+	layer.on('contextmenu', function (e) {
+		e.evt.preventDefault();
 		currentShape = e.target;
 		// show menu
+		if (e.target.getClassName() != "Arrow") {
+			$("#trArr-button").hide();
+			$("#flArr-button").hide();
+		} else {
+			$("#trArr-button").show();
+			$("#flArr-button").show();
+		}
 		menuNode.style.display = 'initial';
 		var containerRect = stage.container().getBoundingClientRect();
 		menuNode.style.top = containerRect.top + stage.getPointerPosition().y + 4 + 'px';
 		menuNode.style.left = containerRect.left + stage.getPointerPosition().x + 4 + 'px';
 	});
-
 	$("#viewmode").click(() => {
 		//View ON
 		if (vf == 0) {
@@ -550,18 +523,18 @@ function stageinit(gridLayer, layer) {
 					}
 				} */
 			arrP = 0;
-			var startnode=null;
+			var startnode = null;
 			layer.getChildren().forEach((node) => {
 				if (node.name() == "TerminalGrp") {
 					var txt = node.getChildren()[1];
 					if (txt.text() == "Start") {
 						VShapesArray.push(node);
-						startnode= node;
+						startnode = node;
 					}
 				}
 			});
 			console.log(startnode);
-			if(startnode==null){
+			if (startnode == null) {
 				Swal.fire({
 					title: 'No Start terminal found!',
 					icon: 'error',
@@ -573,7 +546,7 @@ function stageinit(gridLayer, layer) {
 				$('#prv').prop('disabled', true);
 				return
 			}
-			else{
+			else {
 				NextNode(startnode);
 			}
 			//if(vf==0){return};
@@ -613,13 +586,13 @@ function stageinit(gridLayer, layer) {
 	$("#nxt").click(() => {
 		if (arrP < VShapesArray.length - 1) {
 			VShapesArray[arrP].getChildren()[0].fill("#efefef");
-			var textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			var textpointer = ((VShapesArray[arrP].y() + blockSnapSize * 2) / (blockSnapSize * 3)) - 1;
 			console.log(textpointer + " / " + VShapesArray[arrP].y());
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#efefef");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#efefef");
 			arrP++;
 			VShapesArray[arrP].getChildren()[0].fill("#a2c1f2");
-			textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			textpointer = ((VShapesArray[arrP].y() + blockSnapSize * 2) / (blockSnapSize * 3)) - 1;
 			console.log(textpointer + " / " + VShapesArray[arrP].y());
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
@@ -636,13 +609,13 @@ function stageinit(gridLayer, layer) {
 
 	$("#prv").click(() => {
 		if (arrP > 0) {
-			var textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			textpointer = ((VShapesArray[arrP].y() + blockSnapSize * 2) / (blockSnapSize * 3)) - 1;
 			VShapesArray[arrP].getChildren()[0].fill("#efefef");
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#efefef");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#efefef");
 			arrP--;
 			VShapesArray[arrP].getChildren()[0].fill("#a2c1f2");
-			textpointer = (VShapesArray[arrP].y() + 60) / 90 - 1;
+			textpointer = ((VShapesArray[arrP].y() + blockSnapSize * 2) / (blockSnapSize * 3)) - 1;
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#a2c1f2");
 			layer.draw();
@@ -667,7 +640,7 @@ function stageinit(gridLayer, layer) {
 		setshapepos();
 	});
 	$('.dici').click(function () {
-		newDecision(placeX + ShapeWidth / 2, placeY);
+		newDecision(placeX, placeY);
 		setshapepos();
 	});
 	$('.circle').click(function () {
@@ -714,10 +687,9 @@ function NextNode(node) {
 }
 
 function setstageheight() {
-
 	stage.height(StageHeight);
 	gridLayer.destroyChildren();
-	for (var i = 0; i < StageWidth / blockSnapSize; i++) {
+	for (let i = 0; i < StageWidth / blockSnapSize; i++) {
 		gridLayer.add(new Konva.Line({
 			points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, StageHeight],
 			stroke: '#6b6b6b',
@@ -725,56 +697,49 @@ function setstageheight() {
 		}));
 	}
 
-	for (var j = 0; j < StageHeight / blockSnapSize; j++) {
+	for (let j = 0; j < StageHeight / blockSnapSize; j++) {
+		if (j % 3 == 0) {
+			gridLayer.add(new Konva.Text({
+				x: 0,
+				y: blockSnapSize * j,
+				text: j == 0 ? "0" : j / 3,
+				width: blockSnapSize,
+				height: blockSnapSize,
+				fontSize: 20,
+				fontFamily: 'Calibri',
+				fill: 'black',
+				align: 'center',
+				verticalAlign: "middle",
+				padding: 5
+			}));
+			gridLayer.add(new Konva.Rect({
+				x: 0,
+				y: blockSnapSize * j,
+				width: StageWidth,
+				height: blockSnapSize,
+				fill: '#4c555e',
+				opacity: 0.2
+			}));
+		}
 		gridLayer.add(new Konva.Line({
 			points: [0, j * blockSnapSize, StageWidth, j * blockSnapSize],
 			stroke: '#6b6b6b',
 			strokeWidth: 0.5,
 		}));
 	}
-	/*for (var j = 0; j < StageHeight / (blockSnapSize*2.5); j++) {
-		let rowstart=j*(blockSnapSize*2.5);
-		gridLayer.add(new Konva.Rect({
-			x: 0,
-			y: rowstart,
-			width: StageWidth,
-			height: blockSnapSize/2,
-			fill: '#6b6b6b',
-		}));
-		let linestart=rowstart+(blockSnapSize*1.5);
-		gridLayer.add(new Konva.Line({
-			points: [0,linestart, StageWidth, linestart],
-			stroke: '#6b6b6b',
-			strokeWidth: 0.5,
-		}));
-	}*/
-
-	/*for (var j = 0; j < StageHeight / blockSnapSize; j=j+2) {
-		
-	}*/
-
 	stage.batchDraw();
 }
 
 function setshapepos() {
-	this==window?node=layer.getChildren()[layer.getChildren().length-1]:node = this;
-	if (node.name() == "DecisionGrp") {
-		placeX = node.x() - blockSnapSize * 3;
-		console.log("from deci X:"+placeX);
-	}
-	else if(node.name() == "ConnectorGrp") {
-		placeX = node.x() - blockSnapSize * 3;
-		placeY = node.y() - blockSnapSize;
-		console.log("from connec X:"+placeX+" Y:"+placeY);
-	}
-		placeX = Math.round(node.x() / blockSnapSize) * blockSnapSize;
-		placeY = node.y() + blockSnapSize * 3;
-		placeY = Math.round(placeY / blockSnapSize) * blockSnapSize;
-		console.log("X:"+placeX+" Y:"+placeY);
+	var node = (this == window) ? layer.getChildren()[layer.getChildren().length - 1] : this;
+
+	placeY = /* node.y()  */placeY + blockSnapSize * 3;
+	placeY = Math.round(placeY / blockSnapSize) * blockSnapSize;
 }
 
-function addtexty(whichcol,text){
-	return `<li class="list-group-item p-0" onfocusin="rowfocus(this)">
+function addtexty(whichcol, text) {
+	text = text ? text : "";
+	return `<li class="list-group-item p-0">
 						<div class="row-box"></div>
 						<div class="form-control invisibile-texty ${whichcol}" contenteditable="true">${text}</div>
 						<div class="rowboxdel">
@@ -784,6 +749,16 @@ function addtexty(whichcol,text){
 						</div>
 					</li>`
 }
+
+function AncInUse(anchor) {
+	anchor.stroke("red");
+	layer.draw();
+	setTimeout(() => {
+		anchor.stroke("black");
+		layer.draw();
+	}, 1000);
+}
+
 stageinit(gridLayer, layer);
 
 

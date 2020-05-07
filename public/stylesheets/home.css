@@ -1,46 +1,64 @@
 body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
     background-color:yellow;
   }
-
 #maincontent {
     padding: 0px;
-    height: fit-content;
+    height: 86vh;
     background-color: #1e2022; 
-}
-
-/* Topics menu */
-.sidebar {
-    height: 100vh;
     overflow-y: auto;
-    overflow-x: visible;
-    z-index: 1000;
-    min-width: 280px;
 }
-
-.sidebar::-webkit-scrollbar {
-    width: 0;
+#botnav {
+    height: 7vh;
 }
-
-.sidebar > .navbar {
-    position: relative;
+.sidenav {
     height: 100%;
-    overflow: visible;
-}
+    width: 300px;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    padding: 10px;
+    transition:none;
+  }
+  
+  .sidenav #userInfo {
+    position: fixed;
+    bottom:  40px;
+    padding: 40px;
+    color: ghostwhite;
+  }
 
-.sidebar-right {
-    right: 0;
-    left: initial;
-}
+  .sidenav #topicInfo {
+    height: 75vh;
+    overflow-y: scroll;
+  }
 
-.sub-topic > li > a{
-    color: rgba(255,255,255,.3) !important;
-    cursor: pointer;
+  .sidenav ul {
+    padding: 8px 8px 8px 32px;
+    color: ghostwhite;
+  }
+  .topiclist {
+    overflow-y: hidden;
+    list-style-image: url('http://localhost:3000/T.png');
+    font-size: 25px;
+  }
+  .subtopiclist {
+    overflow-y: hidden;
+    list-style-image: url('http://localhost:3000/ST.png');
+    font-size: 20px;
+  }
+
+  .topiclist > li, .subtopiclist > li {
+    padding: 2px 3px;
+  }
+.topiclisttext{
+  cursor: pointer;
 }
-.sidebarlist>li>a {
-    display: inline-block;
-    vertical-align: top;
-    width: calc(100% - 48px);
-}
+  .title-text {
+    font-family: 'Aldrich';
+    text-align: center;
+    border: 2px solid #FFF;
+  }
