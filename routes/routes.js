@@ -89,35 +89,27 @@ router.post('/newtopic', isNotLoggedIn, function (req, res) {
 });
 
 router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
-	var topID = req.body.topic;
-	var height = req.body.StageHeight;
-	var shapes = req.body.Shapes;
-	var newsubTopic = req.body.sbtopic;
+	var topID = req.body.topicid;
+	var fc = req.body.fc;
+	var newsubTopic = req.body.NewSubtopicName;
 	var codearr = req.body.codearr;
 	var psuedoarr = req.body.psuedoarr;
-	var fc = {
-		shapes: shapes,
-		StageH: height,
-	}
 	var cUser = req.user._id;
 	var id;
 	User.findOne({ _id: cUser }, function (err, user) {
 		if (err) {
 			console.log(err);
 		} else {
-			var topic = user.topics.id(topID)
+			 topic = user.topics.id(topID);
 					topic.subtopics.push({
 						name: newsubTopic,
 						flowchart: fc,
 						code: codearr,
 						psuedocode: psuedoarr
 					});
-		
-				
-				topic.subtopics.forEach(function (subtopic) {
-					id = subtopic._id;
-				});
-
+				id=topic.subtopics[topic.subtopics.length-1]._id;
+			console.log(topic.subtopics.length);
+			console.log("id:"+id);
 			user.save(function (err, user) {
 				if (err) {
 					console.log(err);
@@ -128,42 +120,34 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 			});
 		}
 	});
-	return res.send({ "subtopicid": id });
+	 res.send({ "subtopicid": id,"topicid":topID});
 });
 
 router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
-	var subID = req.body.sbtopicID;
-	var topID = req.body.topic;
-	var cUser = req.user._id;
-	var height = req.body.StageHeight;
-	var shapes = req.body.Shapes;
-	var subTopicNm = req.body.sbtopic;
+	var topID = req.body.topicid;
+	var subID = req.body.subtopicid;
+	var fc = req.body.fc;
+	var UpdatedTopicName = req.body.UpTopNm;
+	var UpdatedSubTopicName = req.body.UpSubNm;
 	var codearr = req.body.codearr;
 	var psuedoarr = req.body.psuedoarr;
-	var fc = {
-		shapes: shapes,
-		StageH: height,
-	}
+	var cUser = req.user._id;
 	var id;
-	console.log(subID);
-
 	User.findOne({ _id: cUser }, function (err, user) {
+		var topic = user.topics.id(topID);
+		topic.title=UpdatedTopicName;
 		var subtopic = user.topics.id(topID).subtopics.id(subID);
-		console.log(user.topics.id(topID).subtopics.id(subID));
-		subtopic.name = subTopicNm;
+		subtopic.name = UpdatedSubTopicName;
 		subtopic.code = codearr;
 		subtopic.psuedocode = psuedoarr;
 		subtopic.flowchart = fc;
 
-		console.log(subtopic);
-
 		user.save(function (err) {
 			if (err) { return handleError(err); }
-			console.log('Success!');
+			console.log('Success Updated!');
 		});
 	});
-
-});
+res.send()});
 
 router.post('/delsubtopic', isNotLoggedIn, function (req, res) {
 	var subID = req.body.subtopicID;
@@ -189,7 +173,8 @@ router.post('/delsubtopic', isNotLoggedIn, function (req, res) {
 			});
 		}
 	});
-return});
+	res.send();
+});
 
 router.post('/deltopic', isNotLoggedIn, function (req, res) {
 	var topID = req.body.topicID;
@@ -210,7 +195,8 @@ router.post('/deltopic', isNotLoggedIn, function (req, res) {
 			});
 		}
 	});
-return});
+	res.send();
+});
 
 router.post('/login', passport.authenticate('local', {
 	successRedirect: '/home',
@@ -225,7 +211,7 @@ router.post('/login', passport.authenticate('local', {
 router.get('/logout', function (req, res) {
 	req.logout();
 	req.flash('success', 'Logged you out!');
-	res.redirect('/');
+	return res.redirect('/');
 });
 
 router.get('/home', function (req, res) {

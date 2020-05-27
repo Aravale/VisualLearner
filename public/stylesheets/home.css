@@ -22,6 +22,7 @@ body {
     overflow-x: hidden;
     padding: 10px;
     transition:none;
+    box-shadow: 5px 5px 5px;
   }
   
   .sidenav #userInfo {

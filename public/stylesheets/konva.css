@@ -1,4 +1,4 @@
-        .parallelogram {
+        .IO {
             width: 50px;
             height: 20px;
             transform: skew(340deg);
@@ -7,7 +7,7 @@
 			margin: 5px 5px 0px 5px;
         }
 
-        .circle {
+        .Connector {
             height: 20px;
             width: 20px;
             background: #efefef;
@@ -16,7 +16,7 @@
 			margin: 5px 5px 0px 5px;
         }
 
-        .rectangle {
+        .Process {
             height: 20px;
             width: 50px;
             background: #efefef;
@@ -24,7 +24,7 @@
 			margin: 5px 5px 0px 5px;
         }
 
-        .rrectangle {
+        .Terminal {
             height: 20px;
             width: 50px;
             background: #efefef;
@@ -41,7 +41,7 @@
             padding: 0px !important;
         }
 
-        .dici {
+        .Decision {
             height: 20px;
             width: 20px;
             background: #efefef;

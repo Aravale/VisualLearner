@@ -1,8 +1,8 @@
-#codeDiv>li{
+#codeUL>li{
   border: none;
   margin: 0px;
 }
-#psuedoDiv>li{
+#psuedoUL>li{
   border: none;
   margin: 0px;
 }

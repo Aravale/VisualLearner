@@ -15,7 +15,8 @@
 </head>
 
 <body>
-	<!-- <div class="row m-0 topbar">
+	<%# Top Bar %>
+	<nav class="navbar p-0 d-none d-lg-flex">
 		<div class="col-lg-4 p-0">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
@@ -31,52 +32,11 @@
 				<h2 class="colhead">
 					Flowchart
 				</h2>
-				<button class="rrectangle" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
-				<button class="rectangle" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
-				<button class="parallelogram" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
-				<button class="dici" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
-				<button class="circle" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
-
-				<div class="holder-thing">
-					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
-						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
-						<i class="fa fa-trash-alt"></i></button>
-				</div>
-
-			</div>
-		</div>
-		<div class="col-lg-4 p-0">
-			<div class="card-header bg-light rounded-0 colheader">
-				<h2 class="colhead">
-					Psuedocode
-				</h2>
-				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="slider">
-				</div>
-			</div>
-		</div>
-	</div> -->
-	<nav class="navbar p-0">
-		<div class="col-lg-4 p-0">
-			<div class="card-header bg-light rounded-0 colheader">
-				<h2 class="colhead">
-					Code
-				</h2>
-				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="slider">
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-4 p-0">
-			<div class="card-header bg-light rounded-0 colheader">
-				<h2 class="colhead">
-					Flowchart
-				</h2>
-				<button class="rrectangle" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
-				<button class="rectangle" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
-				<button class="parallelogram" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
-				<button class="dici" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
-				<button class="circle" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
+				<button class="Terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
+				<button class="Process" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
+				<button class="IO" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
+				<button class="Decision" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
+				<button class="Connector" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
 
 				<div class="holder-thing">
 					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
@@ -97,21 +57,29 @@
 			</div>
 		</div>
 	</nav>
+
 	<%# Main Content %>
 	<div class="row m-0" id="maincontent">
 		<!-- Code -->
 		<div class="col-lg-4 p-0" id="code">
-
-			<ul class="list-group textcol" id="codeDiv">
+			<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+				<h2 class="colhead">
+					Code
+				</h2>
+				<div class="holder-thing">
+					<input type="range" min="1" max="100" value="100" class="slider">
+				</div>
+			</div>
+			<ul class="list-group textcol" id="codeUL">
 				<%for(i=0;i<=6;i++){%>
 				<li class="list-group-item p-0">
 					<div class="row-box"></div>
 					<div class="invisibile-texty codetexty" contenteditable="true"></div>
-					<div class="rowboxdel">
+					<!-- <div class="rowboxdel">
 						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
 							<i class="fa fa-trash-alt"></i>
 						</button>
-					</div>
+					</div> -->
 				</li>
 				<% } %>
 			</ul>
@@ -119,16 +87,39 @@
 
 		<!-- Flowchart -->
 		<div class="col-lg-4 p-0" id="flowchart">
+			<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+				<h2 class="colhead">
+					Flowchart
+				</h2>
+				<button class="Terminal t1" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
+				<button class="Process t2" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
+				<button class="IO t3" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
+				<button class="Decision t4" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
+				<button class="Connector t5" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
 
+				<div class="holder-thing">
+					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
+						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
+						<i class="fa fa-trash-alt"></i></button>
+				</div>
+
+			</div>
 			<div id="flowchartdiv" class="textcol">
 			</div>
 		</div>
 
 		<!-- Psuedocode -->
 		<div class="col-lg-4 p-0" id="psuedo">
+			<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+				<h2 class="colhead">
+					Psuedocode
+				</h2>
+				<div class="holder-thing">
+					<input type="range" min="1" max="100" value="100" class="slider">
+				</div>
+			</div>
 
-
-			<ul class="list-group textcol" id="psuedoDiv">
+			<ul class="list-group textcol" id="psuedoUL">
 				<%for(i=0;i<=6;i++){%>
 				<li class="list-group-item p-0">
 					<div class="row-box"></div>
@@ -165,15 +156,19 @@
 				<button type="button" class="btn btn-outline-light" id="nxt" disabled="true">Next</button>
 			</div>
 			<div>
+
 				<button type="button" id="addRow" class="btn btn-outline-light">Add Row</button>
 				<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
-				<button type="button" class="btn btn-outline-light" onclick="saveSwal()">Save</button>
+				<% if(currentUser){ %>
+				<button type="button" class="btn btn-outline-light" id="Save">Save</button>
+				<button type="button" class="btn btn-outline-light" id="Update">Update</button>
+				<% } %>
 			</div>
 		</div>
 	</nav>
 
 	<%# Topic list Menu%>
-	<div id="mySidenav" class="sidenav bg-secondary show">
+	<div id="mySidenav" class="sidenav bg-secondary collapse">
 
 		<div>
 			<h2 class="text-light px-2 title-text">Visual Learner</h2>
@@ -183,8 +178,8 @@
 			<ul class="topiclist" id="topiclist">
 				<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
 				<li id="<%=topic._id%>">
-
 					<span class="dir topiclisttext"><%= topic.title %></span>
+
 					<button type="button" class="btn btn-sm btn-outline-light float-right" onclick="deletetopic(this)"
 						style="margin-right: 11px;">
 						<i class="fa fa-trash-alt text-dark"></i>
@@ -193,7 +188,7 @@
 					<ul class="subtopiclist">
 						<%topic.subtopics.forEach(function(subtopic){ %>
 						<li id="<%=subtopic._id%>">
-							<span class="topiclisttext" onclick="loadBoard(this)"><%= subtopic.name %></span>
+							<span class="topiclisttext" onclick="loadSubtopic(this)"><%= subtopic.name %></span>
 							<button type="button" class="btn btn-sm btn-outline-light float-right"
 								onclick="deletesub(this)">
 								<i class="fa fa-trash-alt text-light"></i>
@@ -223,9 +218,10 @@
 					&nbsp;&nbsp;
 					<br />
 					<a class="text-link" href="/logout">Logout</a>
+					<% } %>
 				</div>
 			</div>
-			<% } %>
+
 		</div>
 
 	</div>
@@ -252,15 +248,8 @@
 	crossorigin="anonymous"></script>
 <script src="https://unpkg.com/konva@4.0.14/konva.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script type="text/javascript" src="/konvascript.js"></script>
-<script type="text/javascript" src="/konvashapes.js"></script>
-<script type="text/javascript" src="/topics.js"></script>
+
 <script>
-
-
-	/* 	$('.topiclisttext').dblclick(function () {
-			this.attr('contenteditable',true);
-		}); */
 
 	$('.dir').click(function (e) {
 		e.stopPropagation();
@@ -271,14 +260,15 @@
 		$(".codetexty").each(function (index, element) {
 			$(this).siblings('.row-box').html("<span class='codeCounter'>" + index + "</span>");
 		});
-		$(".psuedotexty").each(function (index, element) {
+		console.log("hi setting rows")
+		/* $(".psuedotexty").each(function (index, element) {
 			$(this).siblings('.row-box').html("<span class='codeCounter'>" + index + "</span>");
-		});
+		}); */
 	}
 
 	$('#addRow').click(function () {
-		$('#codeDiv').append(addtexty("codetexty"));
-		$('#psuedoDiv').append(addtexty("psuedotexty"));
+		$('#codeUL').append(addtexty("codetexty"));
+		$('#psuedoUL').append(addtexty("psuedotexty"));
 		StageHeight = StageHeight + (blockSnapSize * 3);
 		setstageheight();
 		setrowsIndex();
@@ -286,7 +276,10 @@
 	});
 
 	function delrowbox(item) {
-		$(item).parent().parent().remove();
+		let rowNumber=$(item).parent().parent().index();
+		$("#codeUL li").eq(rowNumber).remove();
+		$("#psuedoUL li").eq(rowNumber).remove();
+		deletestagerow(rowNumber);
 		setrowsIndex();
 	}
 
@@ -309,16 +302,57 @@
 				]
 			}
 		});
-		console.log(formValues);
-		saveBoard(formValues);
+		return formValues;
+	}
+	
+	async function updateSwal() {
+		console.log($("#"+topid+" .topiclisttext").html());
+		console.log($("#"+subid+" .topiclisttext").html());
+		let { value: formValues } = await Swal.fire({
+			title: 'Update Subtopic',
+			html:
+				`<label>Topic</label><input id="swal-input1" value="${$("#"+topid+" .topiclisttext").html()}" class="swal2-input">
+				<label>Subtopic</label><input id="swal-input2"  value="${$("#"+subid+" .topiclisttext").html()}" class="swal2-input">`,
+			focusConfirm: false,
+			preConfirm: () => {
+				return [
+					$("#swal-input1").val(),
+					$("#swal-input2").val(),
+				]
+			}
+		});
+		return formValues;
 	}
 
-
+	$("#Save").click(async function(){
+			saveSwal().then(function(vals){
+				console.log("Saving: "+vals);
+				console.log(saveBoard(vals));
+				saveSubtopic(saveBoard(vals));
+				});
+	});
+	
+	$("#Update").click(async function(){
+		if(topid && subid){updateSwal().then(function(vals){
+				if(vals){console.log("Updating: "+vals);
+				console.log(saveBoard(vals));
+				updateSubtopic(saveBoard(vals));}
+				});}
+				else{	
+					Swal.fire({
+				title: 'Open a sub first!',
+				icon: 'error',
+				confirmButtonText: 'OK'
+			});
+				}
+	});
 	$('.slider').change(function () {
 		$(this).parent().parent().parent().find("ul").fadeTo(100, this.value / 100);
 	});
 
-	setrowsIndex();
 </script>
-
+<script type="text/javascript" src="/konvascript.js"></script>
+<script type="text/javascript" src="/konvashapes.js"></script>
+<script type="text/javascript" src="/topics.js"></script>
+<script type="text/javascript" src="/subtopics.js"></script>
 </html>

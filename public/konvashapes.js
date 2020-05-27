@@ -1,7 +1,7 @@
 function makeGroup(placeX, placeY, GrpName,GrpWidth) {
 	var NewGroup = new Konva.Group({
-		x: (GrpName == "ConnectorGrp" || GrpName == "DecisionGrp") ? placeX + (blockSnapSize * 3) : placeX,
-		y: (GrpName == "ConnectorGrp") ? placeY + blockSnapSize : placeY,
+		x: placeX,
+		y: placeY,
 		draggable: true,
 		name: GrpName
 	});
@@ -28,7 +28,7 @@ function makeGroup(placeX, placeY, GrpName,GrpWidth) {
 		});
 		layer.batchDraw();
 	});
-	NewGroup.on('dragend', setshapepos);
+	//NewGroup.on('dragend', setshapepos);
 	NewGroup.add(shape);
 	if (GrpName != "ConnectorGrp") {
 		GrpWidth?shape.width(GrpWidth):shape.width(ShapeWidth);
@@ -87,10 +87,10 @@ function newConnector(placeX, placeY, anchors) {
 	shape.radius(blockSnapSize / 2);
 
 	newAnchor(0, 0, grp);
-
+	
 	if (anchors != null) {
-		grp.getChildren()[1].name(anchors[index - 2][0]);
-		grp.getChildren()[1].id(anchors[index - 2][1]);
+		grp.getChildren()[1].name(anchors[0][0]);
+		grp.getChildren()[1].id(anchors[0][1]);
 	}
 
 	layer.add(grp);
@@ -202,7 +202,7 @@ function newAnchor(placeX, placeY, grp) {
 				pointerWidth: 15,
 				fill: 'black',
 				stroke: 'black',
-				strokeWidth: 2,
+				strokeWidth: 4,
 				name: 'objArr',
 				hitStrokeWidth: 0,
 			});
@@ -249,9 +249,6 @@ function newDecision(placeX, placeY, txty, anchors,shapeW) {
 	}
 	layer.add(grp);
 	layer.draw();
-
-
-
 }
 
 function newIO(placeX, placeY, txty, anchors,shapeW) {
@@ -277,9 +274,9 @@ function newIO(placeX, placeY, txty, anchors,shapeW) {
 }
 
 
-newTerminal(placeX, placeY, "Start"); setshapepos();
-newProcess(placeX, placeY); setshapepos();
-newIO(placeX, placeY); setshapepos();
-newDecision(placeX, placeY); setshapepos();
-newConnector(placeX, placeY); setshapepos();
-newTerminal(placeX, placeY);
+$('.t1').click();
+$('.t2').click();
+$('.t3').click();
+$('.t4').click();
+$('.t5').click();
+$('.t2').click();
