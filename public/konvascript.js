@@ -259,7 +259,6 @@ function saveBoard(formdata) {
 }
 
 function loadBoard(data) {
-	console.log(data);
 	layer.destroyChildren();
 	$('#codeUL').empty();
 	$('#psuedoUL').empty();
@@ -275,7 +274,6 @@ function loadBoard(data) {
 	setstageheight();
 	setrowsIndex();
 	data.subtop.flowchart.shapes.forEach(node => {
-		console.log(node);
 		if (node.AName.length == 0) {
 			switch (node.SName) {
 				case "ProcessGrp":
@@ -317,7 +315,7 @@ function loadBoard(data) {
 function deletesub(item) {
 	let delsubid = $(item).parent().attr('id');
 	let deltopid = $(item).parent().parent().parent().attr('id');
-	deleteSubtopic(delsubid,deltopid,item);
+	deleteSubtopic(delsubid, deltopid, item);
 }
 
 function snap(num) {
@@ -494,7 +492,6 @@ function stageinit(gridLayer, layer) {
 		if (arrP < VShapesArray.length - 1) {
 			VShapesArray[arrP].getChildren()[0].fill("#DCDCDC");
 			var textpointer = ((VShapesArray[arrP].y() + blockSnapSize * 2) / (blockSnapSize * 3)) - 1;
-			console.log(textpointer + " / " + VShapesArray[arrP].y());
 			//$("#maincontent").scrollTop(textpointer*(blockSnapSize*3));
 			$('#maincontent').animate({ scrollTop: textpointer * (blockSnapSize * 3) }, 'slow');
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#DCDCDC");
@@ -502,7 +499,6 @@ function stageinit(gridLayer, layer) {
 			arrP++;
 			VShapesArray[arrP].getChildren()[0].fill("#1496BB");
 			textpointer = ((VShapesArray[arrP].y() + blockSnapSize * 2) / (blockSnapSize * 3)) - 1;
-			console.log(textpointer + " / " + VShapesArray[arrP].y());
 			$(".codetexty:eq(" + textpointer + ")").css("background", "#1496BB");
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#1496BB");
 			layer.draw();
@@ -573,7 +569,6 @@ function NextNode(node) {
 				}
 			});
 			if (looped == 0) {
-				console.log("Pushed node:" + nextNodeAnc.getParent());
 				VShapesArray.push(nextNodeAnc.getParent());
 				NextNode(nextNodeAnc.getParent());
 			}
@@ -584,22 +579,24 @@ function NextNode(node) {
 function deletestagerow(rowNumber) {
 	let stagestart = rowNumber * (blockSnapSize * 3);
 	let stageend = stagestart + (blockSnapSize * 3);
-	console.log(stagestart);
-	console.log(stageend);
 	layer.getChildren().forEach((node) => {
 		if (node.y() >= stagestart && node.y() < stageend) {
-			console.log("destroy");
-			console.log(node);
-			console.log(node.y());
+			console.log("destroy"+node.name());
 			deleteNode(node);
 		}
 	});
 	layer.getChildren().forEach((node) => {
-		if (node.y() >= stageend) {
-			console.log("reheight");
-			console.log(node);
-			node.y(node.y() - (blockSnapSize * 3));
+		if (node.getClassName() != "Arrow") {
+			if (node.y() >= stageend) {
+				node.move({
+					y: -(blockSnapSize * 3)
+				});
+			}
 		}
+	});
+	layer.getChildren().forEach((node) => {
+		if (node.getClassName() != "Arrow") {
+		node.fire('dragmove');}
 	});
 	StageHeight = StageHeight - (blockSnapSize * 3);
 	setstageheight();
@@ -695,7 +692,6 @@ function AncInUse(anchor) {
 }
 
 function deleteNode(node) {
-	console.log(node);
 	if (node.getClassName() === 'Arrow') {
 		var nmarr = node.name().split(' ');
 		var anc1 = layer.findOne("#" + nmarr[0]);

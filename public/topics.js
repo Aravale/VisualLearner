@@ -52,11 +52,12 @@ function newTopic() {
                     return data;
                 }
                 else {
-                    $('#topiclist').append(`<li id="${data.topicid}" class="dir">
-                    ${data.topictitle}
-                    <button type="button" class="btn btn-outline-light" onclick="deletetopic(this)">
-                        <i class="fa fa-trash-alt text-danger"></i>
-                    </button>  
+                    $('#topiclist').append(`<li id="${data.topicid}">
+                    <span class="dir topiclisttext">${data.topictitle}</span>
+                    <button type="button" class="btn btn-sm btn-outline-light float-right" onclick="deletetopic(this)"
+						style="margin-right: 11px;">
+						<i class="fa fa-trash-alt text-dark"></i>
+					</button> 
                     <ul class="subtopiclist">
                     </ul>
                 </li>`);
