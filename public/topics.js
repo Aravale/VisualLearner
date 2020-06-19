@@ -24,9 +24,7 @@ function deletetopic(item) {
 					$(item).parent().remove();
 				});
 		}
-	})
-
-
+	});
 }
 
 function newTopic() {

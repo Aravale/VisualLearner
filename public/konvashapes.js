@@ -1,4 +1,4 @@
-function makeGroup(placeX, placeY, GrpName,GrpWidth) {
+function makeGroup(placeX, placeY, GrpName, GrpWidth) {
 	var NewGroup = new Konva.Group({
 		x: placeX,
 		y: placeY,
@@ -28,13 +28,16 @@ function makeGroup(placeX, placeY, GrpName,GrpWidth) {
 		});
 		layer.batchDraw();
 	});
-	//NewGroup.on('dragend', setshapepos);
+	NewGroup.on('dragend', () => {
+		nextNodeY();
+	});
+	//NewGroup.on('dragend', nextNodeY);
 	NewGroup.add(shape);
 	if (GrpName != "ConnectorGrp") {
-		GrpWidth?shape.width(GrpWidth):shape.width(ShapeWidth);
+		GrpWidth ? shape.width(GrpWidth) : shape.width(ShapeWidth);
 		shape.height(ShapeHeight);
 		var txt = new Konva.Text(ShapeText);
-		GrpWidth?txt.width(GrpWidth):txt.width(ShapeWidth);
+		GrpWidth ? txt.width(GrpWidth) : txt.width(ShapeWidth);
 		txt.height(ShapeHeight);
 		NewGroup.add(txt);
 		NewGroup.on('dblclick', makeTextInput);
@@ -42,8 +45,8 @@ function makeGroup(placeX, placeY, GrpName,GrpWidth) {
 	return NewGroup;
 }
 
-function newProcess(placeX, placeY, txty, anchors,shapeW) {
-	var grp = makeGroup(placeX, placeY, "ProcessGrp",shapeW);
+function newProcess(placeX, placeY, txty, anchors, shapeW) {
+	var grp = makeGroup(placeX, placeY, "ProcessGrp", shapeW);
 	var shape = grp.getChildren()[0];
 	var txt = grp.getChildren()[1];
 	txty ? txt.text(txty) : txt.text('int a');
@@ -84,10 +87,10 @@ function newTerminal(placeX, placeY, txty, anchors) {
 function newConnector(placeX, placeY, anchors) {
 	var grp = makeGroup(placeX, placeY, "ConnectorGrp");
 	var shape = grp.getChildren()[0];
-	shape.radius(blockSnapSize / 2);
+	shape.radius(blockSize / 2);
 
 	newAnchor(0, 0, grp);
-	
+
 	if (anchors != null) {
 		grp.getChildren()[1].name(anchors[0][0]);
 		grp.getChildren()[1].id(anchors[0][1]);
@@ -152,18 +155,18 @@ function newAnchor(placeX, placeY, grp) {
 		}
 	});
 
-	anchor.on('mouseover', function () {
+	anchor.on('mouseover', () => {
 		anchor.opacity(1);
 		anchor.strokeWidth(3);
 		layer.draw();
 	});
-	anchor.on('mouseout', function () {
+	anchor.on('mouseout', () => {
 		anchor.opacity(0.6);
 		anchor.strokeWidth(2);
 		layer.draw();
 	});
 
-	anchor.on('click', function () {
+	anchor.on('click', () => {
 
 		//If anchor already has arrow on it prevent another
 		if (anchor.name().includes("arrstart") || anchor.name().includes("arrend")) {
@@ -218,8 +221,8 @@ function newAnchor(placeX, placeY, grp) {
 	layer.draw();
 }
 
-function newDecision(placeX, placeY, txty, anchors,shapeW) {
-	var grp = makeGroup(placeX, placeY, "DecisionGrp",shapeW);
+function newDecision(placeX, placeY, txty, anchors, shapeW) {
+	var grp = makeGroup(placeX, placeY, "DecisionGrp", shapeW);
 	var shape = grp.getChildren()[0];
 	var txt = grp.getChildren()[1];
 	txt.fontSize(20);
@@ -251,18 +254,18 @@ function newDecision(placeX, placeY, txty, anchors,shapeW) {
 	layer.draw();
 }
 
-function newIO(placeX, placeY, txty, anchors,shapeW) {
-	var grp = makeGroup(placeX, placeY, "IOGrp",shapeW);
+function newIO(placeX, placeY, txty, anchors, shapeW) {
+	var grp = makeGroup(placeX, placeY, "IOGrp", shapeW);
 	var shape = grp.getChildren()[0];
 	var txt = grp.getChildren()[1];
 	shape.skewX(-0.5);
 	txty ? txt.text(txty) : txt.text('Input X');
-	txt.x(-blockSnapSize / 2);
+	txt.x(-blockSize / 2);
 
 	newAnchor(shape.width() / 2, 0, grp);//top
-	newAnchor(0 - (blockSnapSize / 2), ShapeHeight / 2, grp);//left
+	newAnchor(0 - (blockSize / 2), ShapeHeight / 2, grp);//left
 	newAnchor(shape.width() / 2, ShapeHeight, grp);//bot
-	newAnchor(shape.width() - (blockSnapSize / 2), ShapeHeight / 2, grp);//right
+	newAnchor(shape.width() - (blockSize / 2), ShapeHeight / 2, grp);//right
 
 	if (anchors != null) {
 		grp.getChildren().forEach((subnode, index) => { if (index > 1) { subnode.name(anchors[index - 2][0]); subnode.id(anchors[index - 2][1]); } });
@@ -274,9 +277,4 @@ function newIO(placeX, placeY, txty, anchors,shapeW) {
 }
 
 
-$('.t1').click();
-$('.t2').click();
-$('.t3').click();
-$('.t4').click();
-$('.t5').click();
-$('.t2').click();
+

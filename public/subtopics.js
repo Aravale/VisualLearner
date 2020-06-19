@@ -3,9 +3,10 @@ function saveSubtopic(Sarr) {
 	$.ajax({
 		type: 'POST',
 		url: '/newsubtopic',
-		data: { fc: Sarr.fc, codearr: Sarr.codearr, psuedoarr: Sarr.psuedoarr, topicid: Sarr.topicid, NewSubtopicName: Sarr.NewSubtopicName }
+		data: { fc: Sarr.fc, codearr: Sarr.codearr, psuedoarr: Sarr.psuedoarr, topicid: Sarr.topicid, NewSubtopicName: Sarr.NewSubtopicName,description:Sarr.description }
 	})
 		.done(function (data) {
+			console.log(data)
 			topid = data.topicid;
 			subid = data.subtopicid;
 			console.log("topid:" + topid);
@@ -34,7 +35,7 @@ function updateSubtopic(Sarr) {
 	$.ajax({
 		type: 'POST',
 		url: '/updatesubtopic',
-		data: { fc: Sarr.fc, codearr: Sarr.codearr, psuedoarr: Sarr.psuedoarr, topicid: topid, UpTopNm: Sarr.UpTopNm, subtopicid: subid, UpSubNm: Sarr.UpSubNm }
+		data: { fc: Sarr.fc, codearr: Sarr.codearr, psuedoarr: Sarr.psuedoarr, topicid: topid, UpTopNm: Sarr.UpTopNm, subtopicid: subid, UpSubNm: Sarr.UpSubNm,description:Sarr.description }
 	}).done(function () {
 		var title = Sarr.UpTopNm + " > " + Sarr.UpSubNm;
 		console.log(title);

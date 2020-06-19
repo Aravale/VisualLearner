@@ -94,8 +94,9 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 	var newsubTopic = req.body.NewSubtopicName;
 	var codearr = req.body.codearr;
 	var psuedoarr = req.body.psuedoarr;
+	var description= req.body.description;
 	var cUser = req.user._id;
-	var id;
+	var id="";
 	User.findOne({ _id: cUser }, function (err, user) {
 		if (err) {
 			console.log(err);
@@ -105,7 +106,8 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 						name: newsubTopic,
 						flowchart: fc,
 						code: codearr,
-						psuedocode: psuedoarr
+						psuedocode: psuedoarr,
+						description:description
 					});
 				id=topic.subtopics[topic.subtopics.length-1]._id;
 			console.log(topic.subtopics.length);
@@ -119,13 +121,15 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 				}
 			});
 		}
-	});
-	 res.send({ "subtopicid": id,"topicid":topID});
+	}).then(() =>
+	{console.log("id:"+id);
+	 res.send({ "subtopicid": id,"topicid":topID});});
 });
 
 router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
 	var topID = req.body.topicid;
 	var subID = req.body.subtopicid;
+	var description= req.body.description;
 	var fc = req.body.fc;
 	var UpdatedTopicName = req.body.UpTopNm;
 	var UpdatedSubTopicName = req.body.UpSubNm;
@@ -141,7 +145,7 @@ router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
 		subtopic.code = codearr;
 		subtopic.psuedocode = psuedoarr;
 		subtopic.flowchart = fc;
-
+		subtopic.description= description;
 		user.save(function (err) {
 			if (err) { return handleError(err); }
 			console.log('Success Updated!');

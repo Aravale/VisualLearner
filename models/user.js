@@ -15,18 +15,19 @@ var shapeSchema=new mongoose.Schema({
 
 var subtopicSchema=new mongoose.Schema({
 	name: String,
+	description:String,
 	code: [String],
 	psuedocode: [String],
 	flowchart: {shapes:[shapeSchema],
 				StageH:Number,
 				}
-});
+}, { timestamps: { createdAt: 'created', updatedAt:'updated'}});
 //var Subtopic=mongoose.model("SubTopic",subtopicSchema)
 
 var topicSchema=new mongoose.Schema({
 	title: String,
 	subtopics:[subtopicSchema]
-});
+}, { timestamps: { createdAt: 'created', updatedAt:'updated'}});
 //var Topic=mongoose.model("Topic",topicSchema)
 
 var userSchema=new mongoose.Schema({

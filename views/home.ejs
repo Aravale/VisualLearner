@@ -16,14 +16,14 @@
 
 <body>
 	<%# Top Bar %>
-	<nav class="navbar p-0 d-none d-lg-flex">
+	<nav class="navbar p-0 d-none d-lg-flex sticky-top h-9">
 		<div class="col-lg-4 p-0">
 			<div class="card-header bg-light rounded-0 colheader">
 				<h2 class="colhead">
 					Code
 				</h2>
 				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="slider">
+					<input type="range" min="1" max="100" value="100" class="cslider">
 				</div>
 			</div>
 		</div>
@@ -52,143 +52,148 @@
 					Psuedocode
 				</h2>
 				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="slider">
+					<input type="range" min="1" max="100" value="100" class="pslider">
 				</div>
 			</div>
 		</div>
 	</nav>
 
 	<%# Main Content %>
-	<div class="row m-0" id="maincontent">
-		<!-- Code -->
-		<div class="col-lg-4 p-0" id="code">
-			<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
-				<h2 class="colhead">
-					Code
-				</h2>
-				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="slider">
+	<div class="container-fluid m-0 p-0" id="maincontent">
+		<div class="row-box w-100"><span class='codeCounter'>Description</span> <button type="button" class="btn btn-sm  btn-outline-light" id="descToggle">+</button></div>
+		<div class="invisibile-texty w-100 border-bottom border-dark" id="Description" contenteditable="true"></div>
+		<div class="row m-0">
+			<!-- Code -->
+			<div class="col-lg-4 col-md-12 p-0" id="code">
+				<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+					<h2 class="colhead">
+						Code
+					</h2>
+					<div class="holder-thing">
+						<input type="range" min="1" max="100" value="100" class="cslider">
+					</div>
 				</div>
-			</div>
-			<ul class="list-group textcol" id="codeUL">
-				<%for(i=0;i<=6;i++){%>
-				<li class="list-group-item p-0">
-					<div class="row-box"></div>
-					<div class="invisibile-texty codetexty" contenteditable="true"></div>
-					<!-- <div class="rowboxdel">
-						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
+				<ul class="list-group" id="codeUL">
+					<%for(i=0;i<=7;i++){%>
+					<li class="list-group-item p-0">
+						<div class="row-box"></div>
+						<div class="invisibile-texty codetexty" contenteditable="true"></div>
+						<!-- <div class="rowboxdel">
+						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="deleteRow(this)">
 							<i class="fa fa-trash-alt"></i>
 						</button>
 					</div> -->
-				</li>
-				<% } %>
-			</ul>
-		</div>
-
-		<!-- Flowchart -->
-		<div class="col-lg-4 p-0" id="flowchart">
-			<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
-				<h2 class="colhead">
-					Flowchart
-				</h2>
-				<button class="Terminal t1" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
-				<button class="Process t2" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
-				<button class="IO t3" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
-				<button class="Decision t4" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
-				<button class="Connector t5" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
-
-				<div class="holder-thing">
-					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
-						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
-						<i class="fa fa-trash-alt"></i></button>
-				</div>
-
-			</div>
-			<div id="flowchartdiv" class="textcol">
-			</div>
-		</div>
-
-		<!-- Psuedocode -->
-		<div class="col-lg-4 p-0" id="psuedo">
-			<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
-				<h2 class="colhead">
-					Psuedocode
-				</h2>
-				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="slider">
-				</div>
+					</li>
+					<% } %>
+				</ul>
 			</div>
 
-			<ul class="list-group textcol" id="psuedoUL">
-				<%for(i=0;i<=6;i++){%>
-				<li class="list-group-item p-0">
-					<div class="row-box"></div>
-					<div class="invisibile-texty psuedotexty" contenteditable="true"></div>
-					<div class="rowboxdel">
-						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="delrowbox(this)">
-							<i class="fa fa-trash-alt"></i>
-						</button>
+			<!-- Flowchart -->
+			<div class="col-lg-4 col-md-12 p-0" id="flowchart">
+				<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+					<h2 class="colhead">
+						Flowchart
+					</h2>
+					<button class="Terminal t1" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
+					<button class="Process t2" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
+					<button class="IO t3" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
+					<button class="Decision t4" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
+					<button class="Connector t5" data-toggle="tooltip" data-placement="bottom"
+						title="Connector"></button>
+
+					<div class="holder-thing">
+						<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
+							data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
+							<i class="fa fa-trash-alt"></i></button>
 					</div>
-				</li>
-				<% } %>
-			</ul>
+
+				</div>
+				<div id="flowchartdiv" class="h-100 bg-white">
+				</div>
+			</div>
+
+			<!-- Psuedocode -->
+			<div class="col-lg-4 col-md-12 p-0" id="psuedo">
+				<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+					<h2 class="colhead">
+						Psuedocode
+					</h2>
+					<div class="holder-thing">
+						<input type="range" min="1" max="100" value="100" class="pslider">
+					</div>
+				</div>
+
+				<ul class="list-group" id="psuedoUL">
+					<%for(i=0;i<=7;i++){%>
+					<li class="list-group-item p-0">
+						<div class="row-box"></div>
+						<div class="invisibile-texty psuedotexty" contenteditable="true"></div>
+						<div class="rowboxdel">
+							<button type="button" class="btn btn-sm btn-outline-light btn-dark"
+								onclick="deleteRow(this)">
+								<i class="fa fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>
+					<% } %>
+				</ul>
+			</div>
+
 		</div>
-
 	</div>
-
 	<%# Bottom Nav %>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom" id="botnav">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#mySidenav">
-			<i class="fa fa-bars fa-lg"></i>
-		</button>
-
-		<div class="collapse navbar-collapse d-flex justify-content-between">
-
-			<span id="subTopicName" class="text-light ml-2">Topic Name Here</span>
-			<div class="navbar-nav d-flex justify-content-center ">
-				<button type="button" class="btn btn-outline-light" id="prv" disabled="true">Previous</button>
-
-				<span class="nav-link" id="shpN">0/0</span>
-
-				<button type="button" class="btn btn-outline-light" id="nxt" disabled="true">Next</button>
-			</div>
-			<div>
-
-				<button type="button" id="addRow" class="btn btn-outline-light">Add Row</button>
-				<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
-				<% if(currentUser){ %>
-				<button type="button" class="btn btn-outline-light" id="Save">Save</button>
-				<button type="button" class="btn btn-outline-light" id="Update">Update</button>
-				<% } %>
-			</div>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-bottom" id="botnav">
+		<div class="navbar-header">
+			<button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#mySidenav">
+				<i class="fa fa-bars fa-lg"></i>
+			</button>
+			<span class="navbar-brand d-none d-md-inline p-2" id="subTopicName">Topic > Subtopic</span>
+		</div>
+		<div class="abs-center-x" id="viewControls">
+			<button type="button" id="prv" class="btn btn-outline-light d-none">
+				< </button>
+					<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
+					<button type="button" id="nxt" class="btn btn-outline-light d-none">></button>
+		</div>
+		<div id="addrow">
+			<button type="button" id="addRow" class="btn btn-outline-info round" data-toggle="tooltip"
+				data-placement="top" title="Add Row">+</button>
 		</div>
 	</nav>
 
 	<%# Topic list Menu%>
-	<div id="mySidenav" class="sidenav bg-secondary collapse">
+	<div id="mySidenav" class="sidenav collapse fade">
 
 		<div>
 			<h2 class="text-light px-2 title-text">Visual Learner</h2>
 		</div>
 
 		<div id="topicInfo">
+			<div class="p-2 d-flex justify-content-center">
+				<button type="button" onclick="newTopic()" class="btn btn-outline-light">New Topic</button>
+			</div>
+			<hr class="hrTopics" />
 			<ul class="topiclist" id="topiclist">
 				<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
 				<li id="<%=topic._id%>">
 					<span class="dir topiclisttext"><%= topic.title %></span>
-
-					<button type="button" class="btn btn-sm btn-outline-light float-right" onclick="deletetopic(this)"
-						style="margin-right: 11px;">
-						<i class="fa fa-trash-alt text-dark"></i>
+					<button style="margin-right: 11px;" type="button" class="btn btn-sm btn-outline-light float-right"
+						data-updated="<%=topic.updated%>" data-created="<%=topic.created%>" onclick="showInfo(this)">
+						<span class="fa fa-info text-light"></span>
+					</button>
+					<button type="button" class="btn btn-sm btn-outline-light float-right" onclick="deletetopic(this)">
+						<i class="fa fa-trash-alt text-secondary"></i>
 					</button>
 
 					<ul class="subtopiclist">
 						<%topic.subtopics.forEach(function(subtopic){ %>
 						<li id="<%=subtopic._id%>">
 							<span class="topiclisttext" onclick="loadSubtopic(this)"><%= subtopic.name %></span>
+							<button type="button" class="btn btn-sm btn-outline-light float-right"
+								data-updated="<%=subtopic.updated%>" data-created="<%=subtopic.created%>"
+								onclick="showInfo(this)">
+								<span class="fa fa-info text-light"></span>
+							</button>
 							<button type="button" class="btn btn-sm btn-outline-light float-right"
 								onclick="deletesub(this)">
 								<i class="fa fa-trash-alt text-light"></i>
@@ -197,33 +202,24 @@
 						<%	}); %>
 					</ul>
 				</li>
-				<hr style="margin-bottom: 10px; margin-top: 5px;">
+				<hr class="hrTopics" />
 				<%	});} %>
 			</ul>
 		</div>
-
-		<div id="userInfo">
-			<div class="row">
-				<div class="col-md-12">
-					<button type="button" onclick="newTopic()" class="btn btn-outline-light">New Topic</button>
-				</div>
+		<% if(currentUser){ %>
+		<div id="userInfo" class="d-flex flex-column mx-auto bd-highlight">
+			<div class="d-flex justify-content-between">
+				<button type="button" class="btn btn-outline-light" id="Save">Save</button>
+				<button type="button" class="btn btn-outline-light" id="Update">Update</button>
 			</div>
-			<div class="row">
-				<div class="col-md-3">
-					<img src="avatar.jpg" / height="60" width="60">
-				</div>
-				<div class="col-md-9">
-					<% if(currentUser){ %>
-					<%= currentUser.first_name %> <%= currentUser.last_name %>
-					&nbsp;&nbsp;
-					<br />
-					<a class="text-link" href="/logout">Logout</a>
-					<% } %>
-				</div>
+			<div class="d-flex justify-content-center p-3 border border-dark">
+				<%= currentUser.first_name %>&nbsp;&nbsp; <%= currentUser.last_name %>
 			</div>
-
+			<div class="d-flex justify-content-center">
+				<a class="text-link dark" href="/logout">Logout</a>
+			</div>
 		</div>
-
+		<% } %>
 	</div>
 
 	<div id="menu">
@@ -235,7 +231,6 @@
 		<button type="button" class="btn btn-outline-dark" id="trArr-button">True Arrow</button>
 		<button type="button" class="btn btn-outline-dark" id="flArr-button">False Arrow</button>
 	</div>
-
 </body>
 
 <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -257,30 +252,48 @@
 	});
 
 	function setrowsIndex() {
+		let rows = 0;
 		$(".codetexty").each(function (index, element) {
 			$(this).siblings('.row-box').html("<span class='codeCounter'>" + index + "</span>");
+			rows = index;
 		});
-		console.log("hi setting rows")
-		/* $(".psuedotexty").each(function (index, element) {
-			$(this).siblings('.row-box').html("<span class='codeCounter'>" + index + "</span>");
-		}); */
+		if (rows < 7) {
+			$("#botnav").removeClass("sticky-bottom").addClass("fixed-bottom");
+		}
+		else {
+			$("#botnav").removeClass("fixed-bottom").addClass("sticky-bottom");
+		}
+		console.log("hi setting rows");
 	}
 
 	$('#addRow').click(function () {
 		$('#codeUL').append(addtexty("codetexty"));
 		$('#psuedoUL').append(addtexty("psuedotexty"));
-		StageHeight = StageHeight + (blockSnapSize * 3);
-		setstageheight();
+		StageHeight = StageHeight + rowSize;
+		drawStage();
 		setrowsIndex();
 
 	});
 
-	function delrowbox(item) {
-		let rowNumber=$(item).parent().parent().index();
-		$("#codeUL li").eq(rowNumber).remove();
-		$("#psuedoUL li").eq(rowNumber).remove();
-		deletestagerow(rowNumber);
+	function cuteHide(el) {
+		el.animate({ opacity: '0' }, 150, function () {
+			el.animate({ height: '0px' }, 150, function () {
+				el.remove();
+			});
+		});
+	}
+
+	$("#descToggle").click( () =>{
+
+		$("#Description").slideToggle();
+	});
+
+	function deleteRow(item) {
+		let rowNumber = $(item).parent().parent().index();
+		cuteHide($("#codeUL li").eq(rowNumber));
+		cuteHide($("#psuedoUL li").eq(rowNumber));
 		setrowsIndex();
+		deletestagerow(rowNumber);
 	}
 
 	async function saveSwal() {
@@ -304,15 +317,15 @@
 		});
 		return formValues;
 	}
-	
+
 	async function updateSwal() {
-		console.log($("#"+topid+" .topiclisttext").html());
-		console.log($("#"+subid+" .topiclisttext").html());
+		console.log($("#" + topid + " .topiclisttext").html());
+		console.log($("#" + subid + " .topiclisttext").html());
 		let { value: formValues } = await Swal.fire({
 			title: 'Update Subtopic',
 			html:
-				`<label>Topic</label><input id="swal-input1" value="${$("#"+topid+" .topiclisttext").html()}" class="swal2-input">
-				<label>Subtopic</label><input id="swal-input2"  value="${$("#"+subid+" .topiclisttext").html()}" class="swal2-input">`,
+				`<label>Topic</label><input id="swal-input1" value="${$("#" + topid + " .topiclisttext").html()}" class="swal2-input">
+				<label>Subtopic</label><input id="swal-input2"  value="${$("#" + subid + " .topiclisttext").html()}" class="swal2-input">`,
 			focusConfirm: false,
 			preConfirm: () => {
 				return [
@@ -324,30 +337,48 @@
 		return formValues;
 	}
 
-	$("#Save").click(async function(){
-			saveSwal().then(function(vals){
-				console.log("Saving: "+vals);
-				console.log(saveBoard(vals));
-				saveSubtopic(saveBoard(vals));
-				});
+	function showInfo(item) {
+		Swal.fire({
+			title: 'Information',
+			html: `<p><strong>Created on: </strong> ${$(item).attr('data-created').substr(0, 24)}</p>
+				<p><strong>Last updated on: </strong> ${$(item).attr('data-updated').substr(0, 24)}</p>`,
+			confirmButtonText: 'OK'
+		});
+		console.log($(item).attr('data-created').substr(0, 24));
+		console.log($(item).attr('data-updated').substr(0, 24));
+	}
+
+	$("#Save").click(async function () {
+		saveSwal().then(function (vals) {
+			console.log("Saving: " + vals);
+			console.log(saveBoard(vals));
+			saveSubtopic(saveBoard(vals));
+		});
 	});
-	
-	$("#Update").click(async function(){
-		if(topid && subid){updateSwal().then(function(vals){
-				if(vals){console.log("Updating: "+vals);
-				console.log(saveBoard(vals));
-				updateSubtopic(saveBoard(vals));}
-				});}
-				else{	
-					Swal.fire({
+
+	$("#Update").click(async function () {
+		if (topid && subid) {
+			updateSwal().then(function (vals) {
+				if (vals) {
+					console.log("Updating: " + vals);
+					console.log(saveBoard(vals));
+					updateSubtopic(saveBoard(vals));
+				}
+			});
+		}
+		else {
+			Swal.fire({
 				title: 'Open a sub first!',
 				icon: 'error',
 				confirmButtonText: 'OK'
 			});
-				}
+		}
 	});
-	$('.slider').change(function () {
-		$(this).parent().parent().parent().find("ul").fadeTo(100, this.value / 100);
+	$('.cslider').change(function () {
+		$("#codeUL").fadeTo(20, this.value / 100);
+	});
+	$('.pslider').change(function () {
+		$("#psuedoUL").fadeTo(20, this.value / 100);
 	});
 
 </script>
@@ -355,4 +386,5 @@
 <script type="text/javascript" src="/konvashapes.js"></script>
 <script type="text/javascript" src="/topics.js"></script>
 <script type="text/javascript" src="/subtopics.js"></script>
+
 </html>

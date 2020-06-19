@@ -1,40 +1,59 @@
 body {
-    margin: 0;
-    padding: 0;
-    background-color:yellow;
+    background-color:grey;
   }
 #maincontent {
-    padding: 0px;
-    height: 86vh;
-    background-color: #1e2022; 
     overflow-y: auto;
 }
-#botnav {
-    height: 7vh;
+.abs-center-x {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#addrow {
+  position: absolute;
+  right: 20px;
+}
+.round{
+  border-radius: 2rem;
+  font-weight: 900;
+}
+.sticky-bottom {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  z-index: 1022;
+}
+.hrTopics{
+  margin-bottom: 10px;
+   margin-top: 5px;
+   background-color: #22272c;
 }
 .sidenav {
     height: 100%;
     width: 300px;
     position: fixed;
-    z-index: 100;
+    z-index: 1021;
     top: 0;
     left: 0;
     overflow-x: hidden;
     padding: 10px;
-    transition:none;
+    background-color: #2a4158;
     box-shadow: 5px 5px 5px;
   }
-  
+
   .sidenav #userInfo {
-    position: fixed;
-    bottom:  40px;
-    padding: 40px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 7px;
     color: ghostwhite;
   }
 
   .sidenav #topicInfo {
-    height: 75vh;
+    height: 72vh;
     overflow-y: scroll;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-bottom: 15px;
   }
 
   .sidenav ul {
