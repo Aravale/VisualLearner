@@ -65,12 +65,12 @@ body {
   }
   .topiclist {
     overflow-y: hidden;
-    list-style-image: url('http://localhost:3000/assets/images/T.png');
+    list-style-image: url('https://visuallearner.herokuapp.com/assets/images/T.png');
     font-size: 25px;
   }
   .subtopiclist {
     overflow-y: hidden;
-    list-style-image: url('http://localhost:3000/assets/images/ST.png');
+    list-style-image: url('https://visuallearner.herokuapp.com/assets/images/ST.png');
     font-size: 20px;
   }
 
