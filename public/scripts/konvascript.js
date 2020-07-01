@@ -78,7 +78,7 @@ function makeTextInput() {
 	textarea.style.width = textnode.width() - textnode.padding() + 5 + 'px';
 	textarea.style.height = shapenode.height() - textnode.padding() + 5 + 'px';
 	textarea.style.fontSize = textnode.fontSize() + 'px';
-	textarea.style.border = 'solid 1px';//'none';
+	textarea.style.border = 'none';
 	textarea.style.padding = '5px';
 	textarea.style.margin = '0px';
 	textarea.style.overflow = 'hidden';
@@ -148,12 +148,12 @@ function makeTextInput() {
 				setTextNodeWidth(ShapeWidth + blockadder);
 				layer.draw();
 			}
-			if (txtlen > 52) {
+			if (txtlen > 40) {
 				shapenode.stroke("#DC143C");
 				shapenode.strokeWidth(2);
 				layer.draw();
 			}
-			if (txtlen < 52) {
+			if (txtlen < 40) {
 				shapenode.stroke("black");
 				shapenode.strokeWidth(0.5);
 				layer.draw();
@@ -253,14 +253,12 @@ function saveBoard(formdata) {
 	if (formdata[2]) {
 		var topicid = formdata[0];
 		var NewSubtopicName = formdata[2];
-		console.log("Returning save from saveboard");
 		return ({ fc, codearr, psuedoarr, topicid, NewSubtopicName, description });
 	}
 	else {
 		//Update
 		let UpTopNm = formdata[0];
 		let UpSubNm = formdata[1];
-		console.log("Returning update from saveboard");
 		return ({ fc, codearr, psuedoarr, UpTopNm, UpSubNm, description });
 	}
 }
@@ -277,7 +275,6 @@ function loadBoard(data) {
 	});
 	var title = data.topictitle + " > " + data.subtop.name;
 	$("#subTopicName").text(title);
-	console.log(data.subtop.description)
 	$("#Description").text(data.subtop.description);
 	StageHeight = data.subtop.flowchart.StageH;
 	drawStage();
@@ -305,7 +302,6 @@ function loadBoard(data) {
 			}
 		}
 		else {
-			console.log(node)
 			var arrow = new Konva.Arrow({
 				points: node.points,
 				pointerLength: 10,
@@ -386,11 +382,11 @@ function stageinit(gridLayer, layer) {
 		layer.draw();
 	});
 	$('#trArr-button').on('click', () => {
-		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#00CC00");currentShape.fill("#00CC00"); }
+		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#00CC00"); currentShape.fill("#00CC00"); }
 		layer.draw();
 	});
 	$('#flArr-button').on('click', () => {
-		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#FF0000");currentShape.fill("#FF0000"); }
+		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#FF0000"); currentShape.fill("#FF0000"); }
 		layer.draw();
 	});
 
@@ -420,7 +416,6 @@ function stageinit(gridLayer, layer) {
 	layer.on('contextmenu', function (e) {
 		e.evt.preventDefault();
 		currentShape = e.target;
-		console.log(currentShape.getParent().name());
 		// show menu
 		if (e.target.getClassName() != "Arrow") {
 			$("#trArr-button").hide();
@@ -437,8 +432,8 @@ function stageinit(gridLayer, layer) {
 	});
 	$("#viewmode").click(() => {
 		//View ON
-		if(vf==0){
-		viewOn();
+		if (vf == 0) {
+			viewOn();
 		}
 		//View OFF
 		else {
@@ -502,9 +497,11 @@ function stageinit(gridLayer, layer) {
 function viewOff() {
 	vf = 0;
 	$("#viewmode").html("View Mode");
-	VShapesArray[arrP].getChildren()[0].fill("#DCDCDC");
-	$(".codetexty:eq(" + arrP + ")").css("background", "#DCDCDC");
-	$(".psuedotexty:eq(" + arrP + ")").css("background", "#DCDCDC");
+	if(VShapesArray.length!=0)
+	{VShapesArray[arrP].getChildren()[0].fill("#DCDCDC");
+	var textpointer = ((VShapesArray[arrP].y() + blockSize * 2) / rowSize) - 1;
+	$(".codetexty:eq(" + textpointer + ")").css("background", "#DCDCDC");
+	$(".psuedotexty:eq(" + textpointer + ")").css("background", "#DCDCDC");}
 	$(".rowboxdel").show();
 	layer.draw();
 	VShapesArray = [];
@@ -512,7 +509,7 @@ function viewOff() {
 	$("#prv").addClass("d-none");
 	$("#fcToolbox").show();
 	$("#clearFC").show();
-	$("#addrow").show();
+	$("#addrowdiv").show();
 	$("#topicToggler").show();
 	arrP = 0;
 }
@@ -526,15 +523,26 @@ function viewOn() {
 	$(".rowboxdel").hide();
 	$("#fcToolbox").hide();
 	$("#clearFC").hide();
-	$("#addrow").hide();
+	$("#addrowdiv").hide();
 	$("#topicToggler").hide();
 	arrP = 0;
 	var startnode = null;
-
+	let startcount = 0;
 	layer.getChildren().forEach((node) => {
 		if (node.name() == "TerminalGrp") {
 			var txt = node.getChildren()[1];
 			if (txt.text() == "Start" || txt.text() == "start") {
+				if (startcount == 1) {
+					Swal.fire({
+						title: 'Please have only one Start terminal!',
+						icon: 'error',
+						showConfirmButton: false,
+						timer: 1000
+					});
+					viewOff();
+					return
+				}
+				startcount++;
 				VShapesArray.push(node);
 				startnode = node;
 			}
@@ -582,7 +590,6 @@ function NextNode(node) {
 			VShapesArray.forEach((node) => {
 				if (nextNodeAnc.getParent() == node) {
 					subnode.addName("loopend");
-					console.log("Loopend: " + nextNodeAnc.getParent())
 				}
 			});
 			if (looped == 0) {
@@ -598,7 +605,6 @@ function deletestagerow(rowNumber) {
 	let stageend = stagestart + rowSize;
 	layer.getChildren().forEach((node) => {
 		if (node.y() >= stagestart && node.y() < stageend) {
-			console.log("destroy" + node.name());
 			deleteNode(node);
 		}
 	});
@@ -686,13 +692,13 @@ function addtexty(whichcol, text) {
 	if (whichcol == "codetexty") {
 		return `<li class="list-group-item p-0">
 						<div class="row-box"></div>
-						<div class="form-control invisibile-texty codetexty" contenteditable="true">${text}</div>
+						<div class="invisibile-texty codetexty" contenteditable="true">${text}</div>
 					</li>`
 	}
 	else {
 		return `<li class="list-group-item p-0">
 		<div class="row-box"></div>
-		<div class="form-control invisibile-texty ${whichcol}" contenteditable="true">${text}</div>
+		<div class="invisibile-texty ${whichcol}" contenteditable="true">${text}</div>
 		<div class="rowboxdel">
 			<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="deleteRow(this)">
 				<i class="fa fa-trash-alt"></i>
@@ -764,7 +770,6 @@ function deleteNode(node) {
 			if (AncNameArr.includes("Astart")) {
 				let Index = AncNameArr.indexOf("Astart");
 				let ArrowTo = layer.findOne("#" + AncNameArr[Index + 1]);
-				console.log("deleting congrp start arrow:" + AncNameArr[Index + 1])
 				deleteNode(ArrowTo);
 				AncNameArr.splice(Index, 2);
 			}
@@ -774,7 +779,6 @@ function deleteNode(node) {
 				AncNameArr.forEach(
 					(PrevArrNm) => {
 						let ArrowFrom = layer.findOne("#" + PrevArrNm);
-						console.log("deleting congrp end arrow:" + PrevArrNm);
 						deleteNode(ArrowFrom);
 					});
 			}

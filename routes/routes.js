@@ -43,9 +43,8 @@ router.get('/getsubtopic', isNotLoggedIn, function (req, res) {
 			topic = user.topics.id(topID);
 			subtopic = user.topics.id(topID).subtopics.id(subID);
 		}
-		return res.send({ "subtop": subtopic, "topictitle": topic.title });
+	 res.send({ "subtop": subtopic, "topictitle": topic.title });
 	});
-
 });
 
 router.post('/register', function (req, res) {
@@ -73,16 +72,18 @@ router.post('/newtopic', isNotLoggedIn, function (req, res) {
 
 		var topicid = "";
 		var topictitle = "";
+		var created = "";
 		user.topics.forEach(topic => {
 			topicid = topic._id;
 			topictitle = topic.title;
+			created = topic.created;
 		});
 
 		user.save(function (err) {
 			if (err) { return handleError(err); }
 			else {
 				console.log('Topic Added!');
-				return res.send({ "topicid": topicid, "topictitle": topictitle });
+				return res.send({ "topicid": topicid, "topictitle": topictitle,"Tcreated":created });
 			}
 		});
 	});
@@ -97,6 +98,7 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 	var description= req.body.description;
 	var cUser = req.user._id;
 	var id="";
+	var created="";
 	User.findOne({ _id: cUser }, function (err, user) {
 		if (err) {
 			console.log(err);
@@ -110,6 +112,7 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 						description:description
 					});
 				id=topic.subtopics[topic.subtopics.length-1]._id;
+				created=topic.subtopics[topic.subtopics.length-1].created;
 			console.log(topic.subtopics.length);
 			console.log("id:"+id);
 			user.save(function (err, user) {
@@ -123,7 +126,7 @@ router.post('/newsubtopic', isNotLoggedIn, function (req, res) {
 		}
 	}).then(() =>
 	{console.log("id:"+id);
-	 res.send({ "subtopicid": id,"topicid":topID});});
+	 res.send({ "subtopicid": id,"topicid":topID,"Screated":created});});
 });
 
 router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
@@ -151,10 +154,9 @@ router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
 			if (err) { return handleError(err); }
 			console.log('Success Updated!');
 			success=true;
+			res.send({"success":success});
 		});
 	});
-
-res.send({"success":success});
 });
 
 router.post('/delsubtopic', isNotLoggedIn, function (req, res) {
@@ -179,11 +181,11 @@ router.post('/delsubtopic', isNotLoggedIn, function (req, res) {
 				} else {
 					console.log("Done!");
 					success=true;
+					res.send({"success":success});
 				}
 			});
 		}
 	});
-	res.send({"success":success});
 });
 
 router.post('/deltopic', isNotLoggedIn, function (req, res) {
@@ -202,12 +204,12 @@ router.post('/deltopic', isNotLoggedIn, function (req, res) {
 					console.log(err);
 				} else {
 					console.log("Done!");
-					success=true
+					success=true;
+					res.send({"success":success});
 				}
 			});
 		}
 	});
-	res.send({"success":success});
 });
 
 router.post('/login', passport.authenticate('local', {

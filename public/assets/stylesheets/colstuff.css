@@ -15,8 +15,11 @@
   text-align: center;
   font-size: 30px;
   font-family: Calibri;
+  line-height: 1.2;
 }
-
+.invisibile-texty:focus  {
+  outline: 0px solid transparent;
+}
 .row-box {
   background-color: #4c555e;
   height: 40px;

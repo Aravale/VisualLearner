@@ -12,7 +12,12 @@ function saveSubtopic(Sarr) {
 				console.log("topid:" + topid);
 				console.log("subid:" + subid);
 				var newLi = `<li id="${data.subtopicid}">
-							<span class="topiclisttext" onclick="loadBoard(this)">${Sarr.NewSubtopicName}</span>
+							<span class="topiclisttext" onclick="loadSubtopic(this)">${Sarr.NewSubtopicName}</span>
+							<button type="button" class="btn btn-sm btn-outline-light float-right"
+								 data-created="${data.Screated}"
+								onclick="showInfo(this)">
+								<span class="fa fa-info text-light"></span>
+							</button>
 							<button type="button" class="btn btn-sm btn-outline-light float-right"
 								onclick="deletesub(this)">
 								<i class="fa fa-trash-alt text-light"></i>
@@ -46,6 +51,7 @@ function updateSubtopic(Sarr) {
 		url: '/updatesubtopic',
 		data: { fc: Sarr.fc, codearr: Sarr.codearr, psuedoarr: Sarr.psuedoarr, topicid: topid, UpTopNm: Sarr.UpTopNm, subtopicid: subid, UpSubNm: Sarr.UpSubNm, description: Sarr.description }
 	}).done(function (data) {
+		console.log(data);
 		if (data.success) {
 			var title = Sarr.UpTopNm + " > " + Sarr.UpSubNm;
 			console.log(title);

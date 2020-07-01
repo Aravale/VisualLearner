@@ -18,20 +18,20 @@
 	<%# Top Bar %>
 	<nav class="navbar p-0 d-none d-lg-flex sticky-top">
 		<div class="col-lg-4 p-0">
-			<div class="card bg-light rounded-0 colheader flex-row justify-content-between p-1">
-				<h2 class="colhead">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between p-2">
+				<h3 class="colhead">
 					Code
-				</h2>
+				</h3>
 				<input type="range" min="1" max="100" value="100" class="cslider">
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
-			<div class="card bg-light rounded-0 colheader p-1">
-				<div class="row m-0 py-1">
+			<div class="card bg-light rounded-0 colheader p-2" style="min-height: 59px;">
+				<div class="row m-0 p-0">
 					<div class="col-lg-4 p-0">
-						<h2 class="colhead font-smaller">
+						<h3 class="colhead font-smaller">
 							Flowchart
-						</h2>
+						</h3>
 					</div>
 					<div class="col-lg-8 p-0">
 						<div class="btn-group" role="group" id="fcToolbox">
@@ -64,10 +64,10 @@
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
-			<div class="card bg-light rounded-0 colheader flex-row justify-content-between p-1">
-				<h2 class="colhead">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between p-2">
+				<h3 class="colhead">
 					Psuedocode
-				</h2>
+				</h3>
 				<input type="range" min="1" max="100" value="100" class="pslider">
 			</div>
 		</div>
@@ -94,11 +94,6 @@
 					<li class="list-group-item p-0">
 						<div class="row-box"></div>
 						<div class="invisibile-texty codetexty" contenteditable="true"></div>
-						<!-- <div class="rowboxdel">
-						<button type="button" class="btn btn-sm btn-outline-light btn-dark" onclick="deleteRow(this)">
-							<i class="fa fa-trash-alt"></i>
-						</button>
-					</div> -->
 					</li>
 					<% } %>
 				</ul>
@@ -207,7 +202,7 @@
 			<hr class="hrTopics" />
 			<ul class="topiclist" id="topiclist">
 				<%	if(currentUser){currentUser.topics.forEach(function(topic){  %>
-				<li id="<%=topic._id%>">
+				<li id="<%=topic._id%>" class="topiclistLI">
 					<span class="dir topiclisttext"><%= topic.title %></span>
 					<button style="margin-right: 11px;" type="button" class="btn btn-sm btn-outline-light float-right"
 						data-updated="<%=topic.updated%>" data-created="<%=topic.created%>" onclick="showInfo(this)">
@@ -408,12 +403,10 @@
 				<p><strong>Last updated on: </strong> ${$(item).attr('data-updated').substr(0, 24)}</p>`,
 			confirmButtonText: 'OK'
 		});
-		console.log($(item).attr('data-created').substr(0, 24));
-		console.log($(item).attr('data-updated').substr(0, 24));
 	}
 
 	$("#Save").click(async () => {
-		let optionsarr = $("#topiclist li").map((i, item) => { return `<option value="${item.id}">${$(item).find(".topiclisttext").html()}</option>` });
+		let optionsarr = $(".topiclistLI").map((i, item) => { return `<option value="${item.id}">${$(item).find(".topiclisttext").html()}</option>` });
 		let options = "";
 		optionsarr.each((index, option) => {
 			options += option;
@@ -450,11 +443,10 @@
 
 	$('.cslider').change((e) => {
 		$("#codeUL").fadeTo(20, e.target.value / 100);
-		console.log(e.target.value)
 	});
 
-	$('.pslider').change(() => {
-		$("#psuedoUL").fadeTo(20, this.value / 100);
+	$('.pslider').change((e) => {
+		$("#psuedoUL").fadeTo(20, e.target.value / 100);
 	});
 
 </script>
