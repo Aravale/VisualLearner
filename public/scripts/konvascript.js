@@ -51,10 +51,6 @@ $(document).ready(function () {
 var placeX = (((StageWidth / 2) - (ShapeWidth / 2)) * blockSize) / blockSize;
 var placeY = blockSize;
 
-function updateShapeC() {
-	$("#shpN").text(arrP + vf);
-}
-
 function makeTextInput() {
 	var grp = this;
 	var shapenode = grp.getChildren()[0];
@@ -237,7 +233,7 @@ function saveBoard(formdata) {
 			Shapes.push(shape);
 		}
 	});
-	var description=$("#Description").text();
+	var description = $("#Description").text();
 	//Saving code column
 	$(".codetexty").map(function () {
 		codearr.push($(this).text());
@@ -257,14 +253,14 @@ function saveBoard(formdata) {
 		var topicid = formdata[0];
 		var NewSubtopicName = formdata[2];
 		console.log("Returning save from saveboard");
-		return ({ fc, codearr, psuedoarr, topicid, NewSubtopicName,description });
+		return ({ fc, codearr, psuedoarr, topicid, NewSubtopicName, description });
 	}
 	else {
 		//Update
 		let UpTopNm = formdata[0];
 		let UpSubNm = formdata[1];
 		console.log("Returning update from saveboard");
-		return ({ fc, codearr, psuedoarr, UpTopNm, UpSubNm,description });
+		return ({ fc, codearr, psuedoarr, UpTopNm, UpSubNm, description });
 	}
 }
 
@@ -439,62 +435,12 @@ function stageinit(gridLayer, layer) {
 	});
 	$("#viewmode").click(() => {
 		//View ON
-		if (vf == 0) {
-			$("#viewmode").html("Edit Mode");
-			vf = 1;
-			$("#nxt").removeClass("d-none");//.addClass("d-inline-block");
-			$("#prv").removeClass("d-none");
-			$(".rowboxdel").hide();
-
-			arrP = 0;
-			var startnode = null;
-
-			layer.getChildren().forEach((node) => {
-				if (node.name() == "TerminalGrp") {
-					var txt = node.getChildren()[1];
-					if (txt.text() == "Start" || txt.text() == "start") {
-						VShapesArray.push(node);
-						startnode = node;
-					}
-				}
-			});
-
-			if (startnode == null) {
-				Swal.fire({
-					title: 'No Start terminal found!',
-					icon: 'error',
-					showConfirmButton: false,
-					timer: 1000
-				});
-				vf = 0;
-				$("#nxt").addClass("d-none");
-				$("#prv").addClass("d-none");
-				$("#viewmode").html("View Mode");
-				return
-			}
-			else {
-				NextNode(startnode);
-			}
-			$(".codetexty:eq(" + arrP + ")").css("background", "#1496BB");
-			$(".psuedotexty:eq(" + arrP + ")").css("background", "#1496BB");
-			VShapesArray[arrP].getChildren()[0].fill("#1496BB");
-			layer.draw();
-			updateShapeC();
+		if(vf==0){
+		viewOn();
 		}
 		//View OFF
 		else {
-			vf = 0;
-			$("#viewmode").html("View Mode");
-			VShapesArray[arrP].getChildren()[0].fill("#DCDCDC");
-			$(".codetexty:eq(" + arrP + ")").css("background", "#DCDCDC");
-			$(".psuedotexty:eq(" + arrP + ")").css("background", "#DCDCDC");
-			$(".rowboxdel").show();
-			layer.draw();
-			VShapesArray = [];
-			$('#nxt').prop('disabled', true);
-			$('#prv').prop('disabled', true);
-			arrP = 0;
-			updateShapeC();
+			viewOff()
 		}
 
 
@@ -513,7 +459,6 @@ function stageinit(gridLayer, layer) {
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#1496BB");
 			$('body,html').animate({ scrollTop: textpointer * rowSize }, 300);
 			layer.draw();
-			updateShapeC();
 		}
 	});
 
@@ -530,7 +475,6 @@ function stageinit(gridLayer, layer) {
 			$(".psuedotexty:eq(" + textpointer + ")").css("background", "#1496BB");
 			$('body,html').animate({ scrollTop: textpointer * rowSize }, 300);
 			layer.draw();
-			updateShapeC();
 		}
 	});
 
@@ -552,6 +496,67 @@ function stageinit(gridLayer, layer) {
 	$('.Connector').click(function () {
 		newConnector(placeX + rowSize, placeY + (blockSize)); nextNodeY();
 	});
+}
+function viewOff() {
+	vf = 0;
+	$("#viewmode").html("View Mode");
+	VShapesArray[arrP].getChildren()[0].fill("#DCDCDC");
+	$(".codetexty:eq(" + arrP + ")").css("background", "#DCDCDC");
+	$(".psuedotexty:eq(" + arrP + ")").css("background", "#DCDCDC");
+	$(".rowboxdel").show();
+	layer.draw();
+	VShapesArray = [];
+	$("#nxt").addClass("d-none");
+	$("#prv").addClass("d-none");
+	$("#fcToolbox").show();
+	$("#clearFC").show();
+	$("#addrow").show();
+	$("#topicToggler").show();
+	arrP = 0;
+}
+
+function viewOn() {
+	//View ON
+	vf = 1;
+	$("#viewmode").html("Edit Mode");
+	$("#nxt").removeClass("d-none");
+	$("#prv").removeClass("d-none");
+	$(".rowboxdel").hide();
+	$("#fcToolbox").hide();
+	$("#clearFC").hide();
+	$("#addrow").hide();
+	$("#topicToggler").hide();
+	arrP = 0;
+	var startnode = null;
+
+	layer.getChildren().forEach((node) => {
+		if (node.name() == "TerminalGrp") {
+			var txt = node.getChildren()[1];
+			if (txt.text() == "Start" || txt.text() == "start") {
+				VShapesArray.push(node);
+				startnode = node;
+			}
+		}
+	});
+
+	if (startnode == null) {
+		Swal.fire({
+			title: 'No Start terminal found!',
+			icon: 'error',
+			showConfirmButton: false,
+			timer: 1000
+		});
+		viewOff();
+		return
+	}
+	else {
+		NextNode(startnode);
+	}
+	$(".codetexty:eq(" + arrP + ")").css("background", "#1496BB");
+	$(".psuedotexty:eq(" + arrP + ")").css("background", "#1496BB");
+	VShapesArray[arrP].getChildren()[0].fill("#1496BB");
+	layer.draw();
+
 }
 
 function NextNode(node) {

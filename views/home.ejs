@@ -16,9 +16,9 @@
 
 <body>
 	<%# Top Bar %>
-	<nav class="navbar p-0 d-none d-lg-flex sticky-top h-9">
+	<nav class="navbar p-0 d-none d-lg-flex sticky-top">
 		<div class="col-lg-4 p-0">
-			<div class="card bg-light rounded-0 colheader flex-row justify-content-between">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between p-1">
 				<h2 class="colhead">
 					Code
 				</h2>
@@ -26,39 +26,45 @@
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
-			<div class="card bg-light rounded-0 colheader flex-row justify-content-between">
-				<h2 class="colhead">
-					Flowchart
-				</h2>
-				<div class="btn-group" role="group" aria-label="Basic example">
-					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-						data-placement="bottom" title="Terminal">
-						<div class="Terminal"></div>
-					</button>
-					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-						data-placement="bottom" title="Process">
-						<div class="Process"></div>
-					</button>
-					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-						data-placement="bottom" title="I/O">
-						<div class="IO"></div>
-					</button>
-					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-						data-placement="bottom" title="Decision">
-						<div class="Decision"></div>
-					</button>
-					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-						data-placement="bottom" title="Connector">
-						<div class="Connector"></div>
-					</button>
+			<div class="card bg-light rounded-0 colheader p-1">
+				<div class="row m-0 py-1">
+				<div class="col-lg-4 p-0">
+					<h2 class="colhead">
+						Flowchart
+					</h2>
 				</div>
-				<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()" data-toggle="tooltip"
-					data-placement="bottom" title="Clear Flowchart">
-					<i class="fa fa-trash-alt"></i></button>
+				<div class="col-lg-8 p-0">
+					<div class="btn-group" role="group" id="fcToolbox">
+						<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Terminal">
+							<div class="Terminal"></div>
+						</button>
+						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Process">
+							<div class="Process"></div>
+						</button>
+						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="I/O">
+							<div class="IO"></div>
+						</button>
+						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Decision">
+							<div class="Decision"></div>
+						</button>
+						<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Connector">
+							<div class="Connector"></div>
+						</button>
+					</div>
+					<button type="button" id="clearFC" class="btn btn-outline btn-light" onclick="clBoard()"
+						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
+						<i class="fa fa-trash-alt"></i></button>
+				</div>
+			</div>
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
-			<div class="card bg-light rounded-0 colheader flex-row justify-content-between">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between p-1">
 				<h2 class="colhead">
 					Psuedocode
 				</h2>
@@ -73,18 +79,15 @@
 		<div class="panel" id="descPanel">
 			<div class="invisibile-texty" id="Description" contenteditable="true"></div>
 		</div>
-		<!-- <div class="row-box w-100"><span class='codeCounter'>Description</span> <button type="button"
-				class="btn btn-sm  btn-outline-light float-right" id="descToggle">+</button></div> -->
 		<div class="row m-0">
 			<!-- Code -->
 			<div class="col-lg-4 col-md-12 p-0" id="code">
-				<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+				<div
+					class="card bg-light rounded-0 colheader flex-row justify-content-between p-1 d-md-block d-lg-none">
 					<h2 class="colhead">
 						Code
 					</h2>
-					<div class="holder-thing">
-						<input type="range" min="1" max="100" value="100" class="cslider">
-					</div>
+					<input type="range" min="1" max="100" value="100" class="cslider">
 				</div>
 				<ul class="list-group" id="codeUL">
 					<%for(i=0;i<=7;i++){%>
@@ -103,23 +106,36 @@
 
 			<!-- Flowchart -->
 			<div class="col-lg-4 col-md-12 p-0" id="flowchart">
-				<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+				<div
+					class="card bg-light rounded-0 colheader flex-row justify-content-between p-1 d-md-block d-lg-none">
 					<h2 class="colhead">
 						Flowchart
 					</h2>
-					<button class="Terminal t1" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
-					<button class="Process t2" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
-					<button class="IO t3" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
-					<button class="Decision t4" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
-					<button class="Connector t5" data-toggle="tooltip" data-placement="bottom"
-						title="Connector"></button>
-
-					<div class="holder-thing">
-						<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
-							data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
-							<i class="fa fa-trash-alt"></i></button>
+					<div class="btn-group" role="group" id="fcToolbox">
+						<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Terminal">
+							<div class="Terminal"></div>
+						</button>
+						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Process">
+							<div class="Process"></div>
+						</button>
+						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="I/O">
+							<div class="IO"></div>
+						</button>
+						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Decision">
+							<div class="Decision"></div>
+						</button>
+						<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
+							data-placement="bottom" title="Connector">
+							<div class="Connector"></div>
+						</button>
 					</div>
-
+					<button type="button" class="btn btn-outline btn-light" onclick="clBoard()" data-toggle="tooltip"
+						data-placement="bottom" title="Clear Flowchart">
+						<i class="fa fa-trash-alt"></i></button>
 				</div>
 				<div id="flowchartdiv" class="h-100 bg-white">
 				</div>
@@ -127,13 +143,12 @@
 
 			<!-- Psuedocode -->
 			<div class="col-lg-4 col-md-12 p-0" id="psuedo">
-				<div class="card-header bg-light rounded-0 colheader d-md-block d-lg-none">
+				<div
+					class="card bg-light rounded-0 colheader flex-row justify-content-between p-1 d-md-block d-lg-none">
 					<h2 class="colhead">
 						Psuedocode
 					</h2>
-					<div class="holder-thing">
-						<input type="range" min="1" max="100" value="100" class="pslider">
-					</div>
+					<input type="range" min="1" max="100" value="100" class="pslider">
 				</div>
 
 				<ul class="list-group" id="psuedoUL">
@@ -157,7 +172,8 @@
 	<%# Bottom Nav %>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-bottom" id="botnav">
 		<div class="navbar-header">
-			<button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#mySidenav">
+			<button type="button" id="topicToggler" class="btn btn-outline-light" data-toggle="collapse"
+				data-target="#mySidenav">
 				<i class="fa fa-bars fa-lg"></i>
 			</button>
 			<span class="navbar-brand d-none d-md-inline p-2" id="subTopicName">Topic > Subtopic</span>
@@ -168,9 +184,12 @@
 					<button type="button" id="viewmode" class="btn btn-outline-light">View Mode</button>
 					<button type="button" id="nxt" class="btn btn-outline-light d-none">></button>
 		</div>
-		<div id="addrow">
-			<button type="button" id="addRow" class="btn btn-outline-info round" data-toggle="tooltip"
-				data-placement="top" title="Add Row">+</button>
+
+		<div id="addrowdiv">
+			<button type="button" id="genPDF" class="btn btn-outline-light round" data-toggle="tooltip"
+			data-placement="top" title="Print PDF">Generate PDF</button>
+			<button type="button" id="addRow" class="btn btn-outline btn-dark rounded-0 py-0 px-2" data-toggle="tooltip"
+				data-placement="top" title="Add Row"><span class="fa-2x">+</span></button>
 		</div>
 	</nav>
 
@@ -258,6 +277,16 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <script>
+$('#genPDF').click(function printIt() {	
+		
+		window.print();
+	});
+	$(document).mouseup((e) => {
+		var container = $("#mySidenav");
+		if (!container.is(e.target) && container.has(e.target).length === 0) {
+			container.collapse("hide");
+		}
+	})
 	$("#descPanelBtn").click((e) => {
 		e.target.classList.toggle("active");
 		var panel = e.target.nextElementSibling;
@@ -305,11 +334,6 @@
 		});
 	}
 
-	$("#descToggle").click(() => {
-
-		$("#Description").slideToggle();
-	});
-
 	function deleteRow(item) {
 		let rowNumber = $(item).parent().parent().index();
 		cuteHide($("#codeUL li").eq(rowNumber));
@@ -318,16 +342,14 @@
 		deletestagerow(rowNumber);
 	}
 
-	async function saveSwal() {
+	async function saveSwal(options) {
 		let { value: formValues } = await Swal.fire({
 			title: 'Save Subtopic',
 			html:
-				'<select class="swal2-select" id="swal-input1">' +
-				" <%if(currentUser) {currentUser.topics.forEach(function (topic) {%>" +
-				' <option value="<%=topic._id%>">' + "<%= topic.title %>" + '</option>' +
-				"<%});}%>" +
-				' </select>' +
-				'<input id="swal-input2" class="swal2-input">',
+				`<select class="swal2-select" id="swal-input1"> 
+				${options}
+				 </select> 
+				<input id="swal-input2" class="swal2-input">`,
 			focusConfirm: false,
 			preConfirm: () => {
 				return [
@@ -371,7 +393,13 @@
 	}
 
 	$("#Save").click(async () => {
-		saveSwal().then(function (vals) {
+		let optionsarr = $("#topiclist li").map((i, item) => { return `<option value="${item.id}">${$(item).find(".topiclisttext").html()}</option>` });
+		let options = "";
+		optionsarr.each((index, option) => {
+			options += option;
+		})
+		console.log(options);
+		saveSwal(options).then(function (vals) {
 			console.log("Saving: " + vals);
 			console.log(saveBoard(vals));
 			saveSubtopic(saveBoard(vals));
@@ -396,9 +424,12 @@
 			});
 		}
 	});
-	$('.cslider').change(() => {
-		$("#codeUL").fadeTo(20, this.value / 100);
+	
+	$('.cslider').change((e) => {
+		$("#codeUL").fadeTo(20, e.target.value / 100);
+		console.log(e.target.value)
 	});
+
 	$('.pslider').change(() => {
 		$("#psuedoUL").fadeTo(20, this.value / 100);
 	});

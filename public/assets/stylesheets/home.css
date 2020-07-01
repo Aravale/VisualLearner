@@ -9,7 +9,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
 }
-#addrow {
+#addrowdiv {
   position: absolute;
   right: 20px;
 }
@@ -23,6 +23,9 @@ body {
   bottom: 0;
   z-index: 1022;
 }
+.plusicon{
+  font-size: 1.5em;
+}
 .hrTopics{
   margin-bottom: 10px;
    margin-top: 5px;
@@ -32,7 +35,7 @@ body {
     height: 100%;
     width: 300px;
     position: fixed;
-    z-index: 1021;
+    z-index: 1023;
     top: 0;
     left: 0;
     overflow-x: hidden;
