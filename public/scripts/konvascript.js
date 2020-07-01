@@ -228,6 +228,7 @@ function saveBoard(formdata) {
 		else if (node.getClassName() === "Arrow") {
 			var shape = {
 				AName: [node.name(), node.id()],
+				stroke: node.stroke(),
 				points: node.points()
 			}
 			Shapes.push(shape);
@@ -304,12 +305,13 @@ function loadBoard(data) {
 			}
 		}
 		else {
+			console.log(node)
 			var arrow = new Konva.Arrow({
 				points: node.points,
 				pointerLength: 10,
 				pointerWidth: 10,
-				fill: 'black',
-				stroke: 'black',
+				fill: node.stroke,
+				stroke: node.stroke,
 				strokeWidth: 4,
 				name: node.AName[0],
 				id: node.AName[1],
@@ -384,11 +386,11 @@ function stageinit(gridLayer, layer) {
 		layer.draw();
 	});
 	$('#trArr-button').on('click', () => {
-		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#00CC00"); }
+		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#00CC00");currentShape.fill("#00CC00"); }
 		layer.draw();
 	});
 	$('#flArr-button').on('click', () => {
-		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#FF0000"); }
+		if (currentShape.getClassName() === 'Arrow') { currentShape.stroke("#FF0000");currentShape.fill("#FF0000"); }
 		layer.draw();
 	});
 

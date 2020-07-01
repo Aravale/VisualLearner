@@ -15,13 +15,23 @@ function deletetopic(item) {
 				data: { topicID: topid }
 			})
 				.done(function (data) {
-					Swal.fire({
-						title: 'Deleted Topic!',
-						icon: 'success',
-						showConfirmButton: false,
-						timer: 1000
-					});
-					$(item).parent().remove();
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Deleted Topic!',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
+                        $(item).parent().remove();
+                    } else {
+                        Swal.fire({
+                            title: 'Delete failed',
+                            icon: 'error',
+                            showConfirmButton: false,
+                            timer: 600
+                        });
+                    }
+					
 				});
 		}
 	});

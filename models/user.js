@@ -9,6 +9,7 @@ var shapeSchema=new mongoose.Schema({
 	points:[Number],
 	shapeText: String,
 	shapeW: Number,
+	stroke:String,
 	anchors:[[String,String]]
 });
 //var Shape=mongoose.model("Shape",shapeSchema)

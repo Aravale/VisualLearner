@@ -28,39 +28,39 @@
 		<div class="col-lg-4 p-0">
 			<div class="card bg-light rounded-0 colheader p-1">
 				<div class="row m-0 py-1">
-				<div class="col-lg-4 p-0">
-					<h2 class="colhead">
-						Flowchart
-					</h2>
-				</div>
-				<div class="col-lg-8 p-0">
-					<div class="btn-group" role="group" id="fcToolbox">
-						<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
-							data-placement="bottom" title="Terminal">
-							<div class="Terminal"></div>
-						</button>
-						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-							data-placement="bottom" title="Process">
-							<div class="Process"></div>
-						</button>
-						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-							data-placement="bottom" title="I/O">
-							<div class="IO"></div>
-						</button>
-						<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
-							data-placement="bottom" title="Decision">
-							<div class="Decision"></div>
-						</button>
-						<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
-							data-placement="bottom" title="Connector">
-							<div class="Connector"></div>
-						</button>
+					<div class="col-lg-4 p-0">
+						<h2 class="colhead font-smaller">
+							Flowchart
+						</h2>
 					</div>
-					<button type="button" id="clearFC" class="btn btn-outline btn-light" onclick="clBoard()"
-						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
-						<i class="fa fa-trash-alt"></i></button>
+					<div class="col-lg-8 p-0">
+						<div class="btn-group" role="group" id="fcToolbox">
+							<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
+								data-placement="bottom" title="Terminal">
+								<div class="Terminal"></div>
+							</button>
+							<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+								data-placement="bottom" title="Process">
+								<div class="Process"></div>
+							</button>
+							<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+								data-placement="bottom" title="I/O">
+								<div class="IO"></div>
+							</button>
+							<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+								data-placement="bottom" title="Decision">
+								<div class="Decision"></div>
+							</button>
+							<button type="button" class="btn rounded-0 btn-outline-dark btn-light" data-toggle="tooltip"
+								data-placement="bottom" title="Connector">
+								<div class="Connector"></div>
+							</button>
+						</div>
+						<button type="button" id="clearFC" class="btn btn-outline btn-light" onclick="clBoard()"
+							data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
+							<i class="fa fa-trash-alt"></i></button>
+					</div>
 				</div>
-			</div>
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
@@ -187,7 +187,7 @@
 
 		<div id="addrowdiv">
 			<button type="button" id="genPDF" class="btn btn-outline-light round" data-toggle="tooltip"
-			data-placement="top" title="Print PDF">Generate PDF</button>
+				data-placement="top" title="Print PDF">Generate PDF</button>
 			<button type="button" id="addRow" class="btn btn-outline btn-dark rounded-0 py-0 px-2" data-toggle="tooltip"
 				data-placement="top" title="Add Row"><span class="fa-2x">+</span></button>
 		</div>
@@ -277,16 +277,18 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <script>
-$('#genPDF').click(function printIt() {	
-		
+	$('#genPDF').click(function printIt() {
+
 		window.print();
 	});
+
 	$(document).mouseup((e) => {
 		var container = $("#mySidenav");
 		if (!container.is(e.target) && container.has(e.target).length === 0) {
 			container.collapse("hide");
 		}
-	})
+	});
+
 	$("#descPanelBtn").click((e) => {
 		e.target.classList.toggle("active");
 		var panel = e.target.nextElementSibling;
@@ -346,17 +348,27 @@ $('#genPDF').click(function printIt() {
 		let { value: formValues } = await Swal.fire({
 			title: 'Save Subtopic',
 			html:
-				`<select class="swal2-select" id="swal-input1"> 
+				`<select class="swal2-select" id="swal-input1">
+					<option disabled>Topic</option> 
 				${options}
 				 </select> 
-				<input id="swal-input2" class="swal2-input">`,
+				 <div class="form-group">
+    				<label for="swal-input2">Subtopic</label>
+    				<input type="text" class="form-control" id="swal-input2" aria-describedby="t1" placeholder="Enter title">
+    				<small id="t1" class="form-text text-muted">Name your new subtopic</small>
+  				</div>`,
 			focusConfirm: false,
 			preConfirm: () => {
-				return [
-					$("#swal-input1").val(),
-					$("#swal-input1 option:selected").text(),
-					document.getElementById('swal-input2').value
-				]
+				if ($("#swal-input2").val()!="") {
+					return [
+						$("#swal-input1").val(),
+						$("#swal-input1 option:selected").text(),
+						document.getElementById('swal-input2').value
+					]
+				}
+				else {
+					Swal.showValidationMessage('Please fill all fields!')
+				}
 			}
 		});
 		return formValues;
@@ -368,8 +380,16 @@ $('#genPDF').click(function printIt() {
 		let { value: formValues } = await Swal.fire({
 			title: 'Update Subtopic',
 			html:
-				`<label>Topic</label><input id="swal-input1" value="${$("#" + topid + " .topiclisttext").html()}" class="swal2-input">
-				<label>Subtopic</label><input id="swal-input2"  value="${$("#" + subid + " .topiclisttext").html()}" class="swal2-input">`,
+				`<div class="form-group">
+    				<label for="swal-input1">Topic</label>
+    				<input type="text" class="form-control" id="swal-input1" value="${$("#" + topid + " .topiclisttext").html()}" aria-describedby="t1">
+    				<small id="t1" class="form-text text-muted">Update your topic name too?</small>
+  				</div>
+				<div class="form-group">
+    				<label for="swal-input2">Subtopic</label>
+    				<input type="text" class="form-control" id="swal-input2" value="${$("#" + subid + " .topiclisttext").html()}" aria-describedby="t1">
+    				<small id="t1" class="form-text text-muted">Update your subtopic name too?</small>
+  				</div>`,
 			focusConfirm: false,
 			preConfirm: () => {
 				return [
@@ -400,6 +420,8 @@ $('#genPDF').click(function printIt() {
 		})
 		console.log(options);
 		saveSwal(options).then(function (vals) {
+			console.log(vals);
+			if(!vals)return;
 			console.log("Saving: " + vals);
 			console.log(saveBoard(vals));
 			saveSubtopic(saveBoard(vals));
@@ -414,6 +436,7 @@ $('#genPDF').click(function printIt() {
 					console.log(saveBoard(vals));
 					updateSubtopic(saveBoard(vals));
 				}
+				return;
 			});
 		}
 		else {
@@ -424,7 +447,7 @@ $('#genPDF').click(function printIt() {
 			});
 		}
 	});
-	
+
 	$('.cslider').change((e) => {
 		$("#codeUL").fadeTo(20, e.target.value / 100);
 		console.log(e.target.value)

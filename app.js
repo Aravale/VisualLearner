@@ -13,13 +13,13 @@ var express = require('express'),
 session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 var mystore = new MongoDBStore({
-	uri: SESSION_LIVE,
+	uri: SESSION,
 	collection: 'mySessions'
 });
 
 var indexRoutes = require('./routes/routes');
 //App Config
-mongoose.connect(DATABASE_URL_LIVE, {
+mongoose.connect(DATABASE_URL, {
 		useUnifiedTopology: true,
 		useNewUrlParser: true,
 	}).then(() => console.log('DB Connected!')

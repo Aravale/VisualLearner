@@ -136,7 +136,8 @@ router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
 	var codearr = req.body.codearr;
 	var psuedoarr = req.body.psuedoarr;
 	var cUser = req.user._id;
-	var id;
+	var success=false;
+
 	User.findOne({ _id: cUser }, function (err, user) {
 		var topic = user.topics.id(topID);
 		topic.title=UpdatedTopicName;
@@ -149,14 +150,18 @@ router.post('/updatesubtopic', isNotLoggedIn, function (req, res) {
 		user.save(function (err) {
 			if (err) { return handleError(err); }
 			console.log('Success Updated!');
+			success=true;
 		});
 	});
-res.send()});
+
+res.send({"success":success});
+});
 
 router.post('/delsubtopic', isNotLoggedIn, function (req, res) {
 	var subID = req.body.subtopicID;
 	var topID = req.body.topicID;
 	var cUser = req.user._id;
+	var success= false;
 	console.log(cUser);
 	User.findOne({ _id: cUser }, function (err, user) {
 		if (err) {
@@ -173,16 +178,18 @@ router.post('/delsubtopic', isNotLoggedIn, function (req, res) {
 					console.log(err);
 				} else {
 					console.log("Done!");
+					success=true;
 				}
 			});
 		}
 	});
-	res.send();
+	res.send({"success":success});
 });
 
 router.post('/deltopic', isNotLoggedIn, function (req, res) {
 	var topID = req.body.topicID;
 	var cUser = req.user._id;
+	var success=false;
 	console.log(cUser);
 	User.findOne({ _id: cUser }, function (err, user) {
 		if (err) {
@@ -195,11 +202,12 @@ router.post('/deltopic', isNotLoggedIn, function (req, res) {
 					console.log(err);
 				} else {
 					console.log("Done!");
+					success=true
 				}
 			});
 		}
 	});
-	res.send();
+	res.send({"success":success});
 });
 
 router.post('/login', passport.authenticate('local', {
