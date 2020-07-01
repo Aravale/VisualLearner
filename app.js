@@ -1,3 +1,5 @@
+const DATABASE_URL="mongodb://localhost:27017/TestDB"
+const DATABASE_URL_LIVE="mongodb+srv://aravale:mypassword123@cluster0.7ffbj.mongodb.net/vldb?retryWrites=true&w=majority"
 var express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
@@ -9,10 +11,16 @@ var express = require('express'),
 
 var indexRoutes = require('./routes/routes');
 //App Config
-mongoose.connect('mongodb://localhost:27017/TestDB', {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
-});
+try {
+	mongoose.connect(DATABASE_URL_LIVE, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	});
+} catch (error) {
+	console.error(error);
+	
+}
+
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + "/public"));
 //app.use(express.static('public'));
@@ -74,6 +82,6 @@ app.on('uncaughtException', err => {
 });
 
 app.on('unhandledRejection', (reason, promise) => {
-	console.log('Unhandled rejection at ', promise, `reason: ${err.message}`)
+	console.log('Unhandled rejection at ', promise, `reason: ${reason.message}`)
 	app.exit(1)
 });
