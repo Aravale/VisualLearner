@@ -62,12 +62,12 @@ body {
   }
   .topiclist {
     overflow-y: hidden;
-    list-style-image: url('http://localhost:3000/T.png');
+    list-style-image: url('http://localhost:3000/assets/images/T.png');
     font-size: 25px;
   }
   .subtopiclist {
     overflow-y: hidden;
-    list-style-image: url('http://localhost:3000/ST.png');
+    list-style-image: url('http://localhost:3000/assets/images/ST.png');
     font-size: 20px;
   }
 
@@ -81,4 +81,40 @@ body {
     font-family: 'Aldrich';
     text-align: center;
     border: 2px solid #FFF;
+  }
+
+  .accordion {
+    background-color: #4c555e;
+    color: rgb(228, 228, 228);
+    cursor: pointer;
+    padding: 5px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 20px;
+    transition: 0.4s;
+  }
+  
+  .active, .accordion:hover {
+    background-color: #ccc;
+  }
+  
+  .accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+  }
+  
+  .active:after {
+    content: "\2212";
+  }
+  
+  .panel {
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
   }

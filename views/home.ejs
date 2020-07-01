@@ -8,9 +8,9 @@
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 	<link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
-	<link rel="stylesheet" href="/stylesheets/home.css">
-	<link rel="stylesheet" href="/stylesheets/konva.css">
-	<link rel="stylesheet" href="/stylesheets/colstuff.css">
+	<link rel="stylesheet" href="/assets/stylesheets/home.css">
+	<link rel="stylesheet" href="/assets/stylesheets/konva.css">
+	<link rel="stylesheet" href="/assets/stylesheets/colstuff.css">
 	<title>Visual Learner!</title>
 </head>
 
@@ -18,50 +18,63 @@
 	<%# Top Bar %>
 	<nav class="navbar p-0 d-none d-lg-flex sticky-top h-9">
 		<div class="col-lg-4 p-0">
-			<div class="card-header bg-light rounded-0 colheader">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between">
 				<h2 class="colhead">
 					Code
 				</h2>
-				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="cslider">
-				</div>
+				<input type="range" min="1" max="100" value="100" class="cslider">
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
-			<div class="card-header bg-light rounded-0 colheader">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between">
 				<h2 class="colhead">
 					Flowchart
 				</h2>
-				<button class="Terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"></button>
-				<button class="Process" data-toggle="tooltip" data-placement="bottom" title="Process"></button>
-				<button class="IO" data-toggle="tooltip" data-placement="bottom" title="I/O"></button>
-				<button class="Decision" data-toggle="tooltip" data-placement="bottom" title="Decision"></button>
-				<button class="Connector" data-toggle="tooltip" data-placement="bottom" title="Connector"></button>
-
-				<div class="holder-thing">
-					<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()"
-						data-toggle="tooltip" data-placement="bottom" title="Clear Flowchart">
-						<i class="fa fa-trash-alt"></i></button>
+				<div class="btn-group" role="group" aria-label="Basic example">
+					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+						data-placement="bottom" title="Terminal">
+						<div class="Terminal"></div>
+					</button>
+					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+						data-placement="bottom" title="Process">
+						<div class="Process"></div>
+					</button>
+					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+						data-placement="bottom" title="I/O">
+						<div class="IO"></div>
+					</button>
+					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+						data-placement="bottom" title="Decision">
+						<div class="Decision"></div>
+					</button>
+					<button type="button" class="btn btn-outline-dark btn-light" data-toggle="tooltip"
+						data-placement="bottom" title="Connector">
+						<div class="Connector"></div>
+					</button>
 				</div>
-
+				<button type="button" class="btn btn-outline-dark btn-light" onclick="clBoard()" data-toggle="tooltip"
+					data-placement="bottom" title="Clear Flowchart">
+					<i class="fa fa-trash-alt"></i></button>
 			</div>
 		</div>
 		<div class="col-lg-4 p-0">
-			<div class="card-header bg-light rounded-0 colheader">
+			<div class="card bg-light rounded-0 colheader flex-row justify-content-between">
 				<h2 class="colhead">
 					Psuedocode
 				</h2>
-				<div class="holder-thing">
-					<input type="range" min="1" max="100" value="100" class="pslider">
-				</div>
+				<input type="range" min="1" max="100" value="100" class="pslider">
 			</div>
 		</div>
 	</nav>
 
 	<%# Main Content %>
 	<div class="container-fluid m-0 p-0" id="maincontent">
-		<div class="row-box w-100"><span class='codeCounter'>Description</span> <button type="button" class="btn btn-sm  btn-outline-light" id="descToggle">+</button></div>
-		<div class="invisibile-texty w-100 border-bottom border-dark" id="Description" contenteditable="true"></div>
+		<button class="accordion" id="descPanelBtn">Description</button>
+		<div class="panel" id="descPanel">
+			<div class="invisibile-texty" id="Description" contenteditable="true"></div>
+		</div>
+		<!-- <div class="row-box w-100"><span class='codeCounter'>Description</span> <button type="button"
+				class="btn btn-sm  btn-outline-light float-right" id="descToggle">+</button></div> -->
 		<div class="row m-0">
 			<!-- Code -->
 			<div class="col-lg-4 col-md-12 p-0" id="code">
@@ -245,8 +258,17 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <script>
+	$("#descPanelBtn").click((e) => {
+		e.target.classList.toggle("active");
+		var panel = e.target.nextElementSibling;
+		if (panel.style.maxHeight) {
+			panel.style.maxHeight = null;
+		} else {
+			panel.style.maxHeight = panel.scrollHeight + "px";
+		}
+	});
 
-	$('.dir').click(function (e) {
+	$('.dir').click((e) => {
 		e.stopPropagation();
 		$(this).parent().children("ul").slideToggle();
 	});
@@ -266,7 +288,7 @@
 		console.log("hi setting rows");
 	}
 
-	$('#addRow').click(function () {
+	$('#addRow').click(() => {
 		$('#codeUL').append(addtexty("codetexty"));
 		$('#psuedoUL').append(addtexty("psuedotexty"));
 		StageHeight = StageHeight + rowSize;
@@ -283,7 +305,7 @@
 		});
 	}
 
-	$("#descToggle").click( () =>{
+	$("#descToggle").click(() => {
 
 		$("#Description").slideToggle();
 	});
@@ -348,7 +370,7 @@
 		console.log($(item).attr('data-updated').substr(0, 24));
 	}
 
-	$("#Save").click(async function () {
+	$("#Save").click(async () => {
 		saveSwal().then(function (vals) {
 			console.log("Saving: " + vals);
 			console.log(saveBoard(vals));
@@ -356,7 +378,7 @@
 		});
 	});
 
-	$("#Update").click(async function () {
+	$("#Update").click(async () => {
 		if (topid && subid) {
 			updateSwal().then(function (vals) {
 				if (vals) {
@@ -374,17 +396,17 @@
 			});
 		}
 	});
-	$('.cslider').change(function () {
+	$('.cslider').change(() => {
 		$("#codeUL").fadeTo(20, this.value / 100);
 	});
-	$('.pslider').change(function () {
+	$('.pslider').change(() => {
 		$("#psuedoUL").fadeTo(20, this.value / 100);
 	});
 
 </script>
-<script type="text/javascript" src="/konvascript.js"></script>
-<script type="text/javascript" src="/konvashapes.js"></script>
-<script type="text/javascript" src="/topics.js"></script>
-<script type="text/javascript" src="/subtopics.js"></script>
+<script type="text/javascript" src="/scripts/konvascript.js"></script>
+<script type="text/javascript" src="/scripts/konvashapes.js"></script>
+<script type="text/javascript" src="/scripts/topics.js"></script>
+<script type="text/javascript" src="/scripts/subtopics.js"></script>
 
 </html>

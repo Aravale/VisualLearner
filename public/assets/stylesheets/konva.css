@@ -4,7 +4,6 @@
             transform: skew(340deg);
             background: #efefef;
             border: 2px solid #343a40;
-			margin: 5px 5px 0px 5px;
         }
 
         .Connector {
@@ -13,7 +12,6 @@
             background: #efefef;
             border: 2px solid #343a40;
             border-radius: 50%;
-			margin: 5px 5px 0px 5px;
         }
 
         .Process {
@@ -21,7 +19,6 @@
             width: 50px;
             background: #efefef;
             border: 2px solid #343a40;
-			margin: 5px 5px 0px 5px;
         }
 
         .Terminal {
@@ -30,23 +27,12 @@
             background: #efefef;
             border: 2px solid #343a40;
             border-radius: 40px;
-			margin: 5px 5px 0px 5px;
         }
-
-        .arrow {
-            background: none;
-            border: none;
-            font-size: 30px;
-            color: black;
-            padding: 0px !important;
-        }
-
         .Decision {
             height: 20px;
             width: 20px;
             background: #efefef;
             border: 2px solid #343a40;
-			margin: 5px 5px 0px 5px;
 			transform: rotate(45deg);
         }
 
