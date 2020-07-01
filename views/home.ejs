@@ -236,7 +236,7 @@
 		<% if(currentUser){ %>
 		<div id="userInfo" class="d-flex flex-column mx-auto bd-highlight">
 			<div class="d-flex justify-content-between">
-				<button type="button" class="btn btn-outline-light" id="Save">Save</button>
+				<button type="button" class="btn btn-outline-light" id="Save">Create</button>
 				<button type="button" class="btn btn-outline-light" id="Update">Update</button>
 			</div>
 			<div class="d-flex justify-content-center p-3 border border-dark">
@@ -333,10 +333,10 @@
 
 	function deleteRow(item) {
 		let rowNumber = $(item).parent().parent().index();
-		cuteHide($("#codeUL li").eq(rowNumber));
+		let done=deletestagerow(rowNumber);
+		if(done){cuteHide($("#codeUL li").eq(rowNumber));
 		cuteHide($("#psuedoUL li").eq(rowNumber));
-		setrowsIndex();
-		deletestagerow(rowNumber);
+		setrowsIndex();}
 	}
 
 	async function saveSwal(options) {

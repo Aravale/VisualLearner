@@ -427,7 +427,7 @@ function stageinit(gridLayer, layer) {
 		menuNode.style.display = 'initial';
 		var containerRect = stage.container().getBoundingClientRect();
 
-		menuNode.style.top = containerRect.top + stage.getPointerPosition().y + 4 + 'px';
+		menuNode.style.top = containerRect.top + stage.getPointerPosition().y + 4+ $("body,html").scrollTop() + 'px';
 		menuNode.style.left = containerRect.left + stage.getPointerPosition().x + 4 + 'px';
 	});
 	$("#viewmode").click(() => {
@@ -504,7 +504,7 @@ function viewOff() {
 	$(".psuedotexty:eq(" + textpointer + ")").css("background", "#DCDCDC");}
 	$(".rowboxdel").show();
 	layer.draw();
-	VShapesArray = [];
+	VShapesArray.length = 0;
 	$("#nxt").addClass("d-none");
 	$("#prv").addClass("d-none");
 	$("#fcToolbox").show();
@@ -603,10 +603,14 @@ function NextNode(node) {
 function deletestagerow(rowNumber) {
 	let stagestart = rowNumber * rowSize;
 	let stageend = stagestart + rowSize;
+	let deletenode=[];
 	layer.getChildren().forEach((node) => {
-		if (node.y() >= stagestart && node.y() < stageend) {
-			deleteNode(node);
+		if (node.getClassName()!="Arrow" && (node.y() >= stagestart && node.y() < stageend)) {
+			deletenode.push(node);
 		}
+	});
+	deletenode.forEach((node) => {
+		deleteNode(node);
 	});
 	layer.getChildren().forEach((node) => {
 		if (node.getClassName() != "Arrow") {
@@ -624,6 +628,7 @@ function deletestagerow(rowNumber) {
 	});
 	StageHeight = StageHeight - rowSize;
 	drawStage();
+	return true
 }
 
 function drawStage() {
