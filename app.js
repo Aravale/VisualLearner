@@ -1,5 +1,7 @@
 const DATABASE_URL="mongodb://localhost:27017/TestDB"
+const SESSION="mongodb://localhost:27017/connect_mongodb_session_test"
 const DATABASE_URL_LIVE="mongodb+srv://aravale:mypassword123@cluster0.7ffbj.mongodb.net/vldb?retryWrites=true&w=majority"
+const SESSION_LIVE="mongodb+srv://aravale:mypassword123@cluster0.7ffbj.mongodb.net/connect_mongodb_session_test?retryWrites=true&w=majority"
 var express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
@@ -8,9 +10,22 @@ var express = require('express'),
 	flash = require("connect-flash"),
 	LocalStrategy = require('passport-local'),
 	{User} = require('./models/user');
+	session = require('express-session');
+	var MongoDBStore = require('connect-mongodb-session')(session);
+	
 
 var indexRoutes = require('./routes/routes');
 //App Config
+var mystore = new MongoDBStore({
+	uri: SESSION_LIVE,
+	collection: 'mySessions'
+  });
+   
+  // Catch errors
+  mystore.on('error', function(error) {
+	console.log(error);
+  });
+
 try {
 	mongoose.connect(DATABASE_URL_LIVE, {
 		useNewUrlParser: true,
@@ -27,13 +42,15 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(flash());
 //Passport Config
-app.use(
-	require('express-session')({
-		secret: 'VLTest1htstring',
-		resave: false,
-		saveUninitialized: false
-	})
-);
+app.use(require('express-session')({
+	secret: 'VLTKL1',
+	cookie: {
+	  maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+	},
+	store: mystore,
+	resave: false,
+	saveUninitialized: false
+  }));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
