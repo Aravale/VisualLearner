@@ -4,5 +4,6 @@ You can access the app at https://visuallearner.herokuapp.com/
 Create an id using email and password, no email verificaiton required.
 Then you can start creating your flowchart and add code psuedocode.
 To save your work you need to first create a topic and then save the flowchart code psuedocode as a subtopic.
+All saves and loads are based on AJAX calls.
 Flowchart is made using KonvaJS a canvas library.
 Backend is Node.js
